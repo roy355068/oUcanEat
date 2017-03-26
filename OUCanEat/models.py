@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 
-class UserProfile(models.Model):
+class Profile(models.Model):
 	user = models.ForeignKey(User, default=None)
 	age = models.IntegerField()
 	bio = models.TextField(max_length=500, blank=True)
@@ -22,4 +22,3 @@ class Comment(models.Model):
 	event = models.ForeignKey(Event, default=None)
 	content = models.CharField(max_length=500)
 	create_dt = models.DateTimeField(auto_now=True)
-

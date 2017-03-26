@@ -13,11 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
 	url(r'^$', views.home, name='home'),
+	url(r'^login$', auth_views.login, {'template_name':'OUCanEat/login.html'}, name='login'),
+    url(r'^logout$', auth_views.logout_then_login, name="logout"),
+    url(r'^register$', views.register, name="register"),
+    url(r'^confirm-registration/(?P<username>[a-zA-Z0-9_@\+\-]+)/(?P<token>[a-z0-9\-]+)$',
+        views.confirm_registration, name='confirm'),
 ]

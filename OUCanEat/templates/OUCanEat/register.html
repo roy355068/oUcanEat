@@ -1,0 +1,38 @@
+{% extends "OUCanEat/base_lin.html"%}
+
+{% block title %}
+
+    <div class="bg-primary h2">
+        OUCanEat Form
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% for error in errors %}
+        <p class="text-danger text-center h3 ">
+            {{ error }}
+        </p>
+    {% endfor %}
+    <div class="container">
+        
+        <form method="post" action="{% url 'register' %}" class="h3 text-center ">
+            <div class="form-group">
+            <table>
+                
+                {{form}}
+                
+            </table>
+            </div>
+
+            <button class="btn btn-primary btn-md" type="submit" value="Register">Register</button>
+            
+            {% csrf_token %}
+
+        </form>
+            <div class="text-center">
+            <a href="/OUCanEat/"><button class="btn btn-success btn-md">Back</button></a>
+        </div>
+    </div>
+{% endblock %}
+
+

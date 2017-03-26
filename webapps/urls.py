@@ -21,4 +21,5 @@ from OUCanEat import views
 urlpatterns = [
 	url(r'^$', views.home, name='home'),
 	url(r'^OUCanEat/', include('OUCanEat.urls')),
+	url(r'^admin/', admin.site.urls),
 ]
