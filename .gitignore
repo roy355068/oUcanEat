@@ -1,5 +1,6 @@
 db.sqlite3
 *.pyc
+OUCanEat/migrations
 
 # Secret config parameters
 *.ini
