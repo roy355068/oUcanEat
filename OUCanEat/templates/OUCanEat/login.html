@@ -1,0 +1,44 @@
+
+{% extends "OUCanEat/base_lin.html"%}
+
+{% block title %}
+    <div class="bg-primary h2">
+        OUCanEat Login
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% if form.errors %}
+    <p class="text-danger h3 text-center">
+        Incorrect user name and password.
+    </p>
+    {% endif %}
+<div class="container">
+    <form method="post" action="{% url 'login' %}">
+
+        <div class="text-center h3">
+            <div class="form-group">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+            </div>
+            <div class="form-group">
+                {{ form.password.label_tag }}
+                {{ form.password }}
+            </div>
+        <button type="submit" value="Login" class="btn btn-primary btn-md">Login</button>
+        
+        </div>
+        <input type="hidden" name="next" value="{{ next }}" />
+        {% csrf_token %}
+    </form>
+{% endblock %}
+
+{% block register %}
+    <div class="text-center">
+        <a href="{% url 'register' %}">
+            <button type="button" class="btn btn-primary btn-md">Register</button>
+        </a>
+    </div>
+{% endblock %}
+</div>
+
