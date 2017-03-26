@@ -1,0 +1,13 @@
+{% extends "OUCanEat/base_lin.html" %}
+
+{% block title %}
+    <div class="bg-primary h2">Social Network Confirmation Success</div>
+{% endblock %}
+
+
+{% block content %}
+<p class="text-center h3 text-success">
+Thank you for confirming your email address.
+Please <a href="{% url 'login' %}" class="text-warning">login</a> to access your address book.
+</p>
+{% endblock %}
