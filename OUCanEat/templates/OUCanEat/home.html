@@ -1,0 +1,51 @@
+{% extends "OUCanEat/base.html" %}
+
+{% block user-info %} 
+		<div class="container">
+		  <div class="btn-group">
+		    <button type="button" class="btn btn-primary">User Name <span class="badge">2</span></button>
+		    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+		      <span class="caret"></span>
+		    </button>
+		    <ul class="dropdown-menu" role="menu">
+		      <li><a href="#">Profile</a></li>
+		      <li><a href="#">Event History</a></li>
+		      <li><a href="#">Notifications <span class="badge">2</span></a></li>
+		      <li role="presentation" class="divider"></li>
+		      <li><a href="#">Log Out</a></li>
+		    </ul>
+		  </div>
+		</div>
+{% endblock %}
+
+
+{% block search %} 
+		<form class="form-inline">
+	    <div class="form-group">
+	      <input class="form-control" id="focusedInput" type="text" value = "Key Word">
+	    </div>
+	    <div class="form-group">
+	      <input class="form-control" id="focusedInput" type="text" value = "Location">
+	    </div>
+	    <div class="form-group">
+	      <input class="form-control" id="focusedInput" type="text" value = "Time">
+	    </div>
+	    <div class="form-group">
+	    	<button type="button" class="btn btn-info">
+	      		<span class="glyphicon glyphicon-search"></span> Find Events!
+	    	</button>
+		</form>
+{% endblock %}
+
+
+{% block map %} 
+	  <div class="panel-body">
+	    <div class="col-sm-4" style="background-color:lavender;">.col-sm-4</div>
+	    <div class="col-sm-8">   	
+			<div class="embed-responsive embed-responsive-16by9">
+			    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12144.55953034678!2d-79.9583536693115!3d40.45004084343573!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x9c88a1296f5f9568!2sHeinz+College!5e0!3m2!1sen!2sus!4v1490551892314" width="600" height="450" frameborder="0" style="border:0" allowfullscreen>
+			    </iframe>
+		 	</div>
+	    </div>
+	  </div>
+{% endblock %}
