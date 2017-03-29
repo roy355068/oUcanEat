@@ -22,7 +22,7 @@ from django.core.mail import send_mail
 @login_required
 def home(request):
 	context = {}
-	return render(request, 'OUCanEat/google_sample.html', context)
+	return render(request, 'OUCanEat/home.html', context)
 
 
 @transaction.atomic
@@ -60,7 +60,7 @@ def register(request):
 
     send_mail(subject = "Verify your email address",
               message = email_body, 
-              from_email = "bochengl@andrew.cmu.edu",
+              from_email = "yko1@andrew.cmu.edu",
               recipient_list = [new_user.email])
 
 
