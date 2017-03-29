@@ -1,51 +1,86 @@
 {% extends "OUCanEat/base.html" %}
 
 {% block user-info %} 
-		<div class="container">
-		  <div class="btn-group">
-		    <button type="button" class="btn btn-primary">User Name <span class="badge">2</span></button>
-		    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-		      <span class="caret"></span>
-		    </button>
-		    <ul class="dropdown-menu" role="menu">
-		      <li><a href="#">Profile</a></li>
-		      <li><a href="#">Event History</a></li>
-		      <li><a href="#">Notifications <span class="badge">2</span></a></li>
-		      <li role="presentation" class="divider"></li>
-		      <li><a href="#">Log Out</a></li>
-		    </ul>
-		  </div>
-		</div>
+
+<nav class="navbar navbar-default" style="background-color: #48D1CC; margin-bottom:  0pt;">
+  	<div class="container-fluid">
+    	<div class="navbar-header">
+			<a class="navbar-brand" href="#" style="color: #696969; font-size:  24pt;">oUcanEat</a>
+    	</div>
+    <div class="collapse navbar-collapse">
+      	<ul class="nav navbar-nav navbar-right" >
+        	<li class="active" >
+        		<a href="#" style="background-color:#48D1CC; color: #696969; font-size: 14pt; ">UserName</a>
+        	</li>
+        	<li><a href="#" >Profile</a></li>
+        	<li><a href="#">Event History</a></li>
+        	<li><a href="#">Notification<span class="badge">4</span></a></li>
+        	<li><a href="#">Log Out</a></li>
+       	</ul>
+	</div>
+</nav>
+
 {% endblock %}
 
 
 {% block search %} 
-		<form class="form-inline">
-	    <div class="form-group">
-	      <input class="form-control" id="focusedInput" type="text" value = "Key Word">
-	    </div>
-	    <div class="form-group">
-	      <input class="form-control" id="focusedInput" type="text" value = "Location">
-	    </div>
-	    <div class="form-group">
-	      <input class="form-control" id="focusedInput" type="text" value = "Time">
-	    </div>
-	    <div class="form-group">
-	    	<button type="button" class="btn btn-info">
-	      		<span class="glyphicon glyphicon-search"></span> Find Events!
-	    	</button>
-		</form>
+
+<div class="container-fluid" style="background-color:#F5F5F5;">
+	<form class="form-inline"  style= "text-align: center; ">
+	<br>
+	<br>
+		<div class="form-group" style="padding-right: 30pt;" >
+			<input class="form-control input-lg" id="focusedInput" type="text" placeholder= "Key Word">
+		</div>
+
+
+		<div class="form-group" style="padding-right: 30pt;">
+		    <input class="form-control input-lg" id="focusedInput" type="text" placeholder= "Location">
+		</div>
+	    
+		<div class="form-group" style="padding-right: 30pt;">
+		    <input class="form-control input-lg" id="focusedInput" type="text" placeholder= "Time">
+		</div>
+		     
+		<div class="form-group">
+		    <button type="button" class="btn btn-info btn-lg" style="background-color: #48D1CC; border-color: transparent;">
+		      	<span class="glyphicon glyphicon-search"></span> Find Events!
+		    </button>
+		</div>	    
+		    <br>
+		    <br>
+		    <br>
+	</form>
+
 {% endblock %}
 
 
 {% block map %} 
-	  <div class="panel-body">
-	    <div class="col-sm-4" style="background-color:lavender;">.col-sm-4</div>
-	    <div class="col-sm-8">   	
-			<div class="embed-responsive embed-responsive-16by9">
-			    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12144.55953034678!2d-79.9583536693115!3d40.45004084343573!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x9c88a1296f5f9568!2sHeinz+College!5e0!3m2!1sen!2sus!4v1490551892314" width="600" height="450" frameborder="0" style="border:0" allowfullscreen>
-			    </iframe>
-		 	</div>
-	    </div>
-	  </div>
+
+<div class="row" style = "margin-bottom: 0pt; ">
+    <div class="col-md-4"  > 
+		<div class="panel" style="background-color: transparent;">
+			<div class="panel-body" style="overflow-y: scroll; height: 590px" >
+			  	<dl>
+			  		<dt style="font-size: 20pt" id="info"></dt>
+				  		<dd style="font-size: 18pt" id="open"></dd>
+				  		<dd style="font-size: 14pt" id="address"></dd>
+				  		<dd style="font-size: 14pt" id="rating"></dd>
+				</dl>
+				<div class="btn-group" style="padding-left: 65pt;">
+					<button type="button" class="btn btn-default btn-lg" id="create" style="display: none;">Create Event</button>
+					<button type="button" class="btn btn-default btn-lg" id="join" style="display: none;">Join Event</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div class="col-md-8" >
+     	<div class="panel">
+			<div class="panel-body" style="height: 590px;" id="map" ></div>
+		</div>
+    </div>
+</div>
+
 {% endblock %}
+
