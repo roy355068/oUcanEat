@@ -23,7 +23,7 @@ class Event(models.Model):
 
 class Join(models.Model):
 	event = models.ForeignKey(Event, default=None, related_name='event_join')
-	participator = models.ForeignKey(User, default=None)
+	participant = models.ForeignKey(User, default=None)
 
 class Comment(models.Model):
 	user = models.ForeignKey(User, default=None)

@@ -24,7 +24,7 @@ from OUCanEat.forms import RegistrationForm
 def home(request):
 	context = {}
 	upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('-event_dt')
-	top_events = upcoming_events.annotate(num_participators=Count('event_join')).order_by('-num_participators')
+	top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')
 	context['top_events'] = top_events
 	context['upcoming_events'] = upcoming_events
 	return render(request, 'OUCanEat/home.html', context)
