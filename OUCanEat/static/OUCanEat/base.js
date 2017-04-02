@@ -35,17 +35,19 @@ function createMarker(place) {
   });
 
   google.maps.event.addListener(marker, 'click', function() {
-	document.getElementById('info').innerHTML = place.name;
-	document.getElementById('rating').innerHTML = "Rating: "+place.rating;
-	document.getElementById('address').innerHTML = "Address: " +place.vicinity;
-	if(place.opening_hours.open_now){
-		var open = "open now"
-	}else{
-		var open = "closed now"
-	}
-	document.getElementById('open').innerHTML = open ;
-	document.getElementById('create').style.display='block';
-	document.getElementById('join').style.display='block';
+	
+ //  	document.getElementById('topEvent').style.display='block';
+	// document.getElementById('info').innerHTML = place.name;
+	// document.getElementById('rating').innerHTML = "Rating: "+place.rating;
+	// document.getElementById('address').innerHTML = "Address: " +place.vicinity;
+	// if(place.opening_hours.open_now){
+	// 	var open = "open now"
+	// }else{
+	// 	var open = "closed now"
+	// }
+	// document.getElementById('open').innerHTML = open ;
+	// document.getElementById('create').style.display='block';
+	// document.getElementById('join').style.display='block';
     infowindow.setContent(place.name);
     // infowindow.setContent(place.opening_hours);
     infowindow.open(map, this);

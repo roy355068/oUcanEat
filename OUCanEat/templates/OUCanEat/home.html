@@ -61,16 +61,27 @@
     <div class="col-md-4"  > 
 		<div class="panel" style="background-color: transparent;">
 			<div class="panel-body" style="overflow-y: scroll; height: 590px" >
-			  	<dl>
-			  		<dt style="font-size: 20pt" id="info"></dt>
-				  		<dd style="font-size: 18pt" id="open"></dd>
-				  		<dd style="font-size: 14pt" id="address"></dd>
-				  		<dd style="font-size: 14pt" id="rating"></dd>
-				</dl>
-				<div class="btn-group" style="padding-left: 65pt;">
-					<button type="button" class="btn btn-default btn-lg" id="create" style="display: none;">Create Event</button>
-					<button type="button" class="btn btn-default btn-lg" id="join" style="display: none;">Join Event</button>
-				</div>
+			<h2> Top Events: </h2>
+			{% for event in top_events %}
+			  	<table style="width:100%">
+			  	<tr>
+				  		<td style="font-size: 18pt">{{event.restaurant.name}}}</dd>
+				  		<td style="font-size: 18pt">{{event.num_participants}}</dd>
+				  		<td style= "text-align: right;"><button type="button" class="btn btn-default btn-lg">Join Event</button></td>
+				 </tr>
+				</table>
+			{% endfor %}
+			<h2> Upcoming Events: </h2>
+			{% for event in upcoming_events %}
+				<table style="width:100%">
+			  	<tr>
+				  		<td style="font-size: 18pt">{{event.restaurant.name}}}</dd>
+				  		<td style="font-size: 18pt">{{event.event_dt}}</dd>
+				  		<td style="text-align: right;"><button type="button" class="btn btn-default btn-lg">Join Event</button></td>
+				 </tr>
+				</table>
+			{% endfor %}
+
 			</div>
 		</div>
 	</div>
