@@ -5,25 +5,54 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.core import serializers
 from django.db import transaction
-from OUCanEat.models import *
 from django.http import Http404
-from OUCanEat.forms import RegistrationForm
 from django.core.urlresolvers import reverse
-import datetime
 from django.http import HttpResponse
 from django.contrib import messages
-import json
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db.models import Count
 
+import datetime
+import json
+from OUCanEat.models import *
+from OUCanEat.forms import RegistrationForm
 
 @ensure_csrf_cookie
 @login_required
 def home(request):
 	context = {}
+	upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('-event_dt')
+	top_events = upcoming_events.annotate(num_participators=Count('event_join')).order_by('-num_participators')
+	context['top_events'] = top_events
+	context['upcoming_events'] = upcoming_events
 	return render(request, 'OUCanEat/home.html', context)
 
+@login_required
+def create_event(request):
+	response_text = ''
+	if request.method=='POST':
+		user = request.user
+		event_form = EventForm(request.POST, instance=user)
+		if event_form.is_valid():
+			event_form.save()
+			events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('-event_dt')
+			response_text = serializers.serialize('json', events)
+	return HttpResponse(response_text, content_type='application/json')
+
+@login_required
+def join_event(request, event_id):
+	if request.method=='POST':
+		user = request.user
+		try:
+			event = Event.objects.get(id=event_id)
+			join = Join(event, user)
+			join.save()
+		except:
+			pass
+	return HttpResponse()
+			
 
 @transaction.atomic
 def register(request):
