@@ -8,14 +8,22 @@ class Profile(models.Model):
 	bio = models.TextField(max_length=500, blank=True)
 	picture = models.FileField(upload_to="images", blank=True)
 	content_type = models.CharField(max_length=50, blank=True)
-	preference = models.TextField(max_length=500, blank=True)
+	preference = models.CharField(max_length=500, blank=True)
+
+class Restaurant(models.Model):
+	name = models.CharField(max_length=500)
+	lat = models.FloatField()
+	lon = models.FloatField()
 
 class Event(models.Model):
-	host = models.ForeignKey(User, default=None, related_name='host')
-	restaurant = models.TextField(max_length=500)
-	participator = models.ForeignKey(User, default=None, related_name='participator')
+	host = models.ForeignKey(User, default=None)
+	restaurant = models.ForeignKey(Restaurant, default=None)
 	event_dt = models.DateTimeField()
 	create_dt = models.DateTimeField(auto_now=True)
+
+class Join(models.Model):
+	event = models.ForeignKey(Event, default=None, related_name='event_join')
+	participant = models.ForeignKey(User, default=None)
 
 class Comment(models.Model):
 	user = models.ForeignKey(User, default=None)
