@@ -1,5 +1,9 @@
 var map;
 var infowindow;
+var restaurant_name;
+var restaurant_lat;
+var restaurant_lng;
+
 
 function initMap() {
 	var pyrmont = {lat: -33.867, lng: 151.195};
@@ -33,6 +37,8 @@ function createMarker(place) {
     map: map,
     position: place.geometry.location
   });
+  restaurant_lat= place.geometry.location[0];
+  restaurant_lng= place.geometry.location[1];
 
   google.maps.event.addListener(marker, 'click', function() {
 	
@@ -60,7 +66,7 @@ function createMarker(place) {
   });
 }
 
-function createEvents() {
+function create_events() {
 	document.getElementById('map_info').style.display='none';
 	document.getElementById('join').style.display='none';
 	document.getElementById('create').style.display='none';
@@ -68,6 +74,29 @@ function createEvents() {
  	// document.getElementById('map_info').style.display='event_buttons';
 
 }
+
+function send_event() {
+	var event_form_date = document.getElementById('event_date').value;
+	var event_form_time = document.getElementById('event_time').value;
+	var event_form_desc = document.getElementById('event_desc').value;
+// var event_form = document.forms[0];
+// var event_form_date = event_form.elements[0].value;
+// var event_form_time = event_form.elements[1].value;
+// var event_form_desc = event_form.elements[2].value;
+var data = {'event_date':event_form_date, 'event_time':event_form_time, 'event_desc':event_form_desc,
+'event_restaurant':restaurant_name, 'event_lat':restaurant_lat, 'event_lng':restaurant_lng}
+    $.ajax({
+        url: "/OUCanEat/create_event",
+        type: "POST",
+        data: data,
+        dataType : "json",
+        success: function(response) {
+
+        }
+    });
+
+}
+
 
 
 

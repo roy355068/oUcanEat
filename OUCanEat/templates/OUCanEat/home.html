@@ -91,10 +91,10 @@
  				</dl>
  				<div class="btn-group" style="padding-left: 65pt;" id="event_buttons">
  					<button type="button" class="btn btn-default btn-lg" id="create" style="display: none;" 
- 					onclick="createEvents()">Create Event</button>
+ 					onclick="create_events()">Create Event</button>
  					<button type="button" class="btn btn-default btn-lg" id="join" style="display: none;">Join Event</button>
  				</div>
- 				<form id="event_form" style="display: none;" action="create_event">
+ 				<form id="event_form" method="POST" style="display: none;" action="create_event">
  					Event Date:<br>
   					<input type="text" id="event_date" placeholder= "date"><br>
   					Event Time:<br>
@@ -102,7 +102,8 @@
   					Event Description:<br>
   					<input type="text" id="event_desc" placeholder= "Description">
   					<br><br>
-  					<input type="submit" value="Create">
+  					<input type="submit" value="Create" onclick="send_event()">
+  					{% csrf_token %}
 				</form>
 
 
