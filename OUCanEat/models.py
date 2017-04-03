@@ -11,8 +11,8 @@ class Profile(models.Model):
 	preference = models.CharField(max_length=500, blank=True)
 
 class Restaurant(models.Model):
-	name = models.CharField(max_length=500)
-	desc = models.CharField(max_length=500)
+	name = models.CharField(max_length=500, blank=True)
+	desc = models.CharField(max_length=500, blank=True)
 	lat = models.FloatField()
 	lon = models.FloatField()
 
