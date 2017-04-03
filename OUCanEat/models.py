@@ -12,6 +12,7 @@ class Profile(models.Model):
 
 class Restaurant(models.Model):
 	name = models.CharField(max_length=500)
+	desc = models.CharField(max_length=500)
 	lat = models.FloatField()
 	lon = models.FloatField()
 

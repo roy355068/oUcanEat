@@ -30,15 +30,35 @@ def home(request):
 	return render(request, 'OUCanEat/home.html', context)
 
 @login_required
+def show_info(request):
+	if request.method=='POST':
+		#need to verify content
+		restaurant_name = request.POST['name']
+		lon=request.POST['lon']
+		lat=request.POST['lat']
+		events = Event.objects.filter(restaurant_name=restaurant_name, restaurant_lon=lon, restaurant_lat=lat, 
+					event_dt__gte=datetime.date.today()).order_by('-event_dt')
+		response_text = serializers.serialize('json', events)
+		return HttpResponse(response_text, content_type='application/json')
+
+@login_required
 def create_event(request):
 	response_text = ''
 	if request.method=='POST':
-		user = request.user
-		event_form = EventForm(request.POST, instance=user)
-		if event_form.is_valid():
-			event_form.save()
-			events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('-event_dt')
-			response_text = serializers.serialize('json', events)
+		#need to verify content
+		restaurant_name = request.POST['name']
+		lon=request.POST['lon']
+		lat=request.POST['lat']
+
+		try:
+			restaurant = Restaurant.objects.get(name=restaurant_name, lon=lon, lat=lat)
+		except:
+			restaurant = Restaurant(name=restaurant_name, lon=lon, lat=lat)
+		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y/%m/%d %H:%M')
+		event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
+		events = Event.objects.filter(restaurant_name=restaurant_name, restaurant_lon=lon, restaurant_lat=lat, 
+					event_dt__gte=datetime.date.today()).order_by('-event_dt')
+		response_text = serializers.serialize('json', events)
 	return HttpResponse(response_text, content_type='application/json')
 
 @login_required
