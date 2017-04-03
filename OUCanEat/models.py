@@ -14,11 +14,12 @@ class Restaurant(models.Model):
 	name = models.CharField(max_length=500, blank=True)
 	desc = models.CharField(max_length=500, blank=True)
 	lat = models.FloatField()
-	lon = models.FloatField()
+	lng = models.FloatField()
 
 class Event(models.Model):
 	host = models.ForeignKey(User, default=None)
 	restaurant = models.ForeignKey(Restaurant, default=None)
+	desc = models.CharField(max_length=500, blank=True)
 	event_dt = models.DateTimeField()
 	create_dt = models.DateTimeField(auto_now=True)
 
