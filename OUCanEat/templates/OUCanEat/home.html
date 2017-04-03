@@ -61,9 +61,9 @@
     <div class="col-md-4"  > 
 		<div class="panel" style="background-color: transparent;">
 			<div class="panel-body" style="overflow-y: scroll; height: 590px" >
-			<h2> Top Events: </h2>
+			<h2 id="topEvent"> Top Events: </h2>
 			{% for event in top_events %}
-			  	<table style="width:100%">
+			  	<table style="width:100%" id="topEvent_info">
 			  	<tr>
 				  		<td style="font-size: 18pt">{{event.restaurant.name}}}</dd>
 				  		<td style="font-size: 18pt">{{event.num_participants}}</dd>
@@ -71,9 +71,9 @@
 				 </tr>
 				</table>
 			{% endfor %}
-			<h2> Upcoming Events: </h2>
+			<h2 id="upcomingEvent"> Upcoming Events: </h2>
 			{% for event in upcoming_events %}
-				<table style="width:100%">
+				<table style="width:100%" id="upcomingEvent_info">
 			  	<tr>
 				  		<td style="font-size: 18pt">{{event.restaurant.name}}}</dd>
 				  		<td style="font-size: 18pt">{{event.event_dt}}</dd>
@@ -81,6 +81,30 @@
 				 </tr>
 				</table>
 			{% endfor %}
+
+
+ 			  	<dl id="map_info">
+ 			  		<dt style="font-size: 20pt" id="info"></dt>
+ 				  		<dd style="font-size: 18pt" id="open"></dd>
+ 				  		<dd style="font-size: 14pt" id="address"></dd>
+ 				  		<dd style="font-size: 14pt" id="rating"></dd>
+ 				</dl>
+ 				<div class="btn-group" style="padding-left: 65pt;" id="event_buttons">
+ 					<button type="button" class="btn btn-default btn-lg" id="create" style="display: none;" 
+ 					onclick="createEvents()">Create Event</button>
+ 					<button type="button" class="btn btn-default btn-lg" id="join" style="display: none;">Join Event</button>
+ 				</div>
+ 				<form id="event_form" style="display: none;" action="create_event">
+ 					Event Date:<br>
+  					<input type="text" id="event_date" placeholder= "date"><br>
+  					Event Time:<br>
+  					<input type="text" id="event_time" placeholder= "time"><br>
+  					Event Description:<br>
+  					<input type="text" id="event_desc" placeholder= "Description">
+  					<br><br>
+  					<input type="submit" value="Create">
+				</form>
+
 
 			</div>
 		</div>

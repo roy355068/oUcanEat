@@ -37,20 +37,37 @@ function createMarker(place) {
   google.maps.event.addListener(marker, 'click', function() {
 	
  //  	document.getElementById('topEvent').style.display='block';
-	// document.getElementById('info').innerHTML = place.name;
-	// document.getElementById('rating').innerHTML = "Rating: "+place.rating;
-	// document.getElementById('address').innerHTML = "Address: " +place.vicinity;
-	// if(place.opening_hours.open_now){
-	// 	var open = "open now"
-	// }else{
-	// 	var open = "closed now"
-	// }
-	// document.getElementById('open').innerHTML = open ;
-	// document.getElementById('create').style.display='block';
-	// document.getElementById('join').style.display='block';
+	document.getElementById('topEvent').style.display='none';
+	document.getElementById('upcomingEvent').style.display='none';
+	//document.getElementById('topEvent_info').style.display='none';
+	//document.getElementById('upcomingEvent_info').style.display='none';
+
+	document.getElementById('info').innerHTML = place.name;
+	document.getElementById('rating').innerHTML = "Rating: "+place.rating;
+	document.getElementById('address').innerHTML = "Address: " +place.vicinity;
+	if(place.opening_hours.open_now){
+		var open = "open now"
+	}else{
+		var open = "closed now"
+	}
+	document.getElementById('open').innerHTML = open ;
+	// document.getElementById('map_info').style.display='block';
+	document.getElementById('create').style.display='block';
+	document.getElementById('join').style.display='block';
     infowindow.setContent(place.name);
     // infowindow.setContent(place.opening_hours);
     infowindow.open(map, this);
   });
 }
+
+function createEvents() {
+	document.getElementById('map_info').style.display='none';
+	document.getElementById('join').style.display='none';
+	document.getElementById('create').style.display='none';
+	document.getElementById('event_form').style.display='block';
+ 	// document.getElementById('map_info').style.display='event_buttons';
+
+}
+
+
 
