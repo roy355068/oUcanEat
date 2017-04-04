@@ -37,11 +37,11 @@ function createMarker(place) {
     map: map,
     position: place.geometry.location
   });
-  restaurant_name = place.name
-  restaurant_lat= place.geometry.location.lat();
-  restaurant_lng= place.geometry.location.lng();
 
   google.maps.event.addListener(marker, 'click', function() {
+  	restaurant_name = place.name;
+	restaurant_lat= place.geometry.location.lat();
+	restaurant_lng= place.geometry.location.lng();
 	
  //  	document.getElementById('topEvent').style.display='block';
 	document.getElementById('topEvent').style.display='none';
