@@ -36,7 +36,7 @@ def show_info(request):
 		restaurant_name = request.POST['name']
 		lon=request.POST['lon']
 		lat=request.POST['lat']
-		events = Event.objects.filter(restaurant_name=restaurant_name, restaurant_lon=lon, restaurant_lat=lat, 
+		events = Event.objects.filter(restaurant__name=restaurant_name, restaurant__lon=lon, restaurant__lat=lat, 
 					event_dt__gte=datetime.date.today()).order_by('-event_dt')
 		response_text = serializers.serialize('json', events)
 		return HttpResponse(response_text, content_type='application/json')
@@ -46,17 +46,19 @@ def create_event(request):
 	response_text = ''
 	if request.method=='POST':
 		#need to verify content
-		restaurant_name = request.POST['name']
-		lon=request.POST['lon']
-		lat=request.POST['lat']
+		lng=request.POST['event_lng']
+		lat=request.POST['event_lat']
+		restaurant_name = request.POST['event_restaurant']
 
 		try:
-			restaurant = Restaurant.objects.get(name=restaurant_name, lon=lon, lat=lat)
+			restaurant = Restaurant.objects.get(name=restaurant_name, lng=lng, lat=lat)
 		except:
-			restaurant = Restaurant(name=restaurant_name, lon=lon, lat=lat)
+			restaurant = Restaurant(name=restaurant_name, lng=lng, lat=lat)
+			restaurant.save()
 		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y/%m/%d %H:%M')
 		event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
-		events = Event.objects.filter(restaurant_name=restaurant_name, restaurant_lon=lon, restaurant_lat=lat, 
+		event.save()
+		events = Event.objects.filter(restaurant__name=restaurant_name, restaurant__lng=lng, restaurant__lat=lat, 
 					event_dt__gte=datetime.date.today()).order_by('-event_dt')
 		response_text = serializers.serialize('json', events)
 	return HttpResponse(response_text, content_type='application/json')

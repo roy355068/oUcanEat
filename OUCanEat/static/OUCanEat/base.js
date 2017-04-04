@@ -37,8 +37,9 @@ function createMarker(place) {
     map: map,
     position: place.geometry.location
   });
-  restaurant_lat= place.geometry.location[0];
-  restaurant_lng= place.geometry.location[1];
+  restaurant_name = place.name
+  restaurant_lat= place.geometry.location.lat();
+  restaurant_lng= place.geometry.location.lng();
 
   google.maps.event.addListener(marker, 'click', function() {
 	
@@ -83,8 +84,9 @@ function send_event() {
 // var event_form_date = event_form.elements[0].value;
 // var event_form_time = event_form.elements[1].value;
 // var event_form_desc = event_form.elements[2].value;
-var data = {'event_date':event_form_date, 'event_time':event_form_time, 'event_desc':event_form_desc,
-'event_restaurant':restaurant_name, 'event_lat':restaurant_lat, 'event_lng':restaurant_lng}
+	var data = {'event_date':event_form_date, 'event_time':event_form_time, 'event_desc':event_form_desc,
+		'event_restaurant':restaurant_name, 'event_lat':restaurant_lat, 'event_lng':restaurant_lng,
+		'csrfmiddlewaretoken': getCSRFToken()}
     $.ajax({
         url: "/OUCanEat/create_event",
         type: "POST",
@@ -97,6 +99,12 @@ var data = {'event_date':event_form_date, 'event_time':event_form_time, 'event_d
 
 }
 
-
-
-
+function getCSRFToken() {
+	var cookies = document.cookie.split(";");
+	for (var i = 0; i < cookies.length; i++) {
+		if (cookies[i].startsWith("csrftoken=")) {
+			return cookies[i].substring("csrftoken=".length, cookies[i].length);
+		}
+	}
+	return "unknown";
+}
