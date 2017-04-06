@@ -47,15 +47,19 @@ function createMarker(place) {
 
 function show_restaurant_info() {
 	$("#info").html("");
-	var html = "<dl><dt style='font-size: 20pt'>"+clicked_place.name+"</dt>"
-	if(clicked_place.opening_hours.open_now){
-		var open = "open now";
-	} else {
-		var open = "closed now";
+	var html = "<dl><dt style='font-size: 20pt'>"+clicked_place.name+"</dt>";
+	if ("opening_hours" in clicked_place) {
+		if(clicked_place.opening_hours.open_now){
+			var open = "open now";
+		} else {
+			var open = "closed now";
+		}
+		html += "<dd style='font-size: 18pt'>"+open+"</dd>";
 	}
-	html += "<dd style='font-size: 18pt'>"+open+"</dd>"+
-			"<dd style='font-size: 14pt'>Address: "+clicked_place.vicinity+"</dd>"+
-			"<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
+	html += "<dd style='font-size: 14pt'>Address: "+clicked_place.vicinity+"</dd>";
+	if ("rating" in clicked_place) {
+		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
+	}
 
 	var data = {'event_restaurant':clicked_place.name, 'event_lat':clicked_place.geometry.location.lat(),
 		'event_lng':clicked_place.geometry.location.lng(), 'csrfmiddlewaretoken': getCSRFToken()}
@@ -75,7 +79,6 @@ function show_restaurant_info() {
 			$("#info").prepend(html);
         }
     });
-
 }
 
 function create_event_form() {
