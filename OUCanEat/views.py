@@ -23,7 +23,7 @@ from OUCanEat.forms import RegistrationForm
 @login_required
 def home(request):
 	context = {}
-	upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('-event_dt')
+	upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
 	top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')
 	context['top_events'] = top_events
 	context['upcoming_events'] = upcoming_events
@@ -33,11 +33,11 @@ def home(request):
 def show_info(request):
 	if request.method=='POST':
 		#need to verify content
-		restaurant_name = request.POST['name']
-		lon=request.POST['lon']
-		lat=request.POST['lat']
-		events = Event.objects.filter(restaurant__name=restaurant_name, restaurant__lon=lon, restaurant__lat=lat, 
-					event_dt__gte=datetime.date.today()).order_by('-event_dt')
+		restaurant_name = request.POST['event_restaurant']
+		lng = request.POST['event_lng']
+		lat = request.POST['event_lat']
+		events = Event.objects.filter(restaurant__name=restaurant_name, restaurant__lng=lng, restaurant__lat=lat, 
+					event_dt__gte=datetime.date.today()).order_by('event_dt')
 		response_text = serializers.serialize('json', events)
 		return HttpResponse(response_text, content_type='application/json')
 
@@ -46,9 +46,9 @@ def create_event(request):
 	response_text = ''
 	if request.method=='POST':
 		#need to verify content
-		lng=request.POST['event_lng']
-		lat=request.POST['event_lat']
 		restaurant_name = request.POST['event_restaurant']
+		lng = request.POST['event_lng']
+		lat = request.POST['event_lat']
 
 		try:
 			restaurant = Restaurant.objects.get(name=restaurant_name, lng=lng, lat=lat)
@@ -58,10 +58,7 @@ def create_event(request):
 		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y/%m/%d %H:%M')
 		event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
 		event.save()
-		events = Event.objects.filter(restaurant__name=restaurant_name, restaurant__lng=lng, restaurant__lat=lat, 
-					event_dt__gte=datetime.date.today()).order_by('-event_dt')
-		response_text = serializers.serialize('json', events)
-	return HttpResponse(response_text, content_type='application/json')
+	return HttpResponse()
 
 @login_required
 def join_event(request, event_id):
