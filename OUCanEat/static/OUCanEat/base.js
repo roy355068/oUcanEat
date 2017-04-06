@@ -1,49 +1,3 @@
-var map;
-var infowindow;
-var clicked_place;
-
-
-function initMap() {
-	var pyrmont = {lat: -33.867, lng: 151.195};
-
-	map = new google.maps.Map(document.getElementById('map'), {
-		center: pyrmont,
-		zoom: 15
-	});
-
-	infowindow = new google.maps.InfoWindow();
-
-	var service = new google.maps.places.PlacesService(map);
-	service.nearbySearch({
-		location: pyrmont,
-		radius: 500,
-		types: ['restaurant', 'cafe']
-	}, callback);
-}
-
-function callback(results, status) {
-	if (status === google.maps.places.PlacesServiceStatus.OK) {
-		for (var i = 0; i < results.length; i++) {
-			createMarker(results[i]);
-		}
-	}
-}
-
-function createMarker(place) {
-  var placeLoc = place.geometry.location;
-  var marker = new google.maps.Marker({
-    map: map,
-    position: place.geometry.location
-  });
-
-  google.maps.event.addListener(marker, 'click', function() {
-	clicked_place = place;
-	show_restaurant_info();
-
-    infowindow.setContent(place.name);
-    infowindow.open(map, this);
-  });
-}
 
 function show_restaurant_info() {
 	$("#info").html("");
@@ -112,8 +66,9 @@ function create_event() {
 	var event_form_time = $("#event_time").val();
 	var event_form_desc = $("#event_desc").val();
 	var data = {'event_date':event_form_date, 'event_time':event_form_time, 'event_desc':event_form_desc,
-		'event_restaurant':clicked_place.name, 'event_lat':clicked_place.geometry.location.lat(),
-		'event_lng':clicked_place.geometry.location.lng(), 'csrfmiddlewaretoken': getCSRFToken()}
+		'event_restaurant':clicked_place.name, 'google_id': clicked_place.place_id, 
+		'event_lat':clicked_place.geometry.location.lat(), 'event_lng':clicked_place.geometry.location.lng(),
+		'csrfmiddlewaretoken': getCSRFToken()}
     $.ajax({
         url: "/OUCanEat/create_event",
         type: "POST",

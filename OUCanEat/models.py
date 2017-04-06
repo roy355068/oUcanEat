@@ -12,6 +12,7 @@ class Profile(models.Model):
 
 class Restaurant(models.Model):
 	name = models.CharField(max_length=500, blank=True)
+	google_id = models.CharField(max_length=500, blank=True)
 	desc = models.CharField(max_length=500, blank=True)
 	lat = models.FloatField()
 	lng = models.FloatField()

@@ -46,14 +46,15 @@ def create_event(request):
 	response_text = ''
 	if request.method=='POST':
 		#need to verify content
+		google_id = request.POST['google_id']
 		restaurant_name = request.POST['event_restaurant']
 		lng = request.POST['event_lng']
 		lat = request.POST['event_lat']
 
 		try:
-			restaurant = Restaurant.objects.get(name=restaurant_name, lng=lng, lat=lat)
+			restaurant = Restaurant.objects.get(google_id=google_id)
 		except:
-			restaurant = Restaurant(name=restaurant_name, lng=lng, lat=lat)
+			restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
 			restaurant.save()
 		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y/%m/%d %H:%M')
 		event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
