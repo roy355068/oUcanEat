@@ -26,6 +26,8 @@ class Event(models.Model):
 class Join(models.Model):
 	event = models.ForeignKey(Event, default=None, related_name='event_join')
 	participant = models.ForeignKey(User, default=None)
+	class Meta:
+		unique_together = ('event', 'participant')
 
 class Comment(models.Model):
 	user = models.ForeignKey(User, default=None)

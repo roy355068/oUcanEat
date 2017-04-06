@@ -61,14 +61,14 @@ def create_event(request):
 	return HttpResponse()
 
 @login_required
-def join_event(request, event_id):
+def join_event(request):
 	if request.method=='POST':
 		user = request.user
 		try:
-			event = Event.objects.get(id=event_id)
-			join = Join(event, user)
+			event = Event.objects.get(id=request.POST['event_id'])
+			join = Join(event=event, participant=user)
 			join.save()
-		except:
+		except Exception as e:
 			pass
 	return HttpResponse()
 			

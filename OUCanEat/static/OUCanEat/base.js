@@ -73,10 +73,22 @@ function show_restaurant_info() {
 					"<button type='button' class='btn btn-default btn-lg' onclick='create_event_form()'>Create Event</button>";
 			$(response).each(function() {
 				html += this.fields.event_dt;
-				html += "<button type='button' class='btn btn-default btn-lg' >Join Event</button>";
+				html += "<button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+")'>Join Event</button>";
 			});
 			html += "</div>"
 			$("#info").prepend(html);
+        }
+    });
+}
+
+function join_event(event_id) {
+	var data = {'event_id': event_id, 'csrfmiddlewaretoken': getCSRFToken()};
+	$.ajax({
+		url: "/OUCanEat/join_event",
+		type: "POST",
+		data: data,
+		success: function(response) {
+			show_restaurant_info();
         }
     });
 }
@@ -110,7 +122,6 @@ function create_event() {
 			show_restaurant_info();
         }
     });
-
 }
 
 function getCSRFToken() {
