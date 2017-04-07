@@ -30,7 +30,7 @@
 	<br>
 	<br>
 		<div class="form-group" style="padding-right: 30pt;" >
-			<input class="form-control input-lg" id="focusedInput" type="text" placeholder= "Key Word">
+			<input class="form-control input-lg" id="keyword" type="text" placeholder= "Key Word">
 		</div>
 
 
@@ -60,14 +60,16 @@
 <div class="row" style = "margin-bottom: 0pt; ">
     <div class="col-md-4"  > 
 		<div class="panel" style="background-color: transparent;">
-			<div class="panel-body" style="overflow-y: scroll; height: 590px" >
+			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
 			<h2 id="topEvent"> Top Events: </h2>
 			{% for event in top_events %}
 			  	<table style="width:100%" id="topEvent_info">
 			  	<tr>
-				  		<td style="font-size: 18pt">{{event.restaurant.name}}}</dd>
-				  		<td style="font-size: 18pt">{{event.num_participants}}</dd>
-				  		<td style= "text-align: right;"><button type="button" class="btn btn-default btn-lg">Join Event</button></td>
+					<td style="font-size: 18pt">{{event.restaurant.name}}</dd>
+					<td style="font-size: 18pt">{{event.num_participants}}</dd>
+				  	<td style="text-align: right;">
+						<button type="button" class="btn btn-default btn-lg" onclick="join_event({{event.id}}, 1)">Join Event</button>
+					</td>
 				 </tr>
 				</table>
 			{% endfor %}
@@ -75,38 +77,14 @@
 			{% for event in upcoming_events %}
 				<table style="width:100%" id="upcomingEvent_info">
 			  	<tr>
-				  		<td style="font-size: 18pt">{{event.restaurant.name}}}</dd>
-				  		<td style="font-size: 18pt">{{event.event_dt}}</dd>
-				  		<td style="text-align: right;"><button type="button" class="btn btn-default btn-lg">Join Event</button></td>
+				  	<td style="font-size: 18pt">{{event.restaurant.name}}</dd>
+				  	<td style="font-size: 18pt">{{event.event_dt}}</dd>
+				  	<td style="text-align: right;">
+						<button type="button" class="btn btn-default btn-lg" onclick="join_event({{event.id}}, 1)">Join Event</button>
+					</td>
 				 </tr>
 				</table>
 			{% endfor %}
-
-
- 			  	<dl id="map_info">
- 			  		<dt style="font-size: 20pt" id="info"></dt>
- 				  		<dd style="font-size: 18pt" id="open"></dd>
- 				  		<dd style="font-size: 14pt" id="address"></dd>
- 				  		<dd style="font-size: 14pt" id="rating"></dd>
- 				</dl>
- 				<div class="btn-group" style="padding-left: 65pt;" id="event_buttons">
- 					<button type="button" class="btn btn-default btn-lg" id="create" style="display: none;" 
- 					onclick="create_events()">Create Event</button>
- 					<button type="button" class="btn btn-default btn-lg" id="join" style="display: none;">Join Event</button>
- 				</div>
- 				<form id="event_form" method="POST" style="display: none;">
- 					Event Date:<br>
-  					<input type="text" id="event_date" placeholder= "date"><br>
-  					Event Time:<br>
-  					<input type="text" id="event_time" placeholder= "time"><br>
-  					Event Description:<br>
-  					<input type="text" id="event_desc" placeholder= "Description">
-  					<br><br>
-  					<input type="submit" value="Create" onclick="send_event()">
-  					{% csrf_token %}
-				</form>
-
-
 			</div>
 		</div>
 	</div>

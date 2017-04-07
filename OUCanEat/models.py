@@ -12,6 +12,7 @@ class Profile(models.Model):
 
 class Restaurant(models.Model):
 	name = models.CharField(max_length=500, blank=True)
+	google_id = models.CharField(max_length=500, blank=True)
 	desc = models.CharField(max_length=500, blank=True)
 	lat = models.FloatField()
 	lng = models.FloatField()
@@ -26,6 +27,8 @@ class Event(models.Model):
 class Join(models.Model):
 	event = models.ForeignKey(Event, default=None, related_name='event_join')
 	participant = models.ForeignKey(User, default=None)
+	class Meta:
+		unique_together = ('event', 'participant')
 
 class Comment(models.Model):
 	user = models.ForeignKey(User, default=None)
