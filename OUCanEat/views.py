@@ -59,6 +59,11 @@ def create_event(request):
 		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y/%m/%d %H:%M')
 		event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
 		event.save()
+		join = Join(event=event, participant=request.user)
+		join.save()
+
+		#should add himself
+
 	return HttpResponse()
 
 @login_required
@@ -73,6 +78,16 @@ def join_event(request):
 			pass
 	return HttpResponse()
 			
+@login_required
+def profile(request, user_id):
+	context = {}
+	try:
+		user = User.objects.get(id=user_id)
+
+		events = Events.objects.filter()
+	except:
+		pass
+	return render(request, 'OUCanEat/profile.html', context)
 
 @transaction.atomic
 def register(request):
