@@ -67,7 +67,9 @@
 			  	<tr>
 					<td style="font-size: 18pt">{{event.restaurant.name}}</dd>
 					<td style="font-size: 18pt">{{event.num_participants}}</dd>
-				  	<td style="text-align: right;"><button type="button" class="btn btn-default btn-lg">Join Event</button></td>
+				  	<td style="text-align: right;">
+						<button type="button" class="btn btn-default btn-lg" onclick="join_event({{event.id}}, 1)">Join Event</button>
+					</td>
 				 </tr>
 				</table>
 			{% endfor %}
@@ -77,7 +79,9 @@
 			  	<tr>
 				  	<td style="font-size: 18pt">{{event.restaurant.name}}</dd>
 				  	<td style="font-size: 18pt">{{event.event_dt}}</dd>
-				  	<td style="text-align: right;"><button type="button" class="btn btn-default btn-lg">Join Event</button></td>
+				  	<td style="text-align: right;">
+						<button type="button" class="btn btn-default btn-lg" onclick="join_event({{event.id}}, 1)">Join Event</button>
+					</td>
 				 </tr>
 				</table>
 			{% endfor %}
