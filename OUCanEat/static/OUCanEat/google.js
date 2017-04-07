@@ -1,11 +1,12 @@
 var map;
 var infowindow;
 var clicked_place;
-
+var markers = [];
 
 function initMap() {
 	var pyrmont = {lat: -33.867, lng: 151.195};
 
+	//map
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: pyrmont,
 		zoom: 15
@@ -13,12 +14,47 @@ function initMap() {
 
 	infowindow = new google.maps.InfoWindow();
 
+	//nearby search
 	var service = new google.maps.places.PlacesService(map);
 	service.nearbySearch({
 		location: pyrmont,
 		radius: 500,
 		types: ['restaurant', 'cafe']
 	}, callback);
+
+	//search box
+	var input = document.getElementById('keyword');
+	var searchBox = new google.maps.places.SearchBox(input);
+
+	map.addListener('bounds_changed', function() {
+		searchBox.setBounds(map.getBounds());
+	});
+
+	searchBox.addListener('places_changed', function() {
+		var places = searchBox.getPlaces();
+		if (places.length==0) {
+			return;
+		}
+		markers.forEach(function(marker) {
+			marker.setMap(null);
+		});
+		markers = [];
+
+		var bounds = new google.maps.LatLngBounds();
+		places.forEach(function(place) {
+			if (!place.geometry) {
+				console.log("Returned place contains no geometry");
+				return;
+			}
+			createMarker(place);
+            if (place.geometry.viewport) {
+				bounds.union(place.geometry.viewport);
+			} else {
+				bounds.extend(place.geometry.location);
+			}
+		});
+		map.fitBounds(bounds);
+	});
 }
 
 function callback(results, status) {
@@ -30,17 +66,19 @@ function callback(results, status) {
 }
 
 function createMarker(place) {
-  var placeLoc = place.geometry.location;
-  var marker = new google.maps.Marker({
-    map: map,
-    position: place.geometry.location
-  });
+	var placeLoc = place.geometry.location;
+	var marker = new google.maps.Marker({
+		map: map,
+		position: place.geometry.location
+	});
 
-  google.maps.event.addListener(marker, 'click', function() {
-	clicked_place = place;
-	show_restaurant_info();
+	google.maps.event.addListener(marker, 'click', function() {
+		clicked_place = place;
+		show_restaurant_info();
 
-    infowindow.setContent(place.name);
-    infowindow.open(map, this);
-  });
+		infowindow.setContent(place.name);
+		infowindow.open(map, this);
+	});
+
+	markers.push(marker);
 }
