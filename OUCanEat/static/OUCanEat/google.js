@@ -2,6 +2,7 @@ var map;
 var infowindow;
 var clicked_place;
 var markers = [];
+var searched = false;
 
 function initMap() {
 	var pyrmont = {lat: -33.867, lng: 151.195};
@@ -27,10 +28,18 @@ function initMap() {
 	var searchBox = new google.maps.places.SearchBox(input);
 
 	map.addListener('bounds_changed', function() {
+		if (!searched) {
+			service.nearbySearch({
+				location: map.getCenter(),
+				radius: 500,
+				types: ['restaurant', 'cafe']
+			}, callback);
+		}
 		searchBox.setBounds(map.getBounds());
 	});
 
 	searchBox.addListener('places_changed', function() {
+		searched = true;
 		var places = searchBox.getPlaces();
 		if (places.length==0) {
 			return;
