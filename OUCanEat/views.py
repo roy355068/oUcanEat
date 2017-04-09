@@ -23,10 +23,12 @@ from OUCanEat.forms import RegistrationForm
 @login_required
 def home(request):
 	context = {}
+	user = request.user
 	upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
 	top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')
 	context['top_events'] = top_events
 	context['upcoming_events'] = upcoming_events
+	context['user'] = user
 	return render(request, 'OUCanEat/home.html', context)
 
 @login_required
