@@ -92,3 +92,11 @@ function getCSRFToken() {
 	}
 	return "unknown";
 }
+
+//init
+$(function () {
+	$("#search_btn").click(function(){
+    	var search_date = $("#search_date").val();
+		showMapResult();
+	});
+});
