@@ -52,7 +52,7 @@ function callback(results, status) {
 function showMapResult() {
 	searched = true;
 	var places = searchBox.getPlaces();
-	if (places.length==0) {
+	if (places=== undefined || places.length==0) {
 		return;
 	}
 	markers.forEach(function(marker) {

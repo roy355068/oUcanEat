@@ -61,9 +61,6 @@ def create_event(request):
 		event.save()
 		join = Join(event=event, participant=request.user)
 		join.save()
-
-		#should add himself
-
 	return HttpResponse()
 
 @login_required
@@ -76,6 +73,26 @@ def join_event(request):
 			join.save()
 		except Exception as e:
 			pass
+	return HttpResponse()
+
+@login_required
+def search_events(request):
+	if request.method=='GET':
+		events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
+		if 'search_places' in request.GET and len(request.GET.get('search_places'))>0:
+			events = events.filter(restaurant__google_id__in=request.GET.get('search_places'))
+		if 'search_date' in request.GET:
+			search_date = request.GET.get('search_date')
+			try:
+				dt = datetime.datetime.strptime(search_date, '%Y/%m/%d')
+				events = events.filter(event_dt__year=dt.year,
+							event_dt__month=dt.month,
+							event_dt__day=dt.day)
+			except Exception as e:
+				pass
+		response_text = serializers.serialize('json', events)
+		print (response_text)
+		return HttpResponse(response_text, content_type='application/json')
 	return HttpResponse()
 			
 @login_required

@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^create_event$', views.create_event),
     url(r'^join_event$', views.join_event),
     url(r'^show_info$', views.show_info),
+    url(r'^search_events$', views.search_events),
 ]

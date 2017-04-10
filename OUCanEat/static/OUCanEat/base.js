@@ -97,6 +97,28 @@ function getCSRFToken() {
 $(function () {
 	$("#search_btn").click(function(){
     	var search_date = $("#search_date").val();
+		var places = searchBox.getPlaces();
+		var place_ids = []
+		console.log(places);
+		if (places!== undefined && places.length>0) {
+			places.forEach(function(place) {
+				if (!place.geometry) {
+					console.log("Returned place contains no geometry");
+					return;
+				}
+				place_ids.push(place.id)
+			});
+		}
+
 		showMapResult();
+		$.ajax({
+			url: "/OUCanEat/search_events",
+			type: "GET",
+			data: {'search_date': search_date, 'search_places': JSON.stringify(place_ids)},
+			success: function(response) {
+				show_upcoming_event(response);
+				//may need to store events and its restaurants, and show on map
+			}
+		});
 	});
 });
