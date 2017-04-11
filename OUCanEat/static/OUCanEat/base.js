@@ -53,17 +53,22 @@ function join_event(event_id, page_type) {
 
 function create_event_form() {
 	$("#info").html("");
+
 	var html = "<div>"+
-					"Event Date:<br>"+
-					"<input type='text' id='event_date' placeholder= 'date'><br>"+
-					"Event Time:<br>"+
-					"<input type='text' id='event_time' placeholder= 'time'><br>"+
+					"Event Date and Time<br>"+
+					"<div id='datetimepicker' class='input-append date'>"+
+      				"<input type='text' id='event_date' placeholder= 'Date'><br><br>"+
+      				"<input type='text' id='event_tiime' placeholder= 'time'><br><br>"+
 					"Event Description:<br>"+
 					"<input type='text' id='event_desc' placeholder= 'Description'><br><br>"+
 					"<input type='submit' value='Create' onclick='create_event()'>"+
 				"</div>";
+
+    
+
 	$("#info").prepend(html);
 }
+
 
 function create_event() {
 	var event_form_date = $("#event_date").val();
@@ -82,6 +87,61 @@ function create_event() {
         }
     });
 }
+
+
+function show_upcoming_event() {
+	$("#info").html("");
+	var html = "<h2> Upcomping Events: </h2>"
+
+
+	$.ajax({
+		url: "/OUCanEat/show_default",
+		type: "GET",
+		success: function(response){
+			    var upcoming_events = JSON.parse(response.upcoming_events);
+    			var upcoming_events_restaurant = JSON.parse(response.upcoming_events_restaurant);
+    			var top_events = JSON.parse(response.top_events);
+    			var upcoming_events_status = response.upcoming_events_status;
+    			html+= "<table style='width:100%'>"		
+    			var length
+    			
+    			if (upcoming_events.length>5){
+    				length = 5
+    			}else {
+    				length = upcoming_events.length
+    			}	
+
+    			if (upcoming_events){
+
+    				for (i = 0; i < length; i++){
+    					var restaurant_name = upcoming_events_restaurant[i].fields.name
+    					var event_id = upcoming_events[i].id
+    					var status = upcoming_events_status[i]
+    					html+= "<tr><td style='font-size: 16pt'>"+restaurant_name + "</td><td style='text-align: right;'>"
+    					if (status=='host'){
+    						html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event(event_id, 1)'>Edit Event</button></td></tr>"
+    					}else if (status=='joined'){
+    						html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event(event_id, 1)'>Leave Event</button></td></tr>"
+    					}else{
+    						html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event(event_id, 1)'>Join Event</button></td></tr>"
+    					}
+    				}
+    			html+= "</table>"
+
+				}
+			$("#info").prepend(html);
+			}
+
+	});
+
+
+
+
+
+}
+
+
+
 
 function getCSRFToken() {
 	var cookies = document.cookie.split(";");
