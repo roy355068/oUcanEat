@@ -4,6 +4,21 @@ from .models import *
 from django.db.models.fields.files import FieldFile
 MAX_UPLOAD_SIZE = 2500000
 
+FAVORITE_COLORS_CHOICES = (
+    ('blue', 'Blue'),
+    ('green', 'Green'),
+    ('black', 'Black'),
+)
+
+RESTAURANT_TYPE = (
+	('japanese', 'Japanese'),
+	('chinese', 'Chinese'),
+	('mexican', 'Mexican'),
+	('american', 'American'),
+	('indian', 'Indian'),
+
+) 
+
 class RegistrationForm(forms.Form):
 	first_name = forms.CharField(max_length = 30)
 	last_name  = forms.CharField(max_length = 30)
@@ -19,6 +34,11 @@ class RegistrationForm(forms.Form):
 	age 	   = forms.IntegerField(min_value = 0)
 	bio		   = forms.CharField(max_length = 430,
 							     widget = forms.Textarea)
+	preference = forms.MultipleChoiceField(
+			        required=False,
+			        widget=forms.CheckboxSelectMultiple,
+			        choices=RESTAURANT_TYPE,
+			    )
 
 	def clean(self):
 
@@ -34,5 +54,41 @@ class RegistrationForm(forms.Form):
 		if User.objects.filter(username__exact = username):
 			raise forms.ValidationError("Username is already taken.")
 		return username
-
 	
+class NameForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = (
+			'first_name',
+			'last_name',
+		)
+
+		
+class ProfileForm(forms.ModelForm):
+	picture = forms.FileField(required=False, widget=forms.FileInput)
+	age = forms.IntegerField(min_value = 0)
+	# preference= forms.MultipleChoiceField(
+	# 		        required=False,
+	# 		        widget=forms.CheckboxSelectMultiple,
+	# 		        choices=RESTAURANT_TYPE,
+	# 		    )
+	class Meta:
+		model = Profile
+		exclude = (
+			'user',
+			'content_type',
+		)
+		
+
+	def clean_picture(self):
+		picture = self.cleaned_data['picture']
+		# if not picture:
+		# 		raise forms.ValidationError('You must upload a picture')
+		if not isinstance(picture, FieldFile):
+			if not picture:
+				raise forms.ValidationError("You must upload a picture")
+			if not picture.content_type or not picture.content_type.startswith('image'):
+				raise forms.ValidationError('File type is not image')
+			if picture.size > MAX_UPLOAD_SIZE:
+				raise forms.ValidationError('File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
+		return picture

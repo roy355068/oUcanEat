@@ -29,4 +29,7 @@ urlpatterns = [
     url(r'^join_event$', views.join_event),
     url(r'^show_info$', views.show_info),
     url(r'^show-profile/(?P<post_user>\w+)$', views.show_profile, name="show-profile"),
+
+    url(r'^edit-profile$', views.edit_profile, name="edit-profile"),
+    url(r'^picture/(?P<curr_user>\w+)$', views.get_picture, name='picture'),
 ]

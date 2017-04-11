@@ -10,6 +10,10 @@
 			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
 			<h2 id="profileInfo"> Your info: </h2>
 				<table style="width:100%">
+					{% if profile.picture %}
+					<img src="{% url 'picture' curr_user %}" width="100px">
+                    
+                	{% endif%}
 					<tr>
 						<td style="font-size: 18pt">Username: </td>
 						<td style="font-size: 18pt">{{profile.user}}</td>
@@ -23,18 +27,52 @@
 						<td style="font-size: 18pt">Bio:</td>
 						<td style="font-size: 18pt">{{profile.bio}}</td>
 					</tr>
+
+					<tr>
+						<td style="font-size: 18pt">Preference:</td>
+						<td style="font-size: 18pt">
+							<table>
+							
+								{% for pre in prefer%}
+								<tr>
+
+									<td>{{pre}}</td>
+								
+								</tr>
+								{% endfor %}
+								
+							</table>
+						</td>
+					</tr>
 				</table>
+			{% if curr_user == profile.user.username %}
+			<a href="{% url 'edit-profile' %}" class="btn btn-default btn-lg" style="font-size: 18pt">Edit</a>
+			{% endif %}
 			<h2 id="topEvent"> Your Events: </h2>
 			{% for event in your_events %}
 			  	<table style="width:100%" id="yourEvents">
 			  	<tr>
 					<td style="font-size: 18pt">{{event.restaurant.name}}</td>
 					<td style="font-size: 18pt">{{event.num_participants}}</td>
-					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Edit</td>
+					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Detail</td>
 				  	
 				 </tr>
 				</table>
 			{% endfor %}
+
+			<h2 id="oldEvent"> Your Past Events: </h2>
+			{% for event in old_events %}
+			  	<table style="width:100%" id="oldEvents">
+			  	<tr>
+					<td style="font-size: 18pt">{{event.restaurant.name}}</td>
+					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
+					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Detail</td>
+				  	
+				 </tr>
+				</table>
+			{% endfor %}
+
+
 			</div>
 		</div>
 	</div>
