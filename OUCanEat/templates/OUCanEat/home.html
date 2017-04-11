@@ -33,10 +33,6 @@
 			<input class="form-control input-lg" id="keyword" type="text" placeholder= "Key Word">
 		</div>
 
-
-		<div class="form-group" style="padding-right: 30pt;">
-		    <input class="form-control input-lg" id="focusedInput" type="text" placeholder= "Location">
-		</div>
 	    
 		<div class="form-group" style="padding-right: 30pt;">
 		    <input class="form-control input-lg" id="focusedInput" type="text" placeholder= "Time">
@@ -61,7 +57,7 @@
     <div class="col-md-4"  > 
 		<div class="panel" style="background-color: transparent;">
 			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
-			<h2 id="topEvent"> Top Events: </h2>
+			<!-- <h2 id="topEvent"> Top Events: </h2>
 			{% for event in top_events %}
 			  	<table style="width:100%" id="topEvent_info">
 			  	<tr>
@@ -74,17 +70,32 @@
 				</table>
 			{% endfor %}
 			<h2 id="upcomingEvent"> Upcoming Events: </h2>
-			{% for event in upcoming_events %}
+			{% for event, status in zip %}
 				<table style="width:100%" id="upcomingEvent_info">
 			  	<tr>
 				  	<td style="font-size: 18pt">{{event.restaurant.name}}</dd>
 				  	<td style="font-size: 18pt">{{event.event_dt}}</dd>
 				  	<td style="text-align: right;">
+				  	{% if status == 'host' %}
+						<button type="button" class="btn btn-default btn-lg" onclick="edit_event({{event.id}}, 1)">Edit Event</button>
+				  	{% endif %}
+				  	{% if status == 'joined' %}
+						<button type="button" class="btn btn-default btn-lg" onclick="leave_event({{event.id}}, 1)">Leave Event</button>
+				  	{% endif %}
+				  	{% if status == 'notJoin' %}
 						<button type="button" class="btn btn-default btn-lg" onclick="join_event({{event.id}}, 1)">Join Event</button>
+				  	{% endif %}
+
+
 					</td>
 				 </tr>
 				</table>
-			{% endfor %}
+			{% endfor %} -->
+
+
+
+
+
 			</div>
 		</div>
 	</div>
@@ -95,6 +106,7 @@
 		</div>
     </div>
 </div>
+<script type="text/javascript">show_upcoming_event();</script>
 
 {% endblock %}
 
