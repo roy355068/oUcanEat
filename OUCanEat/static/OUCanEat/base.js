@@ -109,16 +109,22 @@ $(function () {
 			});
 		}
 
+		//show all results
 		showMapResult();
+
 		$.ajax({
 			url: "/OUCanEat/search_events",
 			type: "GET",
 			data: {'search_date': search_date, 'search_places': JSON.stringify(place_ids)},
+			dataType: "json",
 			success: function(response) {
-				//show_upcoming_event(response);
-				//may need to store events and its restaurants, and show on map
-				//console.log(response);
-				//showMapEvent(this.google_id);
+				events = JSON.parse(response['events']);
+				show_upcoming_event(events);
+				restaurants = JSON.parse(response['restaurants']);
+				$(restaurants).each(function() {
+					//show event in diff color
+					showMapEvent(this.fields.google_id);
+				});
 			}
 		});
 	});

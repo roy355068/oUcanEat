@@ -44,7 +44,7 @@ function initMap() {
 function callback(results, status) {
 	if (status === google.maps.places.PlacesServiceStatus.OK) {
 		for (var i = 0; i < results.length; i++) {
-			createMarker(results[i]);
+			createMarker(results[i], 'red');
 		}
 	}
 }
@@ -66,7 +66,7 @@ function showMapResult() {
 			console.log("Returned place contains no geometry");
 			return;
 		}
-		createMarker(place);
+		createMarker(place, 'red');
 		if (place.geometry.viewport) {
 			bounds.union(place.geometry.viewport);
 		} else {
@@ -76,11 +76,19 @@ function showMapResult() {
 	map.fitBounds(bounds);
 }
 
-function createMarker(place) {
+function showMapEvent(place_id) {
+	var service = new google.maps.places.PlacesService(map);
+	service.getDetails({placeId: place_id}, function (result, status) {
+		createMarker(result, 'purple');
+	});
+}
+
+function createMarker(place, color) {
 	var placeLoc = place.geometry.location;
 	var marker = new google.maps.Marker({
 		map: map,
-		position: place.geometry.location
+		position: place.geometry.location,
+		icon: 'http://maps.google.com/mapfiles/ms/icons/'+color+'-dot.png'
 	});
 
 	google.maps.event.addListener(marker, 'click', function() {

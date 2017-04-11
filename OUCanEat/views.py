@@ -91,7 +91,11 @@ def search_events(request):
 							event_dt__day=dt.day)
 			except Exception as e:
 				pass
-		response_text = serializers.serialize('json', events)
+		restaurants = [e.restaurant for e in events]
+		response_text1 = serializers.serialize('json', events)
+		response_text2 = serializers.serialize('json', restaurants)
+		response_text = {'events': response_text1, 'restaurants': response_text2}
+		response_text = json.dumps(response_text)
 		print (response_text)
 		return HttpResponse(response_text, content_type='application/json')
 	return HttpResponse()
