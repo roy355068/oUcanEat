@@ -1,0 +1,49 @@
+{% extends "OUCanEat/home.html" %}
+
+
+{% block map %}
+
+
+<div class="row" style = "margin-bottom: 0pt; ">
+    <div class="col-md-4"  > 
+		<div class="panel" style="background-color: transparent;">
+			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
+			<h2 id="profileInfo"> Your info: </h2>
+				<table style="width:100%">
+					<tr>
+						<td style="font-size: 18pt">Username: </td>
+						<td style="font-size: 18pt">{{profile.user}}</td>
+						
+					</tr>
+					<tr>
+						<td style="font-size: 18pt">Age: </td>
+						<td style="font-size: 18pt">{{profile.age}}</td>
+					</tr>
+					<tr>
+						<td style="font-size: 18pt">Bio:</td>
+						<td style="font-size: 18pt">{{profile.bio}}</td>
+					</tr>
+				</table>
+			<h2 id="topEvent"> Your Events: </h2>
+			{% for event in your_events %}
+			  	<table style="width:100%" id="yourEvents">
+			  	<tr>
+					<td style="font-size: 18pt">{{event.restaurant.name}}</td>
+					<td style="font-size: 18pt">{{event.num_participants}}</td>
+					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Edit</td>
+				  	
+				 </tr>
+				</table>
+			{% endfor %}
+			</div>
+		</div>
+	</div>
+
+    <div class="col-md-8" >
+     	<div class="panel">
+			<div class="panel-body" style="height: 590px;" id="map" ></div>
+		</div>
+    </div>
+</div>
+{% endblock%}
+
