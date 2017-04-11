@@ -45,11 +45,30 @@ function join_event(event_id, page_type) {
 			if (page_type==0) {
 				show_restaurant_info();
 			} else {
-			
+				show_default();
 			}
         }
     });
 }
+
+
+function leave_event(event_id, page_type) {
+	var data = {'event_id': event_id, 'csrfmiddlewaretoken': getCSRFToken()};
+	$.ajax({
+		url: "/OUCanEat/leave_event",
+		type: "POST",
+		data: data,
+		success: function(response) {
+			if (page_type==0) {
+				show_restaurant_info();
+			} else {
+				show_default();
+				console.log("success");
+			}
+        }
+    });
+}
+
 
 function create_event_form() {
 	$("#info").html("");
@@ -62,9 +81,7 @@ function create_event_form() {
 					"Event Description:<br>"+
 					"<input type='text' id='event_desc' placeholder= 'Description'><br><br>"+
 					"<input type='submit' value='Create' onclick='create_event()'>"+
-				"</div>";
-
-    
+				"</div>";   
 
 	$("#info").prepend(html);
 }
@@ -88,58 +105,86 @@ function create_event() {
     });
 }
 
-
-function show_upcoming_event() {
-	$("#info").html("");
-	var html = "<h2> Upcomping Events: </h2>"
-
-
+function show_default(){
 	$.ajax({
 		url: "/OUCanEat/show_default",
-		type: "GET",
+		typy: "GET",
 		success: function(response){
-			    var upcoming_events = JSON.parse(response.upcoming_events);
+				var upcoming_events = JSON.parse(response.upcoming_events);
     			var upcoming_events_restaurant = JSON.parse(response.upcoming_events_restaurant);
-    			var top_events = JSON.parse(response.top_events);
     			var upcoming_events_status = response.upcoming_events_status;
-    			html+= "<table style='width:100%'>"		
-    			var length
-    			
+    			var upcoming_events_length
+    			var top_events = JSON.parse(response.top_events);
+    			var top_events_restaurant = JSON.parse(response.top_events_restaurant);
+    			var top_events_status = response.top_events_status;
+    			var top_events_num_participants = response.top_events_num_participants;
+    			var top_events_length
     			if (upcoming_events.length>5){
-    				length = 5
+    				upcoming_events_length = 5
     			}else {
-    				length = upcoming_events.length
+    				upcoming_events_length = upcoming_events.length
     			}	
 
-    			if (upcoming_events){
-
-    				for (i = 0; i < length; i++){
-    					var restaurant_name = upcoming_events_restaurant[i].fields.name
-    					var event_id = upcoming_events[i].id
-    					var status = upcoming_events_status[i]
-    					html+= "<tr><td style='font-size: 16pt'>"+restaurant_name + "</td><td style='text-align: right;'>"
-    					if (status=='host'){
-    						html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event(event_id, 1)'>Edit Event</button></td></tr>"
-    					}else if (status=='joined'){
-    						html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event(event_id, 1)'>Leave Event</button></td></tr>"
-    					}else{
-    						html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event(event_id, 1)'>Join Event</button></td></tr>"
-    					}
-    				}
-    			html+= "</table>"
-
-				}
-			$("#info").prepend(html);
-			}
-
+    			if (top_events.length>5){
+    				top_events_length = 5
+    			}else {
+    				top_events_length = top_events.length
+    			}
+    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,upcoming_events_length);
+				show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,top_events_length);
+		}
 	});
-
-
-
-
-
 }
 
+
+function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,upcoming_events_length) {
+	$("#upcoming_events").html("");
+	var html = "<h2> Upcomping Events: </h2>"
+    html+= "<table style='width:100%'>"		
+    if (upcoming_events){
+		for (i = 0; i < upcoming_events_length; i++){
+    		var restaurant_name = upcoming_events_restaurant[i].fields.name
+    		var datetime = upcoming_events[i].fields.event_dt
+    		var event_id = upcoming_events[i].pk
+    		var status = upcoming_events_status[i]
+    		html+= "<tr><td style='font-size: 16pt'>"+restaurant_name + "</td><td>"+datetime+"</td><td style='text-align: right;'>"
+    		if (status=='host'){
+    			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>"
+    		}else if (status=='joined'){
+    			html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>"
+    		}else{
+    			html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+event_id+", 1)'>Join Event</button></td></tr>"
+    		}
+    	}   
+	}
+	html+= "</table>"
+	$("#upcoming_events").prepend(html);
+}
+
+
+function show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,top_events_length) {
+	$("#top_events").html("");
+	var html = "<h2> Top Events: </h2>"
+    html+= "<table style='width:100%'>"		
+    if (top_events){
+    	for (i = 0; i < top_events_length; i++){
+    		var restaurant_name = top_events_restaurant[i].fields.name
+    		var event_id = top_events[i].pk
+    		var num_participants = top_events_num_participants[i]
+    		var status = top_events_status[i]
+    		html+= "<tr><td style='font-size: 16pt'>"+restaurant_name + "</td><td>"+num_participants+"</td><td style='text-align: right;'>"
+    		if (status=='host'){
+    			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>"
+    		}else if (status=='joined'){
+    			html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>"
+    		}else{
+    			html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+event_id+", 1)'>Join Event</button></td></tr>"
+    		}
+    	}   
+	}
+	html+= "</table>"
+	$("#top_events").prepend(html);
+}
 
 
 
