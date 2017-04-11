@@ -79,8 +79,9 @@ def join_event(request):
 def search_events(request):
 	if request.method=='GET':
 		events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
-		if 'search_places' in request.GET and len(request.GET.get('search_places'))>0:
-			events = events.filter(restaurant__google_id__in=request.GET.get('search_places'))
+		if 'search_places' in request.GET:
+			search_places = json.loads(request.GET.get('search_places'))
+			events = Event.objects.filter(restaurant__google_id__in=search_places)
 		if 'search_date' in request.GET:
 			search_date = request.GET.get('search_date')
 			try:
