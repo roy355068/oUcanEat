@@ -32,6 +32,18 @@ def home(request):
 	return render(request, 'OUCanEat/home.html', context)
 
 @login_required
+def show_profile(request, post_user):
+	context = {}
+	profile = Profile.objects.get(user__username = post_user)
+	your_events = Event.objects.filter(host__username = post_user).annotate(num_participants = Count('event_join'))
+	context['profile'] = profile
+	context['curr_user'] = post_user
+	context['your_events'] = your_events
+	return render(request, 'OUCanEat/profile.html', context)
+
+
+
+@login_required
 def show_info(request):
 	if request.method=='POST':
 		#need to verify content
