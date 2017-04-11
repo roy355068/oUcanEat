@@ -24,10 +24,69 @@ from OUCanEat.forms import RegistrationForm
 def home(request):
 	context = {}
 	upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
+	upcoming_events_status= []
+	join_event = Join.objects.all()
+
+	for e in upcoming_events:
+		try:
+			j = Join.objects.get(event = e, participant=request.user)
+
+			if e.host == request.user:
+				upcoming_events_status.append('host')
+				print ('yes')
+			else:
+				upcoming_events_status.append('joined')
+		except:
+			upcoming_events_status.append('notJoined')
+
+
+	for u in upcoming_events_status:
+		print u
+
+
+
 	top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')
+	# this_user = Event.objects.get(request.user.id)
+
+	zipped = zip(upcoming_events,upcoming_events_status)
+
+
 	context['top_events'] = top_events
-	context['upcoming_events'] = upcoming_events
+	context['zip'] = zipped
+	# context['status'] = upcoming_events_status
 	return render(request, 'OUCanEat/home.html', context)
+
+@login_required
+def show_default(request):
+	if request.method=='GET':
+
+		upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
+		upcoming_events_restaurant = [r.restaurant for r in upcoming_events]
+			
+		upcoming_events_status= []
+		join_event = Join.objects.all()
+
+		for e in upcoming_events:
+			try:
+				j = Join.objects.get(event = e, participant=request.user)
+
+				if e.host == request.user:
+					upcoming_events_status.append('host')
+					print ('yes')
+				else:
+					upcoming_events_status.append('joined')
+			except:
+				upcoming_events_status.append('notJoined')
+	top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')
+
+	response_text = serializers.serialize('json', upcoming_events)
+	response_text2 = serializers.serialize('json', upcoming_events_restaurant)
+	response_text3 = serializers.serialize('json', top_events)
+	data = { 'upcoming_events' : response_text, 'upcoming_events_status' : upcoming_events_status, 'top_events' :response_text3, 'upcoming_events_restaurant': response_text2}
+	data = json.dumps(data)
+	return HttpResponse(data, content_type='application/json')
+
+
 
 @login_required
 def show_info(request):
