@@ -3,7 +3,7 @@ function show_restaurant_info() {
 	$("#info").html("");
 	$("#upcoming_events").html("");
 	$("#top_events").html("");
-	var html = "<dl><dt style='font-size: 20pt'>"+clicked_place.name+"</dt>";
+	var html = "<dl><dt style='font-size: 20pt'>"+clicked_place.name+"</dt><button type='button' class='btn btn-default btn-lg' onclick='create_event_form()'>Create Event</button>";
 	if ("opening_hours" in clicked_place) {
 		if(clicked_place.opening_hours.open_now){
 			var open = "open now";
@@ -25,13 +25,12 @@ function show_restaurant_info() {
         data: data,
         dataType : "json",
         success: function(response) {
-			html += "<div class='btn-group' style='padding-left: 65pt;'>"+
-					"<button type='button' class='btn btn-default btn-lg' onclick='create_event_form()'>Create Event</button>";
+			html += "<div><table style='width:100%'>";
 			$(response).each(function() {
-				html += this.fields.event_dt;
-				html += "<button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button>";
+				html += "<tr><td>"+this.fields.event_dt+"</td>";
+				html += "<td style='text-align: right;'><button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>";
 			});
-			html += "</div>"
+			html += "</table></div>"
 			$("#info").prepend(html);
         }
     });
@@ -77,8 +76,8 @@ function create_event_form() {
 	var html = "<div>"+
 					"Event Date and Time<br>"+
 					"<div id='datetimepicker' class='input-append date'>"+
-      				"<input type='text' id='event_date' placeholder= 'Date'><br><br>"+
-      				"<input type='text' id='event_time' placeholder= 'time'><br><br>"+
+      				"<input type='date' id='event_date' placeholder= 'Date'><br><br>"+
+      				"<input type='time' id='event_time' placeholder= 'time'><br><br>"+
 					"Event Description:<br>"+
 					"<input type='text' id='event_desc' placeholder= 'Description'><br><br>"+
 					"<input type='submit' value='Create' onclick='create_event()'>"+
@@ -96,7 +95,6 @@ function create_event() {
 		'event_restaurant':clicked_place.name, 'google_id': clicked_place.place_id, 
 		'event_lat':clicked_place.geometry.location.lat(), 'event_lng':clicked_place.geometry.location.lng(),
 		'csrfmiddlewaretoken': getCSRFToken()}
-	console.log(data);
     $.ajax({
         url: "/OUCanEat/create_event",
         type: "POST",
@@ -115,25 +113,12 @@ function show_default(){
 				var upcoming_events = JSON.parse(response.upcoming_events);
     			var upcoming_events_restaurant = JSON.parse(response.upcoming_events_restaurant);
     			var upcoming_events_status = response.upcoming_events_status;
-    			var upcoming_events_length
     			var top_events = JSON.parse(response.top_events);
     			var top_events_restaurant = JSON.parse(response.top_events_restaurant);
     			var top_events_status = response.top_events_status;
     			var top_events_num_participants = response.top_events_num_participants;
-    			var top_events_length
-    			if (upcoming_events.length>5){
-    				upcoming_events_length = 5
-    			}else {
-    				upcoming_events_length = upcoming_events.length
-    			}	
-
-    			if (top_events.length>5){
-    				top_events_length = 5
-    			}else {
-    				top_events_length = top_events.length
-    			}
-    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,upcoming_events_length);
-				show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,top_events_length);
+    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,Math.min(upcoming_events.length, 5));
+				show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,Math.min(top_events.length, 5));
 		}
 	});
 }
