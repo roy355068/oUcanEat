@@ -1,5 +1,12 @@
 {% extends "OUCanEat/base.html" %}
 
+{% block header %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyjb_hSmHUamgvrnOYxtvHTN2kjeex0eI&signed_in=true&libraries=places&callback=initMap" async defer></script>
+	{% load staticfiles %}
+    <script type="text/javascript" src="{% static 'OUCanEat/google.js' %}"></script>
+    <script type="text/javascript" src="{% static 'OUCanEat/base.js' %}"></script>
+{% endblock %}
+
 {% block user-info %} 
 
 <nav class="navbar navbar-default" style="background-color: #48D1CC; margin-bottom:  0pt;">
@@ -20,9 +27,8 @@
        	</ul>
 	</div>
 </nav>
-
+	
 {% endblock %}
-
 
 
 {% block search %} 
