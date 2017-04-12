@@ -22,32 +22,8 @@ from OUCanEat.forms import RegistrationForm
 @ensure_csrf_cookie
 @login_required
 def home(request):
-	context = {}
-	upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
-	upcoming_events_status= []
-	join_event = Join.objects.all()
 
-	for e in upcoming_events:
-		try:
-			j = Join.objects.get(event = e, participant=request.user)
-
-			if e.host == request.user:
-				upcoming_events_status.append('host')
-			else:
-				upcoming_events_status.append('joined')
-		except:
-			upcoming_events_status.append('notJoined')
-
-	top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')
-	# this_user = Event.objects.get(request.user.id)
-
-	zipped = zip(upcoming_events,upcoming_events_status)
-
-
-	context['top_events'] = top_events
-	context['zip'] = zipped
-	# context['status'] = upcoming_events_status
-	return render(request, 'OUCanEat/home.html', context)
+	return render(request, 'OUCanEat/home.html')
 
 @login_required
 def show_default(request):
@@ -58,7 +34,6 @@ def show_default(request):
 		upcoming_events_status= []
 
 		for e in upcoming_events:
-			print e.event_dt
 			try:
 				j = Join.objects.get(event = e, participant = request.user)
 
@@ -69,14 +44,12 @@ def show_default(request):
 			except:
 				upcoming_events_status.append('notJoined')
 
-		top_events = Event.objects.all()
-		top_events = top_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')		 
+		top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')		 
 		top_events_restaurant = [t.restaurant for t in top_events]
 		top_events_status= []
 		top_events_num_participants = []
 
 		for t in top_events:
-			print t.event_dt
 			top_events_num_participants.append(t.num_participants)
 			try:
 				j = Join.objects.get(event = t, participant = request.user)
@@ -127,7 +100,7 @@ def create_event(request):
 		except:
 			restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
 			restaurant.save()
-		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y/%m/%d %H:%M')
+		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
 		event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
 		event.save()
 		join = Join(event=event, participant=request.user)
