@@ -1,6 +1,8 @@
 
 function show_restaurant_info() {
 	$("#info").html("");
+	$("#upcoming_events").html("");
+	$("#top_events").html("");
 	var html = "<dl><dt style='font-size: 20pt'>"+clicked_place.name+"</dt>";
 	if ("opening_hours" in clicked_place) {
 		if(clicked_place.opening_hours.open_now){
@@ -63,7 +65,6 @@ function leave_event(event_id, page_type) {
 				show_restaurant_info();
 			} else {
 				show_default();
-				console.log("success");
 			}
         }
     });
@@ -77,7 +78,7 @@ function create_event_form() {
 					"Event Date and Time<br>"+
 					"<div id='datetimepicker' class='input-append date'>"+
       				"<input type='text' id='event_date' placeholder= 'Date'><br><br>"+
-      				"<input type='text' id='event_tiime' placeholder= 'time'><br><br>"+
+      				"<input type='text' id='event_time' placeholder= 'time'><br><br>"+
 					"Event Description:<br>"+
 					"<input type='text' id='event_desc' placeholder= 'Description'><br><br>"+
 					"<input type='submit' value='Create' onclick='create_event()'>"+
@@ -95,6 +96,7 @@ function create_event() {
 		'event_restaurant':clicked_place.name, 'google_id': clicked_place.place_id, 
 		'event_lat':clicked_place.geometry.location.lat(), 'event_lng':clicked_place.geometry.location.lng(),
 		'csrfmiddlewaretoken': getCSRFToken()}
+	console.log(data);
     $.ajax({
         url: "/OUCanEat/create_event",
         type: "POST",
