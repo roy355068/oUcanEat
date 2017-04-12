@@ -22,14 +22,54 @@ from OUCanEat.forms import RegistrationForm
 @ensure_csrf_cookie
 @login_required
 def home(request):
-	context = {}
-	user = request.user
-	upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
-	top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')
-	context['top_events'] = top_events
-	context['upcoming_events'] = upcoming_events
-	context['user'] = user
-	return render(request, 'OUCanEat/home.html', context)
+
+	return render(request, 'OUCanEat/home.html')
+
+@login_required
+def show_default(request):
+	if request.method=='GET':
+
+		upcoming_events = Event.objects.filter(event_dt__gte = datetime.date.today()).order_by('event_dt')
+		upcoming_events_restaurant = [r.restaurant for r in upcoming_events]	
+		upcoming_events_status= []
+
+		for e in upcoming_events:
+			try:
+				j = Join.objects.get(event = e, participant = request.user)
+
+				if e.host == request.user:
+					upcoming_events_status.append('host')
+				else:
+					upcoming_events_status.append('joined')
+			except:
+				upcoming_events_status.append('notJoined')
+
+		top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')		 
+		top_events_restaurant = [t.restaurant for t in top_events]
+		top_events_status= []
+		top_events_num_participants = []
+
+		for t in top_events:
+			top_events_num_participants.append(t.num_participants)
+			try:
+				j = Join.objects.get(event = t, participant = request.user)
+
+				if t.host == request.user:
+					top_events_status.append('host')
+				else:
+					top_events_status.append('joined')
+			except:
+				top_events_status.append('notJoined')
+
+	response_text = serializers.serialize('json', upcoming_events)
+	response_text2 = serializers.serialize('json', upcoming_events_restaurant)
+	response_text3 = serializers.serialize('json', top_events)
+	response_text4 = serializers.serialize('json',top_events_restaurant)
+	data = { 'upcoming_events' : response_text, 'upcoming_events_restaurant': response_text2, 
+	'top_events' :response_text3, 'top_events_restaurant': response_text4,'upcoming_events_status' : upcoming_events_status, 
+	'top_events_status' : top_events_status, 'top_events_num_participants':top_events_num_participants}
+	data = json.dumps(data)
+	return HttpResponse(data, content_type='application/json')
 
 @login_required
 def show_profile(request, post_user):
@@ -70,7 +110,7 @@ def create_event(request):
 		except:
 			restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
 			restaurant.save()
-		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y/%m/%d %H:%M')
+		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
 		event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
 		event.save()
 		join = Join(event=event, participant=request.user)
@@ -113,7 +153,15 @@ def search_events(request):
 		print (response_text)
 		return HttpResponse(response_text, content_type='application/json')
 	return HttpResponse()
-			
+
+def leave_event(request):
+	if request.method != 'POST' or "event_id" not in request.POST:
+		raise Http404
+	user = request.user
+	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
+	unjoin.delete()
+	return HttpResponse()
+
 @login_required
 def profile(request, user_id):
 	context = {}
