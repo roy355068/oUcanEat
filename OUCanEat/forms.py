@@ -4,11 +4,6 @@ from .models import *
 from django.db.models.fields.files import FieldFile
 MAX_UPLOAD_SIZE = 2500000
 
-FAVORITE_COLORS_CHOICES = (
-    ('blue', 'Blue'),
-    ('green', 'Green'),
-    ('black', 'Black'),
-)
 
 RESTAURANT_TYPE = (
 	('japanese', 'Japanese'),
@@ -41,7 +36,6 @@ class RegistrationForm(forms.Form):
 			    )
 
 	def clean(self):
-
 		cleaned_data = super(RegistrationForm, self).clean()
 		password1 = cleaned_data.get('password1')
 		password2 = cleaned_data.get('password2')
@@ -62,12 +56,19 @@ class NameForm(forms.ModelForm):
 			'first_name',
 			'last_name',
 		)
-
+		
+class ChoiceForm(forms.Form):
+	choice = forms.MultipleChoiceField(
+			        required=False,
+			        widget=forms.CheckboxSelectMultiple,
+			        choices=RESTAURANT_TYPE,
+			)
 		
 class ProfileForm(forms.ModelForm):
 	picture = forms.FileField(required=False, widget=forms.FileInput)
 	age = forms.IntegerField(min_value = 0)
-	# preference= forms.MultipleChoiceField(
+	# preference = forms.MultipleChoiceField(choices=RESTAURANT_TYPE)
+	# preference = forms.MultipleChoiceField(
 	# 		        required=False,
 	# 		        widget=forms.CheckboxSelectMultiple,
 	# 		        choices=RESTAURANT_TYPE,
@@ -77,8 +78,10 @@ class ProfileForm(forms.ModelForm):
 		exclude = (
 			'user',
 			'content_type',
+			'preference',
 		)
 		
+
 
 	def clean_picture(self):
 		picture = self.cleaned_data['picture']
