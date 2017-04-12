@@ -35,10 +35,6 @@
 			<input class="form-control input-lg" id="keyword" type="text" placeholder= "Key Word">
 		</div>
 
-
-		<div class="form-group" style="padding-right: 30pt;">
-		    <input class="form-control input-lg" id="focusedInput" type="text" placeholder= "Location">
-		</div>
 	    
 		<div class="form-group" style="padding-right: 30pt;">
 		    <input class="form-control input-lg" id="focusedInput" type="text" placeholder= "Time">
@@ -61,31 +57,10 @@
 <div class="row" style = "margin-bottom: 0pt; ">
     <div class="col-md-4"  > 
 		<div class="panel" style="background-color: transparent;">
-			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
-			<h2 id="topEvent"> Top Events: </h2>
-			{% for event in top_events %}
-			  	<table style="width:100%" id="topEvent_info">
-			  	<tr>
-					<td style="font-size: 18pt">{{event.restaurant.name}}</dd>
-					<td style="font-size: 18pt">{{event.num_participants}}</dd>
-				  	<td style="text-align: right;">
-						<button type="button" class="btn btn-default btn-lg" onclick="join_event({{event.id}}, 1)">Join Event</button>
-					</td>
-				 </tr>
-				</table>
-			{% endfor %}
-			<h2 id="upcomingEvent"> Upcoming Events: </h2>
-			{% for event in upcoming_events %}
-				<table style="width:100%" id="upcomingEvent_info">
-			  	<tr>
-				  	<td style="font-size: 18pt">{{event.restaurant.name}}</dd>
-				  	<td style="font-size: 18pt">{{event.event_dt}}</dd>
-				  	<td style="text-align: right;">
-						<button type="button" class="btn btn-default btn-lg" onclick="join_event({{event.id}}, 1)">Join Event</button>
-					</td>
-				 </tr>
-				</table>
-			{% endfor %}
+			<div class="panel-body" style="overflow-y: scroll; height: 590px" >
+			<div id="info"></div>
+			<div id="upcoming_events"></div>
+			<div id="top_events"></div>
 			</div>
 		</div>
 	</div>
@@ -96,6 +71,7 @@
 		</div>
     </div>
 </div>
+<script type="text/javascript">show_default();</script>
 
 {% endblock %}
 
