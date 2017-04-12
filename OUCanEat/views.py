@@ -33,17 +33,10 @@ def home(request):
 
 			if e.host == request.user:
 				upcoming_events_status.append('host')
-				print ('yes')
 			else:
 				upcoming_events_status.append('joined')
 		except:
 			upcoming_events_status.append('notJoined')
-
-
-	for u in upcoming_events_status:
-		print u
-
-
 
 	top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')
 	# this_user = Event.objects.get(request.user.id)
@@ -60,29 +53,46 @@ def home(request):
 def show_default(request):
 	if request.method=='GET':
 
-		upcoming_events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
-		upcoming_events_restaurant = [r.restaurant for r in upcoming_events]
-			
+		upcoming_events = Event.objects.filter(event_dt__gte = datetime.date.today()).order_by('event_dt')
+		upcoming_events_restaurant = [r.restaurant for r in upcoming_events]	
 		upcoming_events_status= []
-		join_event = Join.objects.all()
 
 		for e in upcoming_events:
 			try:
-				j = Join.objects.get(event = e, participant=request.user)
+				j = Join.objects.get(event = e, participant = request.user)
 
 				if e.host == request.user:
 					upcoming_events_status.append('host')
-					print ('yes')
 				else:
 					upcoming_events_status.append('joined')
 			except:
 				upcoming_events_status.append('notJoined')
-	top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')
+
+		top_events = Event.objects.all()
+		top_events = top_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')		 
+		top_events_restaurant = [t.restaurant for t in top_events]
+		top_events_status= []
+		top_events_num_participants = []
+
+		for t in top_events:
+			top_events_num_participants.append(t.num_participants)
+			try:
+				j = Join.objects.get(event = t, participant = request.user)
+
+				if t.host == request.user:
+					top_events_status.append('host')
+				else:
+					top_events_status.append('joined')
+			except:
+				top_events_status.append('notJoined')
 
 	response_text = serializers.serialize('json', upcoming_events)
 	response_text2 = serializers.serialize('json', upcoming_events_restaurant)
 	response_text3 = serializers.serialize('json', top_events)
-	data = { 'upcoming_events' : response_text, 'upcoming_events_status' : upcoming_events_status, 'top_events' :response_text3, 'upcoming_events_restaurant': response_text2}
+	response_text4 = serializers.serialize('json',top_events_restaurant)
+	data = { 'upcoming_events' : response_text, 'upcoming_events_restaurant': response_text2, 
+	'top_events' :response_text3, 'top_events_restaurant': response_text4,'upcoming_events_status' : upcoming_events_status, 
+	'top_events_status' : top_events_status, 'top_events_num_participants':top_events_num_participants}
 	data = json.dumps(data)
 	return HttpResponse(data, content_type='application/json')
 
@@ -136,6 +146,17 @@ def join_event(request):
 		except Exception as e:
 			pass
 	return HttpResponse()
+
+@login_required
+def leave_event(request):
+	if request.method != 'POST' or "event_id" not in request.POST:
+		raise Http404
+	user = request.user
+	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
+	unjoin.delete()
+	return HttpResponse()
+
+
 			
 @login_required
 def profile(request, user_id):
