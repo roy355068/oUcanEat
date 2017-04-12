@@ -5,14 +5,15 @@
 <nav class="navbar navbar-default" style="background-color: #48D1CC; margin-bottom:  0pt;">
   	<div class="container-fluid">
     	<div class="navbar-header">
-			<a class="navbar-brand" href="#" style="color: #696969; font-size:  24pt;">oUcanEat</a>
+			<a class="navbar-brand" href="{% url 'home' %}" style="color: #696969; font-size:  24pt;">oUcanEat</a>
     	</div>
     <div class="collapse navbar-collapse">
       	<ul class="nav navbar-nav navbar-right" >
         	<li class="active" >
-        		<a href="#" style="background-color:#48D1CC; color: #696969; font-size: 14pt; ">UserName</a>
+        		<a href="#" style="background-color:#48D1CC; color: #696969; font-size: 16pt; ">
+        		{{user}}</a>
         	</li>
-        	<li><a href="#" >Profile</a></li>
+        	<li><a href="{% url 'show-profile' user.username %}">Profile</a></li>
         	<li><a href="#">Event History</a></li>
         	<li><a href="#">Notification<span class="badge">4</span></a></li>
         	<li><a href="{% url 'logout' %}">Log Out</a></li>
@@ -21,6 +22,7 @@
 </nav>
 
 {% endblock %}
+
 
 
 {% block search %} 
@@ -49,7 +51,6 @@
 	</form>
 
 {% endblock %}
-
 
 {% block map %} 
 
