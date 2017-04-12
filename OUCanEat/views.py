@@ -58,6 +58,7 @@ def show_default(request):
 		upcoming_events_status= []
 
 		for e in upcoming_events:
+			print e.event_dt
 			try:
 				j = Join.objects.get(event = e, participant = request.user)
 
@@ -75,6 +76,7 @@ def show_default(request):
 		top_events_num_participants = []
 
 		for t in top_events:
+			print t.event_dt
 			top_events_num_participants.append(t.num_participants)
 			try:
 				j = Join.objects.get(event = t, participant = request.user)
