@@ -40,8 +40,7 @@ def show_profile(request, post_user):
 	your_events = temp_events.filter(event_dt__gte = datetime.date.today()).annotate(num_participants = Count('event_join'))
 	old_events = temp_events.filter(event_dt__lte = datetime.date.today())
 	
-	# jsonDec = json.decoder.JSONDecoder()
-	# my_prefer = jsonDec.decode(profile.preference)
+	
 	my_prefer = profile.preference.all()
 
 	context['profile'] = profile
@@ -82,34 +81,29 @@ def edit_profile(request):
 		choice_form = ChoiceForm(request.POST)
 		if choice_form.is_valid():
 			choice = choice_form.cleaned_data['choice']
-			# print(choice)
+			
 			if choice:
 				user_profile.preference.all().delete()
-			for i in choice:
-				# print (i)
-				new_choice = Choice(choice = i)
-				new_choice.save()
-				user_profile.preference.add(new_choice)
-			for i in user_profile.preference.all():
-				print(i.choice)
+				for i in choice:
+					new_choice = Choice(choice = i)
+					new_choice.save()
+					user_profile.preference.add(new_choice)
+			
 
 
 
 		if profile_form.is_valid() and name_form.is_valid():
-			# pre = json.dumps(profile_form.cleaned_data['preference'])
-			# profile_form.preference = pre
+			
 			if not request.FILES:
 				name_form.save()
 				profile_form.save()
 
 			if profile_form.cleaned_data['picture'] and request.FILES:
 				user_profile.content_type = profile_form.cleaned_data['picture'].content_type
-				
 				user_profile.save()
 				name_form.save()
 				profile_form.save()
 		else:
-			print ("Yooooo")
 			name_form.save()
 			Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'])
             
@@ -168,16 +162,6 @@ def join_event(request):
 			pass
 	return HttpResponse()
 			
-@login_required
-def profile(request, user_id):
-	context = {}
-	try:
-		user = User.objects.get(id=user_id)
-
-		events = Events.objects.filter()
-	except:
-		pass
-	return render(request, 'OUCanEat/profile.html', context)
 
 @transaction.atomic
 def register(request):
@@ -217,11 +201,6 @@ def register(request):
               from_email = "yko1@andrew.cmu.edu",
               recipient_list = [new_user.email])
 
-    # pre = ""
-    # for i in form.cleaned_data['preference']:
-    # 	pre += i + " "
-
-    # pre = json.dumps(form.cleaned_data['preference'])
     choice = form.cleaned_data['preference']
 
     new_user_profile = Profile(user = new_user,
@@ -235,9 +214,7 @@ def register(request):
     	new_choice = Choice(choice = i)
     	new_choice.save()
     	new_user_profile.preference.add(new_choice)
-    # new_user_profile.preference.add(choice)
-    for i in new_user_profile.preference.all():
-    	print(i.choice)
+    
     context['email'] = form.cleaned_data['email']
     return render(request, 'OUCanEat/need-confirmation.html', context)
     # Logs in the new user and redirects to his/her todo list
