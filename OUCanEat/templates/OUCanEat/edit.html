@@ -1,0 +1,47 @@
+{% extends "OUCanEat/home.html" %}
+
+{% block search %}
+{% endblock %}
+
+{% block map %}
+
+	<div class="container">
+		<form class="text-center h3" enctype="multipart/form-data" method="post" action="{% url 'edit-profile' %}" >
+			<div class="text-center h3">
+
+				<div class="form-group">
+				<table>
+					{% for field in name_form.visible_fields %}
+						<tr>
+							<td> {{field.label_tag}} </td>
+							<td> {{field}} </td>
+							<td class="text-danger">
+								{% for error in field.errors %} {{error}} {% endfor %}
+							</td>
+						</tr>
+					{% endfor%}
+					{% for field in profile_form.visible_fields %}
+						<tr>
+							<td> {{field.label_tag}} </td>
+							<td> {{field}} </td>
+							<td class="text-danger">
+								{% for error in field.errors %} {{error}} {% endfor %}
+							</td>
+						</tr>
+					{% endfor %}
+					
+
+					{{choice_form}}
+
+
+				</table>
+				</div>
+			</div>
+			{% for field in profile_form.hidden_fields %}
+	            {{field}} {{field.errors}}
+	        {% endfor %}
+	        {% csrf_token %}
+	        <button class="btn btn-primary btn-md" type="submit" value="Update">Update</button>
+		</form>
+	</div>
+{% endblock %}

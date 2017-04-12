@@ -17,7 +17,7 @@ from django.db.models import Count
 import datetime
 import json
 from OUCanEat.models import *
-from OUCanEat.forms import RegistrationForm
+from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm
 
 @ensure_csrf_cookie
 @login_required
@@ -75,13 +75,83 @@ def show_default(request):
 def show_profile(request, post_user):
 	context = {}
 	profile = Profile.objects.get(user__username = post_user)
-	your_events = Event.objects.filter(host__username = post_user).annotate(num_participants = Count('event_join'))
+	temp_events = Event.objects.filter(host__username = post_user)
+
+	your_events = temp_events.filter(event_dt__gte = datetime.date.today()).annotate(num_participants = Count('event_join'))
+	old_events = temp_events.filter(event_dt__lte = datetime.date.today())
+	
+	
+	my_prefer = profile.preference.all()
+
 	context['profile'] = profile
+	context['prefer'] = my_prefer
 	context['curr_user'] = post_user
 	context['your_events'] = your_events
+	context['old_events'] = old_events
 	return render(request, 'OUCanEat/profile.html', context)
+@login_required
+def get_picture(request, curr_user):
+	profile = get_object_or_404(Profile, user__username = curr_user)
+
+	if not profile.picture:
+		raise Http404
+
+	return HttpResponse(profile.picture, content_type=profile.content_type)
+
+@login_required
+@transaction.atomic
+def edit_profile(request):
+	user_profile = Profile.objects.get(user__username = request.user.username)
+	name_form = NameForm(instance = request.user)
+	profile_form = ProfileForm(instance = user_profile)
+	context = {}
+	context['choice_form'] = ChoiceForm()
+
+	if request.method == "GET":
+		context['name_form'] = name_form
+		context['profile_form'] = profile_form
+		context['user'] = request.user
+		return render(request, "OUCanEat/edit.html", context)
+	elif request.method == "POST":
+		name_form = NameForm(request.POST, instance = request.user)
+
+		profile_form = ProfileForm(request.POST, request.FILES, instance = user_profile)
+		
+		
+		choice_form = ChoiceForm(request.POST)
+		if choice_form.is_valid():
+			choice = choice_form.cleaned_data['choice']
+			
+			if choice:
+				user_profile.preference.all().delete()
+				for i in choice:
+					new_choice = Choice(choice = i)
+					new_choice.save()
+					user_profile.preference.add(new_choice)
+			
 
 
+
+		if profile_form.is_valid() and name_form.is_valid():
+			
+			if not request.FILES:
+				name_form.save()
+				profile_form.save()
+
+			if profile_form.cleaned_data['picture'] and request.FILES:
+				user_profile.content_type = profile_form.cleaned_data['picture'].content_type
+				user_profile.save()
+				name_form.save()
+				profile_form.save()
+		else:
+			name_form.save()
+			Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'])
+            
+	context['name_form'] = name_form
+	context['profile_form'] = profile_form
+	context['username'] = request.user.username
+	context['user'] = request.user
+	return redirect(reverse('home'))
 
 @login_required
 def show_info(request):
@@ -143,16 +213,6 @@ def leave_event(request):
 
 
 			
-@login_required
-def profile(request, user_id):
-	context = {}
-	try:
-		user = User.objects.get(id=user_id)
-
-		events = Events.objects.filter()
-	except:
-		pass
-	return render(request, 'OUCanEat/profile.html', context)
 
 @transaction.atomic
 def register(request):
@@ -192,13 +252,20 @@ def register(request):
               from_email = "yko1@andrew.cmu.edu",
               recipient_list = [new_user.email])
 
-
+    choice = form.cleaned_data['preference']
 
     new_user_profile = Profile(user = new_user,
                                age = form.cleaned_data['age'],
-                               bio = form.cleaned_data['bio'])
-    new_user_profile.save()
+                               bio = form.cleaned_data['bio'],
+                               )
 
+    new_user_profile.save()
+    for i in choice:
+    	print(i)
+    	new_choice = Choice(choice = i)
+    	new_choice.save()
+    	new_user_profile.preference.add(new_choice)
+    
     context['email'] = form.cleaned_data['email']
     return render(request, 'OUCanEat/need-confirmation.html', context)
     # Logs in the new user and redirects to his/her todo list
