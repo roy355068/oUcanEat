@@ -50,16 +50,18 @@ function callback(results, status) {
 }
 
 function showMapResult() {
-	searched = true;
-	var places = searchBox.getPlaces();
-	if (places=== undefined || places.length==0) {
-		return;
-	}
 	markers.forEach(function(marker) {
 		marker.setMap(null);
 	});
 	markers = [];
 
+	var places = searchBox.getPlaces();
+	var keyword = $("#keyword").val();
+	if (keyword.trim().length==0 || places=== undefined || places.length==0) {
+		return;
+	}
+
+	searched = true;
 	var bounds = new google.maps.LatLngBounds();
 	places.forEach(function(place) {
 		if (!place.geometry) {
