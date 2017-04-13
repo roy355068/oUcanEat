@@ -70,6 +70,49 @@ function leave_event(event_id, page_type) {
 }
 
 
+function show_event_page(event_id){
+	$("#info").html("");
+	$("#upcoming_events").html("");
+	$("#top_events").html("");
+	var html =""	
+	var data = {'event_id':event_id, 'csrfmiddlewaretoken': getCSRFToken()}
+	$.ajax({
+		url:"/OUCanEat/show_event_page",
+		type:"POST",
+		data:data,
+		success: function(response){
+
+			var events = JSON.parse(response.event);
+			var hosts = JSON.parse(response.event_host);
+			var restaurants = JSON.parse(response.event_restaurant);
+			var joins = JSON.parse(response.event_join);
+			var participants = JSON.parse(response.event_participant);
+			restaurant_name = restaurants[0].fields.name
+			event_dt = events[0].fields.event_dt
+			event_desc = events[0].fields.desc
+			event_host = hosts[0].fields.first_name
+			var event_participants = []
+			
+			for(i = 0; i< participants.length; i++){
+				if (participants[i].fields.first_name != event_host){
+					event_participants.push(participants[i].fields.first_name)	
+				}			
+			}
+			html+= "<h3>"+restaurant_name+"</h3><table style='width:100%''><tr><td>Time: </td><td>"+event_dt+"</tr></td><tr><td>"+
+			"<tr><td>Description: </td><td>"+event_desc+"</tr></td><tr><td>Host: </td><td>"+event_host+"</tr></td><tr><td>Participants: </td><td>"
+			for(i = 0; i<event_participants.length; i++){			
+				html+=event_participants[i]+"</tr></td><td><tr>"
+			} 
+			html+= "</tr></td>"
+			$("#info").prepend(html);			
+		}
+
+	});
+	
+
+
+}
+
 function create_event_form() {
 	$("#info").html("");
 
@@ -100,7 +143,9 @@ function create_event() {
         type: "POST",
         data: data,
         success: function(response) {
-			show_restaurant_info();
+        	event_id = JSON.parse(response.event_id)
+
+			show_event_page(event_id);
         }
     });
 }
@@ -134,7 +179,7 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
     		var datetime = upcoming_events[i].fields.event_dt
     		var event_id = upcoming_events[i].pk
     		var status = upcoming_events_status[i]
-    		html+= "<tr><td style='font-size: 16pt'>"+restaurant_name + "</td><td>"+datetime+"</td><td style='text-align: right;'>"
+    		html+= "<tr><td style='font-size: 16pt' onclick='show_event_page("+event_id+")'>"+restaurant_name + "</td><td>"+datetime+"</td><td style='text-align: right;'>"
     		if (status=='host'){
     			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>"
     		}else if (status=='joined'){
@@ -159,7 +204,7 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
     		var event_id = top_events[i].pk
     		var num_participants = top_events_num_participants[i]
     		var status = top_events_status[i]
-    		html+= "<tr><td style='font-size: 16pt'>"+restaurant_name + "</td><td>"+num_participants+"</td><td style='text-align: right;'>"
+    		html+= "<tr><td style='font-size: 16pt' onclick='show_event_page("+event_id+")'>"+restaurant_name + "</td><td>"+num_participants+"</td><td style='text-align: right;'>"
     		if (status=='host'){
     			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>"
     		}else if (status=='joined'){

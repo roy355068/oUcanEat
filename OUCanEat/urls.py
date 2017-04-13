@@ -30,5 +30,6 @@ urlpatterns = [
     url(r'^leave_event$', views.leave_event),
     url(r'^show_info$', views.show_info),
     url(r'^show_default$', views.show_default),
+    url(r'^show_event_page$', views.show_event_page,name="show_event_page"),
     url(r'^show-profile/(?P<post_user>\w+)$', views.show_profile, name="show-profile"),
 ]
