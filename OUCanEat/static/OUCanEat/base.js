@@ -17,11 +17,10 @@ function show_restaurant_info() {
 		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
 	}
 
-	var data = {'event_restaurant':clicked_place.name, 'event_lat':clicked_place.geometry.location.lat(),
-		'event_lng':clicked_place.geometry.location.lng(), 'csrfmiddlewaretoken': getCSRFToken()}
+	var data = {'restaurant_id':clicked_place.place_id, 'csrfmiddlewaretoken': getCSRFToken()}
     $.ajax({
-        url: "/OUCanEat/show_info",
-        type: "POST",
+        url: "/OUCanEat/show_restaurant_info",
+        type: "GET",
         data: data,
         dataType : "json",
         success: function(response) {

@@ -132,13 +132,11 @@ def edit_profile(request):
 	return redirect(reverse('home'))
 
 @login_required
-def show_info(request):
-	if request.method=='POST':
+def show_restaurant_info(request):
+	if request.method=='GET':
 		#need to verify content
-		restaurant_name = request.POST['event_restaurant']
-		lng = request.POST['event_lng']
-		lat = request.POST['event_lat']
-		events = Event.objects.filter(restaurant__name=restaurant_name, restaurant__lng=lng, restaurant__lat=lat, 
+		restaurant_google_id = request.GET.get('restaurant_id')
+		events = Event.objects.filter(restaurant__google_id=restaurant_google_id,
 					event_dt__gte=datetime.date.today()).order_by('event_dt')
 		response_text = serializers.serialize('json', events)
 		return HttpResponse(response_text, content_type='application/json')
