@@ -28,48 +28,26 @@ def home(request):
 @login_required
 def show_default(request):
 	if request.method=='GET':
-
 		upcoming_events = Event.objects.filter(event_dt__gte = datetime.date.today()).order_by('event_dt')
 		upcoming_events_restaurant = [r.restaurant for r in upcoming_events]	
-		upcoming_events_status= []
-
-		for e in upcoming_events:
-			try:
-				j = Join.objects.get(event = e, participant = request.user)
-
-				if e.host == request.user:
-					upcoming_events_status.append('host')
-				else:
-					upcoming_events_status.append('joined')
-			except:
-				upcoming_events_status.append('notJoined')
+		upcoming_events_status= get_events_status(upcoming_events, request.user)
 
 		top_events = upcoming_events.annotate(num_participants=Count('event_join')).order_by('-num_participants')		 
 		top_events_restaurant = [t.restaurant for t in top_events]
-		top_events_status= []
-		top_events_num_participants = []
+		top_events_status= get_events_status(top_events, request.user)
+		top_events_num_participants = [t.num_participants for t in top_events]
 
-		for t in top_events:
-			top_events_num_participants.append(t.num_participants)
-			try:
-				j = Join.objects.get(event = t, participant = request.user)
-
-				if t.host == request.user:
-					top_events_status.append('host')
-				else:
-					top_events_status.append('joined')
-			except:
-				top_events_status.append('notJoined')
-
-	response_text = serializers.serialize('json', upcoming_events)
-	response_text2 = serializers.serialize('json', upcoming_events_restaurant)
-	response_text3 = serializers.serialize('json', top_events)
-	response_text4 = serializers.serialize('json',top_events_restaurant)
-	data = { 'upcoming_events' : response_text, 'upcoming_events_restaurant': response_text2, 
-	'top_events' :response_text3, 'top_events_restaurant': response_text4,'upcoming_events_status' : upcoming_events_status, 
-	'top_events_status' : top_events_status, 'top_events_num_participants':top_events_num_participants}
-	data = json.dumps(data)
-	return HttpResponse(data, content_type='application/json')
+		response_text = serializers.serialize('json', upcoming_events)
+		response_text2 = serializers.serialize('json', upcoming_events_restaurant)
+		response_text3 = serializers.serialize('json', top_events)
+		response_text4 = serializers.serialize('json',top_events_restaurant)
+		data = { 'upcoming_events' : response_text, 'upcoming_events_restaurant': response_text2, 
+				'top_events' :response_text3, 'top_events_restaurant': response_text4,
+				'upcoming_events_status' : upcoming_events_status, 
+				'top_events_status' : top_events_status, 'top_events_num_participants':top_events_num_participants}
+		data = json.dumps(data)
+		return HttpResponse(data, content_type='application/json')
+	return HttpResponse()
 
 @login_required
 def show_profile(request, post_user):
@@ -119,10 +97,7 @@ def edit_profile(request):
 		return render(request, "OUCanEat/edit.html", context)
 	elif request.method == "POST":
 		name_form = NameForm(request.POST, instance = request.user)
-
 		profile_form = ProfileForm(request.POST, request.FILES, instance = user_profile)
-		
-		
 		choice_form = ChoiceForm(request.POST)
 		if choice_form.is_valid():
 			choice = choice_form.cleaned_data['choice']
@@ -133,16 +108,11 @@ def edit_profile(request):
 					new_choice = Choice(choice = i)
 					new_choice.save()
 					user_profile.preference.add(new_choice)
-			
-
-
 
 		if profile_form.is_valid() and name_form.is_valid():
-			
 			if not request.FILES:
 				name_form.save()
 				profile_form.save()
-
 			if profile_form.cleaned_data['picture'] and request.FILES:
 				user_profile.content_type = profile_form.cleaned_data['picture'].content_type
 				user_profile.save()
@@ -190,9 +160,6 @@ def create_event(request):
 		event.save()
 		join = Join(event=event, participant=request.user)
 		join.save()
-
-		#should add himself
-
 	return HttpResponse()
 
 @login_required
@@ -208,6 +175,31 @@ def join_event(request):
 	return HttpResponse()
 
 @login_required
+def search_events(request):
+	if request.method=='GET':
+		events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
+		if 'search_places' in request.GET:
+			search_places = json.loads(request.GET.get('search_places'))
+			if len(search_places)>0: events = Event.objects.filter(restaurant__google_id__in=search_places)
+		if 'search_date' in request.GET:
+			search_date = request.GET.get('search_date')
+			try:
+				dt = datetime.datetime.strptime(search_date, '%Y/%m/%d')
+				events = events.filter(event_dt__year=dt.year,
+							event_dt__month=dt.month,
+							event_dt__day=dt.day)
+			except Exception as e:
+				pass
+		restaurants = [e.restaurant for e in events]
+		
+		response_text1 = serializers.serialize('json', events)
+		response_text2 = serializers.serialize('json', restaurants)
+		events_status= get_events_status(events, request.user)
+		response_text = {'events': response_text1, 'restaurants': response_text2, 'events_status' : events_status}
+		response_text = json.dumps(response_text)
+		return HttpResponse(response_text, content_type='application/json')
+	return HttpResponse()
+
 def leave_event(request):
 	if request.method != 'POST' or "event_id" not in request.POST:
 		raise Http404
@@ -215,9 +207,6 @@ def leave_event(request):
 	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
 	unjoin.delete()
 	return HttpResponse()
-
-
-			
 
 @transaction.atomic
 def register(request):
@@ -266,7 +255,6 @@ def register(request):
 
     new_user_profile.save()
     for i in choice:
-    	print(i)
     	new_choice = Choice(choice = i)
     	new_choice.save()
     	new_user_profile.preference.add(new_choice)
@@ -287,3 +275,16 @@ def confirm_registration(request, username, token):
     user.is_active = True
     user.save()
     return render(request, 'OUCanEat/confirmed.html', {})
+
+def get_events_status(events, user):
+	events_status= []
+	for e in events:
+		try:
+			j = Join.objects.get(event = e, participant = user)
+			if e.host == user:
+				events_status.append('host')
+			else:
+				events_status.append('joined')
+		except:
+			events_status.append('notJoined')
+	return events_status
