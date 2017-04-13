@@ -19,6 +19,9 @@ import json
 from OUCanEat.models import *
 from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm
 
+from django.forms.models import model_to_dict
+
+
 @ensure_csrf_cookie
 @login_required
 def home(request):
@@ -160,7 +163,30 @@ def create_event(request):
 		event.save()
 		join = Join(event=event, participant=request.user)
 		join.save()
-	return HttpResponse()
+		data = json.dumps({"event_id":event.id})
+
+		#should add himself
+
+	return HttpResponse(data, content_type='application/json')
+
+
+@login_required
+def show_event_page(request):
+	if request.method == 'POST':
+		event_id = request.POST['event_id']
+		event = Event.objects.get(pk=event_id)
+		event_host = event.host
+		event_restaurant = event.restaurant 	
+		event_join = Join.objects.filter(event__id = event_id)
+		event_participant = [j.participant for j in event_join]	
+		response_text = serializers.serialize('json',[event,])
+		response_text2 = serializers.serialize('json',[event_host,])
+		response_text3 = serializers.serialize('json',[event_restaurant,])
+		response_text4 = serializers.serialize('json',event_join)
+		response_text5 = serializers.serialize('json',event_participant)
+		data = {"event":response_text,"event_host":response_text2,"event_restaurant":response_text3,"event_join":response_text4, "event_participant": response_text5}
+		data = json.dumps(data)
+		return HttpResponse(data, content_type='application/json')
 
 @login_required
 def join_event(request):
