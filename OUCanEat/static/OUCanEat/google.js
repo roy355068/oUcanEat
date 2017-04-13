@@ -1,4 +1,5 @@
 var map;
+var service;
 var infowindow;
 var clicked_place;
 var searchBox;
@@ -17,7 +18,7 @@ function initMap() {
 	infowindow = new google.maps.InfoWindow();
 
 	//nearby search
-	var service = new google.maps.places.PlacesService(map);
+	service = new google.maps.places.PlacesService(map);
 	service.nearbySearch({
 		location: pyrmont,
 		radius: 500,
@@ -79,9 +80,10 @@ function showMapResult() {
 }
 
 function showMapEvent(place_id) {
-	var service = new google.maps.places.PlacesService(map);
 	service.getDetails({placeId: place_id}, function (result, status) {
-		createMarker(result, 'purple');
+		if (status==google.maps.places.PlacesServiceStatus.OK) {
+			createMarker(result, 'purple');
+		}
 	});
 }
 
