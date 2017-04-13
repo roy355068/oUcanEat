@@ -13,8 +13,6 @@ class Profile(models.Model):
 	content_type = models.CharField(max_length=50, blank=True)
 	preference = models.ManyToManyField(Choice)
 
-
-
 class Restaurant(models.Model):
 	name = models.CharField(max_length=500, blank=True)
 	google_id = models.CharField(max_length=500, blank=True)

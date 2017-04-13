@@ -80,9 +80,14 @@ def show_profile(request, post_user):
 	your_events = temp_events.filter(event_dt__gte = datetime.date.today()).annotate(num_participants = Count('event_join'))
 	old_events = temp_events.filter(event_dt__lte = datetime.date.today())
 	
-	
+	joined_temp = Join.objects.filter(participant__username = post_user)
+	joined      = joined_temp.filter(event__event_dt__gte = datetime.date.today())
+	# for i in joined:
+	# 	print(i.event.restaurant.name)
+
 	my_prefer = profile.preference.all()
 
+	context['joined'] = joined
 	context['profile'] = profile
 	context['prefer'] = my_prefer
 	context['curr_user'] = post_user
