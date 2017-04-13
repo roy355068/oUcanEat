@@ -1,6 +1,7 @@
 var map;
 var infowindow;
 var clicked_place;
+var searchBox;
 var markers = [];
 var searched = false;
 
@@ -25,7 +26,7 @@ function initMap() {
 
 	//search box
 	var input = document.getElementById('keyword');
-	var searchBox = new google.maps.places.SearchBox(input);
+	searchBox = new google.maps.places.SearchBox(input);
 
 	map.addListener('bounds_changed', function() {
 		if (!searched) {
@@ -38,47 +39,58 @@ function initMap() {
 		searchBox.setBounds(map.getBounds());
 	});
 
-	searchBox.addListener('places_changed', function() {
-		searched = true;
-		var places = searchBox.getPlaces();
-		if (places.length==0) {
-			return;
-		}
-		markers.forEach(function(marker) {
-			marker.setMap(null);
-		});
-		markers = [];
-
-		var bounds = new google.maps.LatLngBounds();
-		places.forEach(function(place) {
-			if (!place.geometry) {
-				console.log("Returned place contains no geometry");
-				return;
-			}
-			createMarker(place);
-            if (place.geometry.viewport) {
-				bounds.union(place.geometry.viewport);
-			} else {
-				bounds.extend(place.geometry.location);
-			}
-		});
-		map.fitBounds(bounds);
-	});
 }
 
 function callback(results, status) {
 	if (status === google.maps.places.PlacesServiceStatus.OK) {
 		for (var i = 0; i < results.length; i++) {
-			createMarker(results[i]);
+			createMarker(results[i], 'red');
 		}
 	}
 }
 
-function createMarker(place) {
+function showMapResult() {
+	markers.forEach(function(marker) {
+		marker.setMap(null);
+	});
+	markers = [];
+
+	var places = searchBox.getPlaces();
+	var keyword = $("#keyword").val();
+	if (keyword.trim().length==0 || places=== undefined || places.length==0) {
+		return;
+	}
+
+	searched = true;
+	var bounds = new google.maps.LatLngBounds();
+	places.forEach(function(place) {
+		if (!place.geometry) {
+			console.log("Returned place contains no geometry");
+			return;
+		}
+		createMarker(place, 'red');
+		if (place.geometry.viewport) {
+			bounds.union(place.geometry.viewport);
+		} else {
+			bounds.extend(place.geometry.location);
+		}
+	});
+	map.fitBounds(bounds);
+}
+
+function showMapEvent(place_id) {
+	var service = new google.maps.places.PlacesService(map);
+	service.getDetails({placeId: place_id}, function (result, status) {
+		createMarker(result, 'purple');
+	});
+}
+
+function createMarker(place, color) {
 	var placeLoc = place.geometry.location;
 	var marker = new google.maps.Marker({
 		map: map,
-		position: place.geometry.location
+		position: place.geometry.location,
+		icon: 'http://maps.google.com/mapfiles/ms/icons/'+color+'-dot.png'
 	});
 
 	google.maps.event.addListener(marker, 'click', function() {

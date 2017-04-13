@@ -2,13 +2,16 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 
+class Choice(models.Model):
+	choice = models.CharField(max_length=500, blank=True)
+	
 class Profile(models.Model):
 	user = models.ForeignKey(User, default=None)
 	age = models.IntegerField()
 	bio = models.TextField(max_length=500, blank=True)
 	picture = models.FileField(upload_to="images", blank=True)
 	content_type = models.CharField(max_length=50, blank=True)
-	preference = models.CharField(max_length=500, blank=True)
+	preference = models.ManyToManyField(Choice)
 
 class Restaurant(models.Model):
 	name = models.CharField(max_length=500, blank=True)
