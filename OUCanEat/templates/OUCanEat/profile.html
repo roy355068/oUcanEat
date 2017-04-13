@@ -72,6 +72,18 @@
 				</table>
 			{% endfor %}
 
+			<h2 id="oldJoinedEvent"> Your Past Joined Events: </h2>
+			{% for j in joined %}
+			  	<table style="width:100%" id="oldEvents">
+			  	<tr>
+					<td style="font-size: 18pt">{{j.event.restaurant.name}}</td>
+					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
+					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Detail</td>
+				  	
+				 </tr>
+				</table>
+			{% endfor %}
+
 
 			</div>
 		</div>
