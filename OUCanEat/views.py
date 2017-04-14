@@ -138,7 +138,11 @@ def show_restaurant_info(request):
 		restaurant_google_id = request.GET.get('restaurant_id')
 		events = Event.objects.filter(restaurant__google_id=restaurant_google_id,
 					event_dt__gte=datetime.date.today()).order_by('event_dt')
-		response_text = serializers.serialize('json', events)
+		events_status= get_events_status(events, request.user)
+
+		response_text1 = serializers.serialize('json', events)
+		response_text = {'events': response_text1, 'events_status' : events_status}
+		response_text = json.dumps(response_text)
 		return HttpResponse(response_text, content_type='application/json')
 
 @login_required

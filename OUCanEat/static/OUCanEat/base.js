@@ -25,9 +25,17 @@ function show_restaurant_info() {
         dataType : "json",
         success: function(response) {
 			html += "<div><table style='width:100%'>";
-			$(response).each(function() {
+			events = JSON.parse(response.events);
+			events_status = response.events_status;
+			$(events).each(function(index) {
 				html += "<tr><td>"+this.fields.event_dt+"</td>";
-				html += "<td style='text-align: right;'><button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>";
+				if (events_status[index]=='host'){
+					html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+this.pk+", 0)'>Edit Event</button></td></tr>"
+				}else if (events_status[index]=='joined'){
+					html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
+				}else{
+					html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>"
+				}
 			});
 			html += "</table></div>"
 			$("#info").prepend(html);
@@ -107,9 +115,6 @@ function show_event_page(event_id){
 		}
 
 	});
-	
-
-
 }
 
 function create_event_form() {
@@ -197,7 +202,7 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
 	var html = "<h2> Top Events: </h2>"
     html+= "<table style='width:100%'>"		
     if (top_events){
-    	for (i = 0; i < top_events_length; i++){
+    	for (i = 0; i < Math.min(top_events_length, top_events.length); i++){
     		var restaurant_name = top_events_restaurant[i].fields.name
     		var event_id = top_events[i].pk
     		var num_participants = top_events_num_participants[i]
