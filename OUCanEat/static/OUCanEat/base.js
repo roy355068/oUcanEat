@@ -238,40 +238,41 @@ $(function () {
 	$("#search_btn").click(function(){
     	var search_date = $("#search_date").val();
     	var keyword = $("#keyword").val();
-		var places = searchBox.getPlaces();
 		var place_ids = []
 
-		//first need to check keyword in box
-		if (keyword.trim().length>0 && places!== undefined && places.length>0) {
-			places.forEach(function(place) {
-				if (!place.geometry) {
-					console.log("Returned place contains no geometry");
-					return;
-				}
-				place_ids.push(place.place_id)
-			});
+		if (search_date.trim().length==0 && keyword.trim().length==0) {
+			return;
 		}
-
-		//show all results
-		showMapResult();
-
-		$.ajax({
-			url: "/OUCanEat/search_events",
-			type: "GET",
-			data: {'search_date': search_date, 'search_places': JSON.stringify(place_ids)},
-			dataType: "json",
-			success: function(response) {
-				events = JSON.parse(response.events);
-				restaurants = JSON.parse(response.restaurants);
-				events_status = response.events_status;
-				show_upcoming_event(events, restaurants, events_status, 5);
-				$(restaurants).each(function() {
-					//show event in diff color
-					showMapEvent(this.fields.google_id);
+		service.textSearch({
+			query: keyword,
+			types: ['restaurant', 'cafe']
+		}, function(places, status) {
+			if (status === google.maps.places.PlacesServiceStatus.OK) {
+				$(places).each(function() {
+					place_ids.push(this.place_id);
 				});
-				$("#info").html("");
-				$("#top_events").html("");
+				searchBox.set('places', places || [])
+				showMapResult();
 			}
+
+			$.ajax({
+				url: "/OUCanEat/search_events",
+				type: "GET",
+				data: {'search_date': search_date, 'search_places': JSON.stringify(place_ids)},
+				dataType: "json",
+				success: function(response) {
+					events = JSON.parse(response.events);
+					restaurants = JSON.parse(response.restaurants);
+					events_status = response.events_status;
+					show_upcoming_event(events, restaurants, events_status, 5);
+					$(restaurants).each(function() {
+						//show event in diff color
+						showMapEvent(this.fields.google_id);
+					});
+					$("#info").html("");
+					$("#top_events").html("");
+				}
+			});
 		});
 	});
 });

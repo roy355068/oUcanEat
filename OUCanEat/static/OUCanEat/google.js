@@ -57,8 +57,7 @@ function showMapResult() {
 	markers = [];
 
 	var places = searchBox.getPlaces();
-	var keyword = $("#keyword").val();
-	if (keyword.trim().length==0 || places=== undefined || places.length==0) {
+	if (places=== undefined || places.length==0) {
 		return;
 	}
 
