@@ -51,11 +51,7 @@ function callback(results, status) {
 }
 
 function showMapResult() {
-	markers.forEach(function(marker) {
-		marker.setMap(null);
-	});
-	markers = [];
-
+	clearMarkers();
 	var places = searchBox.getPlaces();
 	if (places=== undefined || places.length==0) {
 		return;
@@ -76,6 +72,31 @@ function showMapResult() {
 		}
 	});
 	map.fitBounds(bounds);
+}
+
+function showMapEvents(event_restaurants, clear) {
+	var bounds = map.getBounds();
+	if (clear) {
+		bounds = new google.maps.LatLngBounds();
+	}
+	searched = true;
+	var google_ids = new Set();
+
+	$(event_restaurants).each(function() {
+		if (this.fields.google_id in google_ids) return;
+		service.getDetails({placeId: this.fields.google_id}, function (result, status) {
+			if (status==google.maps.places.PlacesServiceStatus.OK) {
+				createMarker(result, 'purple');
+				if (result.geometry.viewport) {
+					bounds.union(result.geometry.viewport);
+				} else {
+					bounds.extend(result.geometry.location);
+				}
+				map.fitBounds(bounds);
+				google_ids.add(result.place_id);
+			}
+		});
+	});
 }
 
 function showMapEvent(place_id) {
@@ -103,4 +124,11 @@ function createMarker(place, color) {
 	});
 
 	markers.push(marker);
+}
+
+function clearMarkers() {
+	markers.forEach(function(marker) {
+		marker.setMap(null);
+	});
+	markers = [];
 }

@@ -111,7 +111,9 @@ function show_event_page(event_id){
 				html+=event_participants[i]+"</tr></td><td><tr>"
 			} 
 			html+= "</tr></td>"
-			$("#info").prepend(html);			
+			$("#info").prepend(html);
+
+			showMapEvents(restaurants, true);
 		}
 
 	});
@@ -167,6 +169,8 @@ function show_default(){
    			var top_events_num_participants = response.top_events_num_participants;
    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,5);
 			show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,5);
+			showMapEvents(upcoming_events_restaurant, true);
+			showMapEvents(top_events_restaurant, false);
 		}
 	});
 }
@@ -247,6 +251,7 @@ $(function () {
 			query: keyword,
 			types: ['restaurant', 'cafe']
 		}, function(places, status) {
+			clearMarkers();
 			if (status === google.maps.places.PlacesServiceStatus.OK) {
 				$(places).each(function() {
 					place_ids.push(this.place_id);
@@ -265,10 +270,7 @@ $(function () {
 					restaurants = JSON.parse(response.restaurants);
 					events_status = response.events_status;
 					show_upcoming_event(events, restaurants, events_status, 5);
-					$(restaurants).each(function() {
-						//show event in diff color
-						showMapEvent(this.fields.google_id);
-					});
+					showMapEvents(restaurants, false);
 					$("#info").html("");
 					$("#top_events").html("");
 				}
