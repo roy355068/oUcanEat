@@ -270,7 +270,7 @@ $(function () {
 					restaurants = JSON.parse(response.restaurants);
 					events_status = response.events_status;
 					show_upcoming_event(events, restaurants, events_status, 5);
-					showMapEvents(restaurants, false);
+					showMapEvents(restaurants, place_ids.length==0);
 					$("#info").html("");
 					$("#top_events").html("");
 				}
