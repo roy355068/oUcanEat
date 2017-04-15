@@ -78,6 +78,7 @@ function showMapEvents(event_restaurants, clear) {
 	var bounds = map.getBounds();
 	if (clear) {
 		bounds = new google.maps.LatLngBounds();
+		clearMarkers();
 	}
 	searched = true;
 	var google_ids = new Set();
