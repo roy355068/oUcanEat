@@ -113,7 +113,7 @@ function show_event_page(event_id){
 			html+= "</tr></td>"
 			$("#info").prepend(html);
 
-			showMapEvents(restaurants, true);
+			showMapEvents(restaurants, true, false);
 		}
 
 	});
@@ -169,8 +169,8 @@ function show_default(){
    			var top_events_num_participants = response.top_events_num_participants;
    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,5);
 			show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,5);
-			showMapEvents(upcoming_events_restaurant, true);
-			showMapEvents(top_events_restaurant, false);
+			showMapEvents(upcoming_events_restaurant, true, false);
+			showMapEvents(top_events_restaurant, false, false);
 		}
 	});
 }
@@ -270,7 +270,7 @@ $(function () {
 					restaurants = JSON.parse(response.restaurants);
 					events_status = response.events_status;
 					show_upcoming_event(events, restaurants, events_status, 5);
-					showMapEvents(restaurants, place_ids.length==0);
+					showMapEvents(restaurants, place_ids.length==0, true);
 					$("#info").html("");
 					$("#top_events").html("");
 				}
