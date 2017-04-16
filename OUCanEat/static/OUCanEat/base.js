@@ -88,7 +88,6 @@ function show_event_page(event_id){
 		type:"POST",
 		data:data,
 		success: function(response){
-
 			var events = JSON.parse(response.event);
 			var hosts = JSON.parse(response.event_host);
 			var restaurants = JSON.parse(response.event_restaurant);
@@ -105,12 +104,11 @@ function show_event_page(event_id){
 					event_participants.push(participants[i].fields.first_name)	
 				}			
 			}
-			html+= "<h3>"+restaurant_name+"</h3><table style='width:100%''><tr><td>Time: </td><td>"+event_dt+"</tr></td><tr><td>"+
-			"<tr><td>Description: </td><td>"+event_desc+"</tr></td><tr><td>Host: </td><td>"+event_host+"</tr></td><tr><td>Participants: </td><td>"
-			for(i = 0; i<event_participants.length; i++){			
-				html+=event_participants[i]+"</tr></td><td><tr>"
+			html+= "<h3>"+restaurant_name+"</h3><table style='width:100%''><tr><td>Time: </td><td>"+event_dt+"</td></tr>"+
+			"<tr><td>Description: </td><td>"+event_desc+"</td></tr><tr><td>Host: </td><td>"+event_host+"</td></tr><tr><td>Participants: </td></tr>"
+			for(i = 0; i<event_participants.length; i++){
+				html+="<tr><td></td><td>"+event_participants[i]+"</td></tr>"
 			} 
-			html+= "</tr></td>"
 			$("#info").prepend(html);
 
 			showMapEvents(restaurants, true, false);
