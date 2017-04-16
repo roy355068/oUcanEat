@@ -38,6 +38,7 @@ function initMap() {
 		searchBox.setBounds(map.getBounds());
 	});
 
+	show_default();
 }
 
 function callback(results, status) {
