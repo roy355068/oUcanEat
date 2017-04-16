@@ -75,7 +75,7 @@ function showMapResult() {
 function showMapEvents(event_restaurants, clear, fromSearch) {
 	var color = fromSearch ? 'green': 'purple';
 	var bounds = map.getBounds();
-	if (clear) {
+	if (bounds===undefined || clear) {
 		bounds = new google.maps.LatLngBounds();
 		clearMarkers();
 	}
