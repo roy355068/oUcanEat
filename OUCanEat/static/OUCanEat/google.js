@@ -7,21 +7,20 @@ var markers = [];
 var searched = false;
 
 function initMap() {
-	var pyrmont = {lat: -33.867, lng: 151.195};
+	// var pyrmont = {lat: -33.867, lng: 151.195};
 	var pittsburgh = {lat: 40.440, lng: -79.995};
 
 	map = new google.maps.Map(document.getElementById('map'), {
-		center: pyrmont,
+		center: pittsburgh,
 		zoom: 15
 	});
-	console.log(map);
 
 	infowindow = new google.maps.InfoWindow();
 
 	//nearby search
 	service = new google.maps.places.PlacesService(map);
 	service.nearbySearch({
-		location: pyrmont,
+		location: pittsburgh,
 		radius: 500,
 		types: ['restaurant', 'cafe']
 	}, callback);
