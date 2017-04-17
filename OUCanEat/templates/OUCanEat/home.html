@@ -1,19 +1,21 @@
 {% extends "OUCanEat/base.html" %}
 
-{% block header %}
+{% block map_header %}
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyjb_hSmHUamgvrnOYxtvHTN2kjeex0eI&signed_in=true&libraries=places&callback=initMap" async defer></script>
 	{% load staticfiles %}
     <script type="text/javascript" src="{% static 'OUCanEat/google.js' %}"></script>
     <script type="text/javascript" src="{% static 'OUCanEat/base.js' %}"></script>
+
+	{% block init_js %}
 	<script type="text/javascript">
 	$(window).on('load', function() {
 		show_default();
 	});
 	</script>
+	{% endblock %}
 {% endblock %}
 
 {% block user-info %} 
-
 <nav class="navbar navbar-default" style="background-color: #48D1CC; margin-bottom:  0pt;">
   	<div class="container-fluid">
     	<div class="navbar-header">
@@ -32,12 +34,10 @@
        	</ul>
 	</div>
 </nav>
-	
 {% endblock %}
 
 
 {% block search %} 
-
 <div class="container-fluid" style="background-color:#F5F5F5;">
 	<form class="form-inline"  style= "text-align: center; ">
 	<br>
@@ -60,11 +60,10 @@
 		    <br>
 		    <br>
 	</form>
-
 {% endblock %}
 
-{% block map %} 
 
+{% block map %} 
 <div class="row" style = "margin-bottom: 0pt; ">
     <div class="col-md-4"  > 
 		<div class="panel" style="background-color: transparent;">
@@ -82,5 +81,4 @@
 		</div>
     </div>
 </div>
-
 {% endblock %}
