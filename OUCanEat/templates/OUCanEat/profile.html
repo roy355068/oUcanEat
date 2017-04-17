@@ -61,7 +61,7 @@
 			{% for event in your_events %}
 			  	<table style="width:100%" id="yourEvents">
 			  	<tr>
-					<td style="font-size: 18pt">{{event.restaurant.name}}</td>
+					<td onclick="show_event_page({{event.id}})" style="font-size: 18pt">{{event.restaurant.name}}</td>
 					<td style="font-size: 18pt">{{event.num_participants}}</td>
 					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Detail</td>
 				  	
@@ -73,7 +73,7 @@
 			{% for event in old_events %}
 			  	<table style="width:100%" id="oldEvents">
 			  	<tr>
-					<td style="font-size: 18pt">{{event.restaurant.name}}</td>
+					<td onclick="show_event_page({{event.id}})" style="font-size: 18pt">{{event.restaurant.name}}</td>
 					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
 					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Detail</td>
 				  	
@@ -85,7 +85,7 @@
 			{% for j in joined %}
 			  	<table style="width:100%" id="oldEvents">
 			  	<tr>
-					<td style="font-size: 18pt">{{j.event.restaurant.name}}</td>
+					<td onclick="show_event_page({{j.event.id}})" style="font-size: 18pt">{{j.event.restaurant.name}}</td>
 					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
 					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Detail</td>
 				  	
