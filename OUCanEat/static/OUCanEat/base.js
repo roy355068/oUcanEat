@@ -252,11 +252,11 @@ function show_comments(event_id) {
 					var html = "<li class='list-group-item'>";
 					if (profiles[index].fields.picture!="") {
 						html += "<div class='col-md-2'>"+
-									"<img src='/OUCanEat/picture/"+this.fields.user+"' width='50px'>"+
+									"<img src='/OUCanEat/picture/"+users[index].fields.username+"' width='30px'>"+
 								"</div>"+
-								"<h4 class='list-group-item-heading'>"+
+								"<div class='col-md-10'><h4 class='list-group-item-heading'>"+
 								users[index].fields.username+
-								"</h4>";
+								"</h4></div>";
 					} else {
 						html += "<h4 class='list-group-item-heading'>"+
 						users[index].fields.username+"</h4>";
