@@ -115,9 +115,7 @@ function create_event() {
         type: "POST",
         data: data,
         success: function(response) {
-        	event_id = JSON.parse(response.event_id)
-
-			show_event_page(event_id);
+			window.location="/OUCanEat/";
         }
     });
 }
