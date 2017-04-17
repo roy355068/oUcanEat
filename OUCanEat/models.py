@@ -38,3 +38,10 @@ class Comment(models.Model):
 	event = models.ForeignKey(Event, default=None)
 	content = models.CharField(max_length=500)
 	create_dt = models.DateTimeField(auto_now=True)
+
+class EventPicture(models.Model):
+	event = models.ForeignKey(Event, default=None)
+	uploader = models.ForeignKey(User, default=None)
+	create_dt = models.DateTimeField(auto_now=True)
+	picture = models.FileField(upload_to="event_pics")
+	content_type = models.CharField(max_length=50)
