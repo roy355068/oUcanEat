@@ -63,8 +63,6 @@ def show_profile(request, post_user):
 	
 	joined_temp = Join.objects.filter(participant__username = post_user)
 	joined      = joined_temp.filter(event__event_dt__gte = datetime.date.today())
-	# for i in joined:
-	# 	print(i.event.restaurant.name)
 
 	my_prefer = profile.preference.all()
 
@@ -166,9 +164,6 @@ def create_event(request):
 		join = Join(event=event, participant=request.user)
 		join.save()
 		data = json.dumps({"event_id":event.id})
-
-		#should add himself
-
 	return HttpResponse(data, content_type='application/json')
 
 
@@ -235,6 +230,34 @@ def leave_event(request):
 	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
 	unjoin.delete()
 	return HttpResponse()
+
+def add_comment(request):
+	if 'event_id' in request.POST and 'new_comment' in request.POST and request.POST['new_comment']:
+		try:
+			event = Event.objects.get(id=request.POST['event_id'])
+			new_comment = Comment(user=request.user, event=event, content=request.POST['new_comment'])
+			new_comment.save()
+		except Exception as error:
+			pass
+	return HttpResponse()
+
+def get_updated_comments(request):
+	if 'event_id' in request.GET and 'latest' in request.GET:
+		latest = request.GET['latest']
+		event_id = request.GET['event_id']
+
+		comments = Comment.objects.filter(id__gt=latest, event__id=event_id).order_by('create_dt')
+		users = [c.user for c in comments]
+		profiles = [Profile.objects.get(user=u) for u in users]
+
+		response_text1 = serializers.serialize('json', comments)
+		response_text2 = serializers.serialize('json', users)
+		response_text3 = serializers.serialize('json', profiles)
+		response_text = {'comments': response_text1, 'users': response_text2, 'profiles': response_text3}
+		response_text = json.dumps(response_text)
+		return HttpResponse(response_text, content_type='application/json')
+	return HttpResponse()
+
 
 @transaction.atomic
 def register(request):

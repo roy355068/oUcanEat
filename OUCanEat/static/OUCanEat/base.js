@@ -108,9 +108,20 @@ function show_event_page(event_id){
 			"<tr><td>Description: </td><td>"+event_desc+"</td></tr><tr><td>Host: </td><td>"+event_host+"</td></tr><tr><td>Participants: </td></tr>"
 			for(i = 0; i<event_participants.length; i++){
 				html+="<tr><td></td><td>"+event_participants[i]+"</td></tr>"
-			} 
-			$("#info").prepend(html);
+			}
 
+			html += "<div id='comments"+"' class='list-group'>"+
+						"<div>"+
+							"<div class='col-md-10'>"+
+							"<textarea class='form-control' rows='1' placeholder='add your comment' id='new_comment_"+event_id+"'></textarea>"+
+							"</div>"+
+							"<button class='btn btn-primary' onclick='add_comment("+event_id+")'>Add</button>"+
+						"</div>"+
+					"</div>";
+
+			$("#info").prepend(html);
+			latestCommentId = 0;
+			show_comments(event_id)
 			showMapEvents(restaurants, true, false);
 		}
 
@@ -223,6 +234,59 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
 	$("#top_events").prepend(html);
 }
 
+function show_comments(event_id) {
+	$.ajax({
+		url: "/OUCanEat/get_updated_comments",
+		type: "GET",
+		data: {"event_id": event_id, "latest": latestCommentId},
+		dataType: "json",
+		success: function(response) {
+			var comments = JSON.parse(response.comments);
+			var users = JSON.parse(response.users);
+			var profiles = JSON.parse(response.profiles);
+			$(comments).each(function(index) {
+				if (this.pk>latestCommentId) {
+					event_id = this.fields.event;
+					var dt = new Date(this.fields.create_dt).toString();
+
+					var html = "<li class='list-group-item'>";
+					if (profiles[index].fields.picture!="") {
+						html += "<div class='col-md-2'>"+
+									"<img src='/OUCanEat/picture/"+this.fields.user+"' width='50px'>"+
+								"</div>"+
+								"<h4 class='list-group-item-heading'>"+
+								users[index].fields.username+
+								"</h4>";
+					} else {
+						html += "<h4 class='list-group-item-heading'>"+
+						users[index].fields.username+"</h4>";
+					}
+
+					html += "<p class='list-group-item-heading'>"+dt+"</p>"+
+							this.fields.content+
+						"</li>";
+					$("#comments").append(html);
+					latestCommentId = this.pk;
+				}
+			});
+		}
+    });
+}
+
+function add_comment(event_id) {
+	var commentElement = $("#new_comment_"+event_id);
+	var commentValue = commentElement.val();
+	commentElement.val('');
+
+	$.ajax({
+		url: "/OUCanEat/add_comment",
+		type: "POST",
+		data: "new_comment="+commentValue+"&event_id="+event_id+"&csrfmiddlewaretoken="+getCSRFToken(),
+		success: function(response) {
+			show_comments(event_id);
+		}
+	});
+}
 
 
 function getCSRFToken() {
@@ -276,3 +340,5 @@ $(function () {
 		});
 	});
 });
+
+var latestCommentId = 0;

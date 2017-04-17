@@ -33,7 +33,8 @@ urlpatterns = [
     url(r'^show_default$', views.show_default),
     url(r'^show_event_page$', views.show_event_page,name="show_event_page"),
     url(r'^show-profile/(?P<post_user>\w+)$', views.show_profile, name="show-profile"),
-
     url(r'^edit-profile$', views.edit_profile, name="edit-profile"),
+    url(r'^add_comment$', views.add_comment, name="add_comment"),
+    url(r'^get_updated_comments$', views.get_updated_comments, name="get_updated_comments"),
     url(r'^picture/(?P<curr_user>\w+)$', views.get_picture, name='picture'),
 ]
