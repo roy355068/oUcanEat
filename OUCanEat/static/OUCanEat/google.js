@@ -19,15 +19,17 @@ function initMap() {
 
 	//nearby search
 	service = new google.maps.places.PlacesService(map);
+	/*
 	service.nearbySearch({
 		location: pyrmont,
 		radius: 500,
 		types: ['restaurant', 'cafe']
 	}, callback);
+	*/
 
-	//search box
+	//search box only for homepage
 	var input = document.getElementById('keyword');
-	searchBox = new google.maps.places.SearchBox(input);
+	if (input!==null) searchBox = new google.maps.places.SearchBox(input);
 
 	map.addListener('drag', function() {
 		service.nearbySearch({
@@ -35,10 +37,8 @@ function initMap() {
 			radius: 500,
 			types: ['restaurant', 'cafe']
 		}, callback);
-		searchBox.setBounds(map.getBounds());
+		if (input!==null) searchBox.setBounds(map.getBounds());
 	});
-
-	show_default();
 }
 
 function callback(results, status) {

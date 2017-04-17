@@ -59,7 +59,6 @@ function join_event(event_id, page_type) {
     });
 }
 
-
 function leave_event(event_id, page_type) {
 	var data = {'event_id': event_id, 'csrfmiddlewaretoken': getCSRFToken()};
 	$.ajax({
@@ -76,55 +75,15 @@ function leave_event(event_id, page_type) {
     });
 }
 
-
 function show_event_page(event_id){
-	$("#info").html("");
-	$("#upcoming_events").html("");
-	$("#top_events").html("");
-	var html =""	
-	var data = {'event_id':event_id, 'csrfmiddlewaretoken': getCSRFToken()}
+	show_comments(event_id);
 	$.ajax({
-		url:"/OUCanEat/show_event_page",
-		type:"POST",
-		data:data,
+		url:"/OUCanEat/get_event_restaurant/"+event_id,
+		type:"GET",
 		success: function(response){
-			var events = JSON.parse(response.event);
-			var hosts = JSON.parse(response.event_host);
-			var restaurants = JSON.parse(response.event_restaurant);
-			var joins = JSON.parse(response.event_join);
-			var participants = JSON.parse(response.event_participant);
-			restaurant_name = restaurants[0].fields.name
-			event_dt = events[0].fields.event_dt
-			event_desc = events[0].fields.desc
-			event_host = hosts[0].fields.first_name
-			var event_participants = []
-			
-			for(i = 0; i< participants.length; i++){
-				if (participants[i].fields.first_name != event_host){
-					event_participants.push(participants[i].fields.first_name)	
-				}			
-			}
-			html+= "<h3>"+restaurant_name+"</h3><table style='width:100%''><tr><td>Time: </td><td>"+event_dt+"</td></tr>"+
-			"<tr><td>Description: </td><td>"+event_desc+"</td></tr><tr><td>Host: </td><td>"+event_host+"</td></tr><tr><td>Participants: </td></tr>"
-			for(i = 0; i<event_participants.length; i++){
-				html+="<tr><td></td><td>"+event_participants[i]+"</td></tr>"
-			}
-
-			html += "<div id='comments"+"' class='list-group'>"+
-						"<div>"+
-							"<div class='col-md-10'>"+
-							"<textarea class='form-control' rows='1' placeholder='add your comment' id='new_comment_"+event_id+"'></textarea>"+
-							"</div>"+
-							"<button class='btn btn-primary' onclick='add_comment("+event_id+")'>Add</button>"+
-						"</div>"+
-					"</div>";
-
-			$("#info").prepend(html);
-			latestCommentId = 0;
-			show_comments(event_id)
+			var restaurants = JSON.parse(response.restaurant);
 			showMapEvents(restaurants, true, false);
 		}
-
 	});
 }
 
@@ -142,7 +101,6 @@ function create_event_form() {
 
 	$("#info").prepend(html);
 }
-
 
 function create_event() {
 	var event_form_date = $("#event_date").val();
@@ -184,7 +142,6 @@ function show_default(){
 	});
 }
 
-
 function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,upcoming_events_length) {
 	$("#upcoming_events").html("");
 	var html = "<h2> Upcomping Events: </h2>"
@@ -195,7 +152,7 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
     		var datetime = upcoming_events[i].fields.event_dt
     		var event_id = upcoming_events[i].pk
     		var status = upcoming_events_status[i]
-    		html+= "<tr><td style='font-size: 16pt' onclick='show_event_page("+event_id+")'>"+restaurant_name + "</td><td>"+datetime+"</td><td style='text-align: right;'>"
+    		html+= "<tr><td style='font-size: 16pt'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+restaurant_name + "</a></td><td>"+datetime+"</td><td style='text-align: right;'>"
     		if (status=='host'){
     			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>"
     		}else if (status=='joined'){
@@ -209,7 +166,6 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
 	$("#upcoming_events").prepend(html);
 }
 
-
 function show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,top_events_length) {
 	$("#top_events").html("");
 	var html = "<h2> Top Events: </h2>"
@@ -220,7 +176,7 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
     		var event_id = top_events[i].pk
     		var num_participants = top_events_num_participants[i]
     		var status = top_events_status[i]
-    		html+= "<tr><td style='font-size: 16pt' onclick='show_event_page("+event_id+")'>"+restaurant_name + "</td><td>"+num_participants+"</td><td style='text-align: right;'>"
+			html+= "<tr><td style='font-size: 16pt'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+restaurant_name + "</a></td><td>"+num_participants+"</td><td style='text-align: right;'>"
     		if (status=='host'){
     			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>"
     		}else if (status=='joined'){
@@ -235,6 +191,11 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
 }
 
 function show_comments(event_id) {
+	var latestCommentId = 0;
+	$("[id^='comments_']").each(function() {
+		idx = parseInt(this.id.split('_')[1]);
+		if (idx>latestCommentId) latestCommentId = idx;
+	});
 	$.ajax({
 		url: "/OUCanEat/get_updated_comments",
 		type: "GET",
@@ -249,7 +210,7 @@ function show_comments(event_id) {
 					event_id = this.fields.event;
 					var dt = new Date(this.fields.create_dt).toString();
 
-					var html = "<li class='list-group-item'>";
+					var html = "<li class='list-group-item' id='comments_"+this.pk+"'>";
 					if (profiles[index].fields.picture!="") {
 						html += "<div class='col-md-2'>"+
 									"<img src='/OUCanEat/picture/"+users[index].fields.username+"' width='30px'>"+
@@ -285,6 +246,23 @@ function add_comment(event_id) {
 		success: function(response) {
 			show_comments(event_id);
 		}
+	});
+}
+
+function upload_event_pic(event_id) {
+	var file = $("#id_picture")[0].files[0];
+	$("#pic_btn").click(function(){
+		var formData = new FormData($('#pic_form')[0]);
+		$.ajax({
+			url: "/OUCanEat/upload_event_pic",
+			type: "POST",
+			data: formData,
+			processData: false,
+			contentType: false,
+			success : function(response) {
+				console.log(response);
+			}
+		});
 	});
 }
 

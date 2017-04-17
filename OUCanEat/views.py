@@ -17,7 +17,7 @@ from django.db.models import Count
 import datetime
 import json
 from OUCanEat.models import *
-from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm
+from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm, EventPicForm
 
 from django.forms.models import model_to_dict
 
@@ -168,22 +168,23 @@ def create_event(request):
 
 
 @login_required
-def show_event_page(request):
-	if request.method == 'POST':
-		event_id = request.POST['event_id']
-		event = Event.objects.get(pk=event_id)
-		event_host = event.host
-		event_restaurant = event.restaurant 	
-		event_join = Join.objects.filter(event__id = event_id)
-		event_participant = [j.participant for j in event_join]	
-		response_text = serializers.serialize('json',[event,])
-		response_text2 = serializers.serialize('json',[event_host,])
-		response_text3 = serializers.serialize('json',[event_restaurant,])
-		response_text4 = serializers.serialize('json',event_join)
-		response_text5 = serializers.serialize('json',event_participant)
-		data = {"event":response_text,"event_host":response_text2,"event_restaurant":response_text3,"event_join":response_text4, "event_participant": response_text5}
-		data = json.dumps(data)
-		return HttpResponse(data, content_type='application/json')
+def show_event_page(request, event_id):
+	context = {}
+	try:
+		event = Event.objects.get(id=event_id)
+		event_join = Join.objects.filter(event__id=event_id)
+		event_participant = [j.participant for j in event_join]
+		comments = Comment.objects.filter(event__id=event_id)
+		pic_users = Profile.objects.exclude(picture__isnull=True).exclude(picture__exact='')
+		pic_users = [u.user for u in pic_users]
+		context['event'] = event
+		context['event_participant'] = event_participant
+		context['comments'] = comments
+		context['pic_users'] = pic_users
+		context['form'] = EventPicForm()
+	except Exception as e:
+		pass
+	return render(request, 'OUCanEat/event_page.html', context)
 
 @login_required
 def join_event(request):
@@ -232,7 +233,7 @@ def leave_event(request):
 	return HttpResponse()
 
 def add_comment(request):
-	if 'event_id' in request.POST and 'new_comment' in request.POST and request.POST['new_comment']:
+	if request.method=='POST' and 'event_id' in request.POST and 'new_comment' in request.POST and request.POST['new_comment']:
 		try:
 			event = Event.objects.get(id=request.POST['event_id'])
 			new_comment = Comment(user=request.user, event=event, content=request.POST['new_comment'])
@@ -242,7 +243,7 @@ def add_comment(request):
 	return HttpResponse()
 
 def get_updated_comments(request):
-	if 'event_id' in request.GET and 'latest' in request.GET:
+	if request.method=='GET' and 'event_id' in request.GET and 'latest' in request.GET:
 		latest = request.GET['latest']
 		event_id = request.GET['event_id']
 
@@ -256,6 +257,33 @@ def get_updated_comments(request):
 		response_text = {'comments': response_text1, 'users': response_text2, 'profiles': response_text3}
 		response_text = json.dumps(response_text)
 		return HttpResponse(response_text, content_type='application/json')
+	return HttpResponse()
+
+def upload_event_pic(request):
+	if request.method=='POST':
+		try:
+			event = Event.objects.get(id=request.POST['event_id'])
+			event_pic_form = EventPicForm(request.POST, request.FILES)
+			if event_pic_form.is_valid():
+				event_pic = event_pic_form.save(commit=False)
+				event_pic.uploader = request.user
+				event_pic.event = event
+				event_pic.content_type = event_pic_form.cleaned_data['picture'].content_type
+				event_pic.save()
+		except Exception as error:
+			pass
+	return HttpResponse()
+
+def get_event_restaurant(request, event_id):
+	if request.method=='GET':
+		try:
+			event = Event.objects.get(id=event_id)
+			response_text = serializers.serialize('json', [event.restaurant])
+			response_text = {'restaurant': response_text}
+			response_text = json.dumps(response_text)
+			return HttpResponse(response_text, content_type='application/json')
+		except Exception as error:
+			pass
 	return HttpResponse()
 
 

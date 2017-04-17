@@ -1,0 +1,80 @@
+{% extends "OUCanEat/home.html" %}
+
+{% block header %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyjb_hSmHUamgvrnOYxtvHTN2kjeex0eI&signed_in=true&libraries=places&callback=initMap" async defer></script>
+    {% load staticfiles %}
+    <script type="text/javascript" src="{% static 'OUCanEat/google.js' %}"></script>
+    <script type="text/javascript" src="{% static 'OUCanEat/base.js' %}"></script>
+	<script language="javascript">
+	$(window).on('load', function() {
+		show_event_page({{ event.id }});
+	});
+
+	</script>
+{% endblock %}
+
+{% block search %}
+{% endblock %}
+
+{% block map %}
+
+<div class="row" style = "margin-bottom: 0pt; ">
+    <div class="col-md-4"  > 
+		<div class="panel" style="background-color: transparent;">
+			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
+
+			<h3>{{event.restaurant.name}}</h3>
+			<table style="width:100%">
+				<tr>
+					<td>Time: </td>
+					<td>{{event.event_dt}}</td>
+				</tr>
+				<tr>
+					<td>Description: </td>
+					<td>{{event.desc}}</td>
+				</tr>
+				<tr>
+					<td>Host: </td>
+					<td>{{event.host.username}}</td>
+				</tr>
+				<tr>
+					<td>Participants: </td>
+				</tr>
+				{% for p in event_participants %}
+                	<tr>
+						<td></td>
+						<td>{{p.username}}</td>
+					</tr>
+				{% endfor %}
+			</table>
+
+			<form id="pic_form" enctype="multipart/form-data"  method="post" onchange="upload_event_pic({{event.id}})">
+				<table>
+					{{ form }}
+				</table>
+				<input type="hidden" name="event_id"  value="{{event.id}}">
+				<button id="pic_btn" type="button">Upload</button>
+				{% csrf_token %}
+			</form>
+
+			<div id="comments" class="list-group">
+				<div>
+				<div class="col-md-10">
+				<textarea class="form-control" rows="1" placeholder="add your comment" id="new_comment_{{event.id}}"></textarea>
+				</div>
+				<button class="btn btn-primary" onclick="add_comment({{event.id}})">Add</button>
+				</div>
+			</div>
+
+			</div>
+		</div>
+	</div>
+
+    <div class="col-md-8" >
+     	<div class="panel">
+			<div class="panel-body" style="height: 590px;" id="map" ></div>
+		</div>
+    </div>
+</div>
+{% endblock%}
+
