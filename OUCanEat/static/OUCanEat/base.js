@@ -169,8 +169,12 @@ function show_default(){
    			var top_events_num_participants = response.top_events_num_participants;
    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,5);
 			show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,5);
-			showMapEvents(upcoming_events_restaurant, true);
+			console.log('in0');
+			//showMapEvents(upcoming_events_restaurant, true);
+			console.log('in1');
 			showMapEvents(top_events_restaurant, false);
+			console.log('in2');
+
 		}
 	});
 }

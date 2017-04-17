@@ -36,4 +36,5 @@ urlpatterns = [
 
     url(r'^edit-profile$', views.edit_profile, name="edit-profile"),
     url(r'^picture/(?P<curr_user>\w+)$', views.get_picture, name='picture'),
+    url(r'^profile-map/(?P<post_user>\w+)$', views.profile_map, name="profile-map")
 ]

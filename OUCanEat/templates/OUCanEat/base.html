@@ -15,16 +15,19 @@
 	{% endblock %}
 </head>
 
-<body>
-	
-	{% block user-info %}
+	{% block frontbody %}
 	{% endblock %}
+		{% block user-info %}
+		{% endblock %}
 
-	{% block search %}
-	{% endblock %}
+		{% block search %}
+		{% endblock %}
 
-	{% block map %}
-	{% endblock %}	
+		{% block map %}
+		{% endblock %}
+		
+	{% block endbody %}
+	{% endblock%}	
 
-</body>
+
 </html>

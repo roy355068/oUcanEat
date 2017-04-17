@@ -7,6 +7,9 @@
     <script type="text/javascript" src="{% static 'OUCanEat/base.js' %}"></script>
 {% endblock %}
 
+{% block frontbody %}
+<body>
+{% endblock%}
 {% block user-info %} 
 
 <nav class="navbar navbar-default" style="background-color: #48D1CC; margin-bottom:  0pt;">
@@ -80,4 +83,6 @@
 <script type="text/javascript">show_default();</script>
 
 {% endblock %}
-
+{% block endbody%}
+</body>
+{% endblock%}

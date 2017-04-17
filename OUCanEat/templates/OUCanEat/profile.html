@@ -1,8 +1,17 @@
 {% extends "OUCanEat/home.html" %}
 
+{% block header %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyjb_hSmHUamgvrnOYxtvHTN2kjeex0eI&signed_in=true&libraries=places&callback=initMap" async defer></script>
+	{% load staticfiles %}
+    <script type="text/javascript" src="{% static 'OUCanEat/google.js' %}"></script>
+    <script type="text/javascript" src="{% static 'OUCanEat/base.js' %}"></script>
 
+{% endblock %}
+
+{% block frontbody%}
+<body onload="profileMap()">
+{% endblock%}
 {% block map %}
-
 
 <div class="row" style = "margin-bottom: 0pt; ">
     <div class="col-md-4"  > 
@@ -16,7 +25,7 @@
                 	{% endif%}
 					<tr>
 						<td style="font-size: 18pt">Username: </td>
-						<td style="font-size: 18pt">{{profile.user}}</td>
+						<td id="userName" style="font-size: 18pt">{{profile.user}}</td>
 						
 					</tr>
 					<tr>
@@ -96,4 +105,6 @@
     </div>
 </div>
 {% endblock%}
-
+{% block endbody %}
+</body>
+{% endblock%}
