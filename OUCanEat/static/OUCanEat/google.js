@@ -83,7 +83,7 @@ function profileMap() {
 		dataType: "json",
 		success: function(response) {
 			restaurants = JSON.parse(response.restaurants);
-			showMapEvents(restaurants, true);
+			showMapEvents(restaurants, true, false);
 		}
 	})
 }

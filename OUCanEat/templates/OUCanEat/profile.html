@@ -1,13 +1,5 @@
 {% extends "OUCanEat/home.html" %}
 
-{% block header %}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyjb_hSmHUamgvrnOYxtvHTN2kjeex0eI&signed_in=true&libraries=places&callback=initMap" async defer></script>
-	{% load staticfiles %}
-    <script type="text/javascript" src="{% static 'OUCanEat/google.js' %}"></script>
-    <script type="text/javascript" src="{% static 'OUCanEat/base.js' %}"></script>
-
-{% endblock %}
-
 {% block frontbody%}
 <body onload="profileMap()">
 {% endblock%}
@@ -57,42 +49,6 @@
 			{% if curr_user == profile.user.username %}
 			<a href="{% url 'edit-profile' %}" class="btn btn-default btn-lg titleFont">Edit</a>
 			{% endif %}
-			<h2 id="topEvent"> Your Events: </h2>
-			{% for event in your_events %}
-			  	<table class="tableFullWid" id="yourEvents">
-			  	<tr>
-					<td onclick="show_event_page({{event.id}})" class="titleFont">{{event.restaurant.name}}</td>
-					<td class="titleFont">{{event.num_participants}}</td>
-					<td class="titleFont"> <a href="#" class="btn btn-default btn-lg">Detail</td>
-				  	
-				 </tr>
-				</table>
-			{% endfor %}
-
-			<h2 id="oldEvent"> Your Past Events: </h2>
-			{% for event in old_events %}
-			  	<table class="tableFullWid" id="oldEvents">
-			  	<tr>
-					<td onclick="show_event_page({{event.id}})" class="titleFont">{{event.restaurant.name}}</td>
-					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
-					<td class="titleFont"> <a href="#" class="btn btn-default btn-lg">Detail</td>
-				  	
-				 </tr>
-				</table>
-			{% endfor %}
-
-			<h2 id="oldJoinedEvent"> Your Past Joined Events: </h2>
-			{% for j in joined %}
-			  	<table class="tableFullWid" id="oldEvents">
-			  	<tr>
-					<td onclick="show_event_page({{j.event.id}})" class="titleFont">{{j.event.restaurant.name}}</td>
-					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
-					<td class="titleFont"> <a href="#" class="btn btn-default btn-lg">Detail</td>
-				  	
-				 </tr>
-				</table>
-			{% endfor %}
-
 
 			</div>
 		</div>
