@@ -4,7 +4,7 @@ var infowindow;
 var clicked_place;
 var searchBox;
 var markers = [];
-var searched = false;
+var marker_ids = new Set();
 
 function initMap() {
 	var pyrmont = {lat: -33.867, lng: 151.195};
@@ -19,27 +19,26 @@ function initMap() {
 
 	//nearby search
 	service = new google.maps.places.PlacesService(map);
+	/*
 	service.nearbySearch({
 		location: pyrmont,
 		radius: 500,
 		types: ['restaurant', 'cafe']
 	}, callback);
+	*/
 
-	//search box
+	//search box only for homepage
 	var input = document.getElementById('keyword');
-	searchBox = new google.maps.places.SearchBox(input);
+	if (input!==null) searchBox = new google.maps.places.SearchBox(input);
 
-	map.addListener('bounds_changed', function() {
-		if (!searched) {
-			service.nearbySearch({
-				location: map.getCenter(),
-				radius: 500,
-				types: ['restaurant', 'cafe']
-			}, callback);
-		}
-		searchBox.setBounds(map.getBounds());
+	map.addListener('drag', function() {
+		service.nearbySearch({
+			location: map.getCenter(),
+			radius: 500,
+			types: ['restaurant', 'cafe']
+		}, callback);
+		if (input!==null) searchBox.setBounds(map.getBounds());
 	});
-
 }
 
 function callback(results, status) {
@@ -57,14 +56,13 @@ function showMapResult() {
 		return;
 	}
 
-	searched = true;
 	var bounds = new google.maps.LatLngBounds();
 	places.forEach(function(place) {
 		if (!place.geometry) {
 			console.log("Returned place contains no geometry");
 			return;
 		}
-		createMarker(place, 'red');
+		createMarker(place, 'green');
 		if (place.geometry.viewport) {
 			bounds.union(place.geometry.viewport);
 		} else {
@@ -74,20 +72,20 @@ function showMapResult() {
 	map.fitBounds(bounds);
 }
 
-function showMapEvents(event_restaurants, clear) {
+function showMapEvents(event_restaurants, clear, fromSearch) {
+	var color = fromSearch ? 'green': 'purple';
 	var bounds = map.getBounds();
-	if (clear) {
+	if (bounds===undefined || clear) {
 		bounds = new google.maps.LatLngBounds();
 		clearMarkers();
 	}
-	searched = true;
 	var google_ids = new Set();
 
 	$(event_restaurants).each(function() {
-		if (this.fields.google_id in google_ids) return;
+		if (google_ids.has(this.fields.google_id)) return;
 		service.getDetails({placeId: this.fields.google_id}, function (result, status) {
 			if (status==google.maps.places.PlacesServiceStatus.OK) {
-				createMarker(result, 'purple');
+				createMarker(result, color);
 				if (result.geometry.viewport) {
 					bounds.union(result.geometry.viewport);
 				} else {
@@ -100,20 +98,14 @@ function showMapEvents(event_restaurants, clear) {
 	});
 }
 
-function showMapEvent(place_id) {
-	service.getDetails({placeId: place_id}, function (result, status) {
-		if (status==google.maps.places.PlacesServiceStatus.OK) {
-			createMarker(result, 'purple');
-		}
-	});
-}
-
 function createMarker(place, color) {
+	if (marker_ids.has(place.place_id)) return;
+
 	var placeLoc = place.geometry.location;
 	var marker = new google.maps.Marker({
 		map: map,
 		position: place.geometry.location,
-		icon: 'http://maps.google.com/mapfiles/ms/icons/'+color+'-dot.png'
+		icon: 'http://maps.google.com/mapfiles/ms/icons/'+color+'-dot.png' //red: general, purple: event, green: search
 	});
 
 	google.maps.event.addListener(marker, 'click', function() {
@@ -125,6 +117,7 @@ function createMarker(place, color) {
 	});
 
 	markers.push(marker);
+	marker_ids.add(place.place_id);
 }
 
 function clearMarkers() {
@@ -132,4 +125,5 @@ function clearMarkers() {
 		marker.setMap(null);
 	});
 	markers = [];
+	marker_ids = new Set();
 }
