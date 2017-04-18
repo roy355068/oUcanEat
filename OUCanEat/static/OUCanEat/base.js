@@ -77,6 +77,7 @@ function leave_event(event_id, page_type) {
 
 function show_event_page(event_id){
 	show_comments(event_id);
+	show_event_pictures(event_id);
 	$.ajax({
 		url:"/OUCanEat/get_event_restaurant/"+event_id,
 		type:"GET",
@@ -258,10 +259,31 @@ function upload_event_pic(event_id) {
 			processData: false,
 			contentType: false,
 			success : function(response) {
-				console.log(response);
 			}
 		});
 	});
+}
+
+function show_event_pictures(event_id) {
+	$.ajax({
+        url: "/OUCanEat/get_event_pictures",
+        type: "GET",
+		dataType: "json",
+        data: {"event_id": event_id},
+        success: function(response) {
+			pictures = JSON.parse(response.pictures);
+
+			html = "<table style='display: inline-block; overflow:scroll;'>"+
+						"<tr>";
+			$(pictures).each(function(){
+				html += "<td><img src='/OUCanEat/event_picture/"+this.pk+"' width='100px'></td>"
+			});
+
+			html += 	"</tr>"+
+					"</table>";
+			$("#pictures").append(html);
+        }
+    });
 }
 
 

@@ -37,6 +37,8 @@ urlpatterns = [
     url(r'^add_comment$', views.add_comment, name="add_comment"),
     url(r'^get_updated_comments$', views.get_updated_comments, name="get_updated_comments"),
     url(r'^upload_event_pic$', views.upload_event_pic, name="upload_event_pic"),
+    url(r'^get_event_pictures$', views.get_event_pictures, name="get_event_pictures"),
     url(r'^get_event_restaurant/(?P<event_id>\d+)$', views.get_event_restaurant,name="get_event_restaurant"),
     url(r'^picture/(?P<curr_user>\w+)$', views.get_picture, name='picture'),
+    url(r'^event_picture/(?P<event_pic_id>\d+)$', views.get_event_picture, name='event_picture'),
 ]

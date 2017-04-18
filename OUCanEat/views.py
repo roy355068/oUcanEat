@@ -224,6 +224,7 @@ def search_events(request):
 		return HttpResponse(response_text, content_type='application/json')
 	return HttpResponse()
 
+@login_required
 def leave_event(request):
 	if request.method != 'POST' or "event_id" not in request.POST:
 		raise Http404
@@ -232,6 +233,7 @@ def leave_event(request):
 	unjoin.delete()
 	return HttpResponse()
 
+@login_required
 def add_comment(request):
 	if request.method=='POST' and 'event_id' in request.POST and 'new_comment' in request.POST and request.POST['new_comment']:
 		try:
@@ -242,6 +244,7 @@ def add_comment(request):
 			pass
 	return HttpResponse()
 
+@login_required
 def get_updated_comments(request):
 	if request.method=='GET' and 'event_id' in request.GET and 'latest' in request.GET:
 		latest = request.GET['latest']
@@ -259,6 +262,7 @@ def get_updated_comments(request):
 		return HttpResponse(response_text, content_type='application/json')
 	return HttpResponse()
 
+@login_required
 def upload_event_pic(request):
 	if request.method=='POST':
 		try:
@@ -274,6 +278,27 @@ def upload_event_pic(request):
 			pass
 	return HttpResponse()
 
+@login_required
+def get_event_pictures(request):
+	if request.method=='GET' and 'event_id' in request.GET:
+		event_id = request.GET['event_id']
+
+		pictures = EventPicture.objects.filter(event__id=event_id).order_by('create_dt')
+
+		response_text = serializers.serialize('json', pictures)
+		response_text = {'pictures': response_text}
+		response_text = json.dumps(response_text)
+		return HttpResponse(response_text, content_type='application/json')
+	return HttpResponse()
+
+@login_required
+def get_event_picture(request, event_pic_id):
+	event_pic = get_object_or_404(EventPicture, id=event_pic_id)
+	if not event_pic.picture:
+		raise Http404
+	return HttpResponse(event_pic.picture, content_type=event_pic.content_type)
+
+@login_required
 def get_event_restaurant(request, event_id):
 	if request.method=='GET':
 		try:
