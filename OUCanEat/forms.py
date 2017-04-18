@@ -67,12 +67,6 @@ class ChoiceForm(forms.Form):
 class ProfileForm(forms.ModelForm):
 	picture = forms.FileField(required=False, widget=forms.FileInput)
 	age = forms.IntegerField(min_value = 0)
-	# preference = forms.MultipleChoiceField(choices=RESTAURANT_TYPE)
-	# preference = forms.MultipleChoiceField(
-	# 		        required=False,
-	# 		        widget=forms.CheckboxSelectMultiple,
-	# 		        choices=RESTAURANT_TYPE,
-	# 		    )
 	class Meta:
 		model = Profile
 		exclude = (
@@ -80,16 +74,27 @@ class ProfileForm(forms.ModelForm):
 			'content_type',
 			'preference',
 		)
-		
-
 
 	def clean_picture(self):
 		picture = self.cleaned_data['picture']
-		# if not picture:
-		# 		raise forms.ValidationError('You must upload a picture')
 		if not isinstance(picture, FieldFile):
 			if not picture:
 				raise forms.ValidationError("You must upload a picture")
+			if not picture.content_type or not picture.content_type.startswith('image'):
+				raise forms.ValidationError('File type is not image')
+			if picture.size > MAX_UPLOAD_SIZE:
+				raise forms.ValidationError('File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
+		return picture
+
+class EventPicForm(forms.ModelForm):
+	picture = forms.FileField(required=True, widget=forms.FileInput)
+	class Meta:
+		model = EventPicture
+		fields = ('picture',)
+
+	def clean_picture(self):
+		picture = self.cleaned_data['picture']
+		if picture and hasattr(self.cleaned_data['picture'],'content_type'):
 			if not picture.content_type or not picture.content_type.startswith('image'):
 				raise forms.ValidationError('File type is not image')
 			if picture.size > MAX_UPLOAD_SIZE:

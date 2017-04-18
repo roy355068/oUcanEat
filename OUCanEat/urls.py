@@ -31,10 +31,15 @@ urlpatterns = [
     url(r'^show_restaurant_info$', views.show_restaurant_info),
     url(r'^search_events$', views.search_events),
     url(r'^show_default$', views.show_default),
-    url(r'^show_event_page$', views.show_event_page,name="show_event_page"),
+    url(r'^show_event_page/(?P<event_id>\d+)$', views.show_event_page,name="show_event_page"),
     url(r'^show-profile/(?P<post_user>\w+)$', views.show_profile, name="show-profile"),
-
     url(r'^edit-profile$', views.edit_profile, name="edit-profile"),
+    url(r'^add_comment$', views.add_comment, name="add_comment"),
+    url(r'^get_updated_comments$', views.get_updated_comments, name="get_updated_comments"),
+    url(r'^upload_event_pic$', views.upload_event_pic, name="upload_event_pic"),
+    url(r'^get_event_pictures$', views.get_event_pictures, name="get_event_pictures"),
+    url(r'^get_event_restaurant/(?P<event_id>\d+)$', views.get_event_restaurant,name="get_event_restaurant"),
     url(r'^picture/(?P<curr_user>\w+)$', views.get_picture, name='picture'),
     url(r'^profile-map/(?P<post_user>\w+)$', views.profile_map, name="profile-map")
+    url(r'^event_picture/(?P<event_pic_id>\d+)$', views.get_event_picture, name='event_picture'),
 ]
