@@ -259,28 +259,35 @@ function upload_event_pic(event_id) {
 			processData: false,
 			contentType: false,
 			success : function(response) {
+				show_event_pictures(event_id);
 			}
 		});
 	});
 }
 
 function show_event_pictures(event_id) {
+	var latestPicId = 0;
+	$("[id^='pictures_']").each(function() {
+		idx = parseInt(this.id.split('_')[1]);
+		if (idx>latestPicId) latestPicId = idx;
+	});
+
 	$.ajax({
         url: "/OUCanEat/get_event_pictures",
         type: "GET",
 		dataType: "json",
-        data: {"event_id": event_id},
+        data: {"event_id": event_id, "latestPicId": latestPicId},
         success: function(response) {
 			pictures = JSON.parse(response.pictures);
 
-			html = "<table style='display: inline-block; overflow:scroll;'>"+
-						"<tr>";
+			html = ""
 			$(pictures).each(function(){
-				html += "<td><img src='/OUCanEat/event_picture/"+this.pk+"' width='100px'></td>"
+				if (this.pk>latestPicId) {
+					html += "<td id='pictures_"+this.pk+"'><img src='/OUCanEat/event_picture/"+this.pk+"' width='100px'></td>";
+					latestPicId = this.pk;
+				}
 			});
 
-			html += 	"</tr>"+
-					"</table>";
 			$("#pictures").append(html);
         }
     });

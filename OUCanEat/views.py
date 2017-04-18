@@ -280,10 +280,11 @@ def upload_event_pic(request):
 
 @login_required
 def get_event_pictures(request):
-	if request.method=='GET' and 'event_id' in request.GET:
+	if request.method=='GET' and 'event_id' in request.GET and 'latestPicId' in request.GET:
 		event_id = request.GET['event_id']
+		latest = request.GET['latestPicId']
 
-		pictures = EventPicture.objects.filter(event__id=event_id).order_by('create_dt')
+		pictures = EventPicture.objects.filter(id__gt=latest, event__id=event_id).order_by('create_dt')
 
 		response_text = serializers.serialize('json', pictures)
 		response_text = {'pictures': response_text}

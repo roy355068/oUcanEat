@@ -44,7 +44,12 @@
 				{% endfor %}
 			</table>
 
-			<div id="pictures"></div>
+			<div>
+			<table style="display: inline-block; overflow:scroll;">
+				<tr id="pictures">
+				</tr>
+			</table>
+			</div>
 
 			<form id="pic_form" enctype="multipart/form-data"  method="post" onchange="upload_event_pic({{event.id}})">
 				<table>
