@@ -8,7 +8,7 @@ var searched = false;
 
 function initMap() {
 	// var pyrmont = {lat: -33.867, lng: 151.195};
-	var pittsburgh = {lat: 40.440, lng: -79.995};
+	var pittsburgh = {lat: 40.4446, lng: -79.9450};
 
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: pittsburgh,
@@ -21,7 +21,7 @@ function initMap() {
 	service = new google.maps.places.PlacesService(map);
 	service.nearbySearch({
 		location: pittsburgh,
-		radius: 500,
+		radius: 20000,
 		types: ['restaurant', 'cafe']
 	}, callback);
 
@@ -93,12 +93,12 @@ function showMapEvents(event_restaurants, clear) {
 		bounds = new google.maps.LatLngBounds();
 		clearMarkers();
 	}
-	console.log(bounds);
+	// console.log(bounds);
 	searched = true;
 	var google_ids = new Set();
 
 	$(event_restaurants).each(function() {
-		console.log(this.fields.google_id);
+		// console.log(this.fields.google_id);
 		if (this.fields.google_id in google_ids) return;
 		service.getDetails({placeId: this.fields.google_id}, function (result, status) {
 			if (status==google.maps.places.PlacesServiceStatus.OK) {

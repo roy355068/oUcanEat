@@ -16,7 +16,7 @@ function show_restaurant_info() {
 	if ("rating" in clicked_place) {
 		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
 	}
-
+	console.log(clicked_place);
 	var data = {'restaurant_id':clicked_place.place_id, 'csrfmiddlewaretoken': getCSRFToken()}
     $.ajax({
         url: "/OUCanEat/show_restaurant_info",
@@ -169,11 +169,11 @@ function show_default(){
    			var top_events_num_participants = response.top_events_num_participants;
    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,5);
 			show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,5);
-			console.log('in0');
+			
 			//showMapEvents(upcoming_events_restaurant, true);
-			console.log('in1');
+			
 			showMapEvents(top_events_restaurant, false);
-			console.log('in2');
+			
 
 		}
 	});
