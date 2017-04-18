@@ -17,7 +17,7 @@ from django.db.models import Count
 import datetime
 import json
 from OUCanEat.models import *
-from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm
+from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm, EventPicForm
 
 from django.forms.models import model_to_dict
 
@@ -63,8 +63,6 @@ def show_profile(request, post_user):
 	
 	joined_temp = Join.objects.filter(participant__username = post_user)
 	joined      = joined_temp.filter(event__event_dt__gte = datetime.date.today())
-	# for i in joined:
-	# 	print(i.event.restaurant.name)
 
 	my_prefer = profile.preference.all()
 
@@ -158,15 +156,17 @@ def show_history(request, post_user):
 
 
 @login_required
-def show_info(request):
-	if request.method=='POST':
+def show_restaurant_info(request):
+	if request.method=='GET':
 		#need to verify content
-		restaurant_name = request.POST['event_restaurant']
-		lng = request.POST['event_lng']
-		lat = request.POST['event_lat']
-		events = Event.objects.filter(restaurant__name=restaurant_name, restaurant__lng=lng, restaurant__lat=lat, 
+		restaurant_google_id = request.GET.get('restaurant_id')
+		events = Event.objects.filter(restaurant__google_id=restaurant_google_id,
 					event_dt__gte=datetime.date.today()).order_by('event_dt')
-		response_text = serializers.serialize('json', events)
+		events_status= get_events_status(events, request.user)
+
+		response_text1 = serializers.serialize('json', events)
+		response_text = {'events': response_text1, 'events_status' : events_status}
+		response_text = json.dumps(response_text)
 		return HttpResponse(response_text, content_type='application/json')
 
 @login_required
@@ -190,9 +190,6 @@ def create_event(request):
 		join = Join(event=event, participant=request.user)
 		join.save()
 		data = json.dumps({"event_id":event.id})
-
-		#should add himself
-
 	return HttpResponse(data, content_type='application/json')
 
 @login_required
@@ -235,47 +232,23 @@ def add_review(request):
 
 
 @login_required
-def show_event_page(request):
-	if request.method == 'POST':
-		event_id = request.POST['event_id']
-		event = Event.objects.get(pk=event_id)
-		event_host = event.host
-		event_restaurant = event.restaurant 	
-		event_join = Join.objects.filter(event__id = event_id)
+def show_event_page(request, event_id):
+	context = {}
+	try:
+		event = Event.objects.get(id=event_id)
+		event_join = Join.objects.filter(event__id=event_id)
 		event_participant = [j.participant for j in event_join]
-		review = Review.objects.filter(event__id = event_id)
-		# for r in review:
-		# 	print("rating: "+r.rating)
-		print(len(review))
-		sum_review=0
-		avg_review=0
-		if len(review)>0:
-			for r in review:
-				sum_review=sum_review+r.rating
-			avg_review = sum_review / len(review)
-			print("ya")
-		else: 
-			avg_review = -1
-		print(avg_review)
-
-		for p in event_participant:
-			if p == event_host:
-				event_participant.remove(p)
-		event_comment = Comment.objects.filter(event__id = event_id).order_by('-create_dt')
-		comment_user = [c.user for c in event_comment]
-		response_text = serializers.serialize('json',[event,])
-		response_text2 = serializers.serialize('json',[event_host,])
-		response_text3 = serializers.serialize('json',[event_restaurant,])
-		response_text4 = serializers.serialize('json',event_join)
-		response_text5 = serializers.serialize('json',event_participant)
-		response_text6 = serializers.serialize('json',event_comment)
-		response_text7 = serializers.serialize('json',comment_user)
-		# response_text8 = serializers.serialize('json',[avg_review,])
-		data = {"event":response_text,"event_host":response_text2,"event_restaurant":response_text3,
-		"event_join":response_text4, "event_participant": response_text5, "event_comment": response_text6,
-		 "comment_user": response_text7, "rating":avg_review}
-		data = json.dumps(data)
-		return HttpResponse(data, content_type='application/json')
+		comments = Comment.objects.filter(event__id=event_id)
+		pic_users = Profile.objects.exclude(picture__isnull=True).exclude(picture__exact='')
+		pic_users = [u.user for u in pic_users]
+		context['event'] = event
+		context['event_participant'] = event_participant
+		context['comments'] = comments
+		context['pic_users'] = pic_users
+		context['form'] = EventPicForm()
+	except Exception as e:
+		pass
+	return render(request, 'OUCanEat/event_page.html', context)
 
 @login_required
 def join_event(request):
@@ -315,6 +288,17 @@ def search_events(request):
 		return HttpResponse(response_text, content_type='application/json')
 	return HttpResponse()
 
+@login_required
+def profile_map(request, post_user):
+	if request.method == 'GET':
+		joined = Join.objects.filter(participant__username = post_user)
+		restaurants = [e.event.restaurant for e in joined]
+		restaurants = serializers.serialize('json', restaurants)
+		response_text = json.dumps({'restaurants': restaurants})
+		return HttpResponse(response_text, content_type="application/json")
+	return HttpResponse()
+
+@login_required
 def leave_event(request):
 	if request.method != 'POST' or "event_id" not in request.POST:
 		raise Http404
@@ -322,6 +306,86 @@ def leave_event(request):
 	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
 	unjoin.delete()
 	return HttpResponse()
+
+@login_required
+def add_comment(request):
+	if request.method=='POST' and 'event_id' in request.POST and 'new_comment' in request.POST and request.POST['new_comment']:
+		try:
+			event = Event.objects.get(id=request.POST['event_id'])
+			new_comment = Comment(user=request.user, event=event, content=request.POST['new_comment'])
+			new_comment.save()
+		except Exception as error:
+			pass
+	return HttpResponse()
+
+@login_required
+def get_updated_comments(request):
+	if request.method=='GET' and 'event_id' in request.GET and 'latest' in request.GET:
+		latest = request.GET['latest']
+		event_id = request.GET['event_id']
+
+		comments = Comment.objects.filter(id__gt=latest, event__id=event_id).order_by('create_dt')
+		users = [c.user for c in comments]
+		profiles = [Profile.objects.get(user=u) for u in users]
+
+		response_text1 = serializers.serialize('json', comments)
+		response_text2 = serializers.serialize('json', users)
+		response_text3 = serializers.serialize('json', profiles)
+		response_text = {'comments': response_text1, 'users': response_text2, 'profiles': response_text3}
+		response_text = json.dumps(response_text)
+		return HttpResponse(response_text, content_type='application/json')
+	return HttpResponse()
+
+@login_required
+def upload_event_pic(request):
+	if request.method=='POST':
+		try:
+			event = Event.objects.get(id=request.POST['event_id'])
+			event_pic_form = EventPicForm(request.POST, request.FILES)
+			if event_pic_form.is_valid():
+				event_pic = event_pic_form.save(commit=False)
+				event_pic.uploader = request.user
+				event_pic.event = event
+				event_pic.content_type = event_pic_form.cleaned_data['picture'].content_type
+				event_pic.save()
+		except Exception as error:
+			pass
+	return HttpResponse()
+
+@login_required
+def get_event_pictures(request):
+	if request.method=='GET' and 'event_id' in request.GET and 'latestPicId' in request.GET:
+		event_id = request.GET['event_id']
+		latest = request.GET['latestPicId']
+
+		pictures = EventPicture.objects.filter(id__gt=latest, event__id=event_id).order_by('create_dt')
+
+		response_text = serializers.serialize('json', pictures)
+		response_text = {'pictures': response_text}
+		response_text = json.dumps(response_text)
+		return HttpResponse(response_text, content_type='application/json')
+	return HttpResponse()
+
+@login_required
+def get_event_picture(request, event_pic_id):
+	event_pic = get_object_or_404(EventPicture, id=event_pic_id)
+	if not event_pic.picture:
+		raise Http404
+	return HttpResponse(event_pic.picture, content_type=event_pic.content_type)
+
+@login_required
+def get_event_restaurant(request, event_id):
+	if request.method=='GET':
+		try:
+			event = Event.objects.get(id=event_id)
+			response_text = serializers.serialize('json', [event.restaurant])
+			response_text = {'restaurant': response_text}
+			response_text = json.dumps(response_text)
+			return HttpResponse(response_text, content_type='application/json')
+		except Exception as error:
+			pass
+	return HttpResponse()
+
 
 @transaction.atomic
 def register(request):
