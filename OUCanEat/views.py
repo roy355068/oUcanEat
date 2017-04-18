@@ -225,6 +225,16 @@ def search_events(request):
 	return HttpResponse()
 
 @login_required
+def profile_map(request, post_user):
+	if request.method == 'GET':
+		joined = Join.objects.filter(participant__username = post_user)
+		restaurants = [e.event.restaurant for e in joined]
+		restaurants = serializers.serialize('json', restaurants)
+		response_text = json.dumps({'restaurants': restaurants})
+		return HttpResponse(response_text, content_type="application/json")
+	return HttpResponse()
+
+@login_required
 def leave_event(request):
 	if request.method != 'POST' or "event_id" not in request.POST:
 		raise Http404

@@ -16,7 +16,7 @@ function show_restaurant_info() {
 	if ("rating" in clicked_place) {
 		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
 	}
-
+	console.log(clicked_place);
 	var data = {'restaurant_id':clicked_place.place_id, 'csrfmiddlewaretoken': getCSRFToken()}
     $.ajax({
         url: "/OUCanEat/show_restaurant_info",

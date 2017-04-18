@@ -7,11 +7,11 @@ var markers = [];
 var marker_ids = new Set();
 
 function initMap() {
-	var pyrmont = {lat: -33.867, lng: 151.195};
+	// var pyrmont = {lat: -33.867, lng: 151.195};
+	var pittsburgh = {lat: 40.4446, lng: -79.9450};
 
-	//map
 	map = new google.maps.Map(document.getElementById('map'), {
-		center: pyrmont,
+		center: pittsburgh,
 		zoom: 15
 	});
 
@@ -21,8 +21,8 @@ function initMap() {
 	service = new google.maps.places.PlacesService(map);
 	/*
 	service.nearbySearch({
-		location: pyrmont,
-		radius: 500,
+		location: pittsburgh,
+		radius: 20000,
 		types: ['restaurant', 'cafe']
 	}, callback);
 	*/
@@ -72,6 +72,20 @@ function showMapResult() {
 	map.fitBounds(bounds);
 }
 
+function profileMap() {
+	var userName = $("#userName").html();
+	$.ajax({
+		url: "/OUCanEat/profile-map/" + userName,
+		type: "GET",
+		data: {},
+		dataType: "json",
+		success: function(response) {
+			restaurants = JSON.parse(response.restaurants);
+			showMapEvents(restaurants, true, false);
+		}
+	})
+}
+
 function showMapEvents(event_restaurants, clear, fromSearch) {
 	var color = fromSearch ? 'green': 'purple';
 	var bounds = map.getBounds();
@@ -79,6 +93,7 @@ function showMapEvents(event_restaurants, clear, fromSearch) {
 		bounds = new google.maps.LatLngBounds();
 		clearMarkers();
 	}
+
 	var google_ids = new Set();
 
 	$(event_restaurants).each(function() {
@@ -93,6 +108,7 @@ function showMapEvents(event_restaurants, clear, fromSearch) {
 				}
 				map.fitBounds(bounds);
 				google_ids.add(result.place_id);
+
 			}
 		});
 	});

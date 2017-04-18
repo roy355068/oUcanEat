@@ -40,5 +40,6 @@ urlpatterns = [
     url(r'^get_event_pictures$', views.get_event_pictures, name="get_event_pictures"),
     url(r'^get_event_restaurant/(?P<event_id>\d+)$', views.get_event_restaurant,name="get_event_restaurant"),
     url(r'^picture/(?P<curr_user>\w+)$', views.get_picture, name='picture'),
+    url(r'^profile-map/(?P<post_user>\w+)$', views.profile_map, name="profile-map")
     url(r'^event_picture/(?P<event_pic_id>\d+)$', views.get_event_picture, name='event_picture'),
 ]

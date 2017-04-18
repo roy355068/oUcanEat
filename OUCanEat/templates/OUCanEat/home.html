@@ -15,16 +15,21 @@
 	{% endblock %}
 {% endblock %}
 
+{% block frontbody %}
+<body>
+{% endblock%}
+  
 {% block user-info %} 
-<nav class="navbar navbar-default" style="background-color: #48D1CC; margin-bottom:  0pt;">
+
+<nav class="navbar navbar-default skyblue marginBotZero">
   	<div class="container-fluid">
     	<div class="navbar-header">
-			<a class="navbar-brand" href="{% url 'home' %}" style="color: #696969; font-size:  24pt;">oUcanEat</a>
+			<a class="navbar-brand navbarColor navbarTitle" href="{% url 'home' %}">oUcanEat</a>
     	</div>
     <div class="collapse navbar-collapse">
       	<ul class="nav navbar-nav navbar-right" >
         	<li class="active" >
-        		<a href="#" style="background-color:#48D1CC; color: #696969; font-size: 16pt; ">
+        		<a href="#" class="navbarColor skyblue" style="background-color:#48D1CC;">
         		{{user}}</a>
         	</li>
         	<li><a href="{% url 'show-profile' user.username %}">Profile</a></li>
@@ -38,21 +43,22 @@
 
 
 {% block search %} 
-<div class="container-fluid" style="background-color:#F5F5F5;">
-	<form class="form-inline"  style= "text-align: center; ">
+
+<div class="container-fluid containerBG">
+	<form class="form-inline text-center">
 	<br>
 	<br>
-		<div class="form-group" style="padding-right: 30pt;" >
+		<div class="form-group formPadding" >
 			<input class="form-control input-lg" id="keyword" type="text" placeholder= "Key Word">
 		</div>
 
 	    
-		<div class="form-group" style="padding-right: 30pt;">
+		<div class="form-group formPadding">
 		    <input class="form-control input-lg" id="search_date" type="text" placeholder= "Time">
 		</div>
 		     
 		<div class="form-group">
-		    <button type="button" id="search_btn" class="btn btn-info btn-lg" style="background-color: #48D1CC; border-color: transparent;">
+		    <button type="button" id="search_btn" class="btn btn-info btn-lg skyblue transparentBorder">
 		      	<span class="glyphicon glyphicon-search"></span> Find Events!
 		    </button>
 		</div>	    
@@ -64,10 +70,10 @@
 
 
 {% block map %} 
-<div class="row" style = "margin-bottom: 0pt; ">
+<div class="row marginBotZero">
     <div class="col-md-4"  > 
-		<div class="panel" style="background-color: transparent;">
-			<div class="panel-body" style="overflow-y: scroll; height: 590px" >
+		<div class="panel panelTrans">
+			<div class="panel-body panelBody" >
 			<div id="info"></div>
 			<div id="upcoming_events"></div>
 			<div id="top_events"></div>
@@ -77,8 +83,12 @@
 
     <div class="col-md-8" >
      	<div class="panel">
-			<div class="panel-body" style="height: 590px;" id="map" ></div>
+			<div class="panel-body " id="map" ></div>
 		</div>
     </div>
 </div>
 {% endblock %}
+
+{% block endbody%}
+</body>
+{% endblock%}

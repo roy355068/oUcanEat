@@ -5,6 +5,48 @@ html, body {
 }
 
 #map {
-	height: 80%;
+	/*height: 80%;*/
+	height: 590px;
+}
+.transparentBorder {
+	border-color: transparent;
+}
+.containerBG {
+	background-color:#F5F5F5;
 }
 
+.panelBody {
+	overflow-y: scroll; 
+	height: 590px
+}
+
+.titleFont {
+	font-size: 18pt;
+}
+
+.panelTrans {
+	background-color: transparent;
+}
+
+.tableFullWid {
+	width: 100%;
+}
+
+.skyblue {
+	background-color : #48D1CC;
+}
+
+.navbarColor {
+	color: #696969; 
+}
+
+.formPadding {
+	padding-right: 30pt;
+}
+.marginBotZero {
+	margin-bottom: 0pt;
+}
+
+.navbarTitle {
+	font-size:  24pt;
+}

@@ -1,36 +1,37 @@
 {% extends "OUCanEat/home.html" %}
 
-
+{% block frontbody%}
+<body onload="profileMap()">
+{% endblock%}
 {% block map %}
 
-
-<div class="row" style = "margin-bottom: 0pt; ">
+<div class="row marginBotZero" >
     <div class="col-md-4"  > 
-		<div class="panel" style="background-color: transparent;">
-			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
+		<div class="panel panelTrans">
+			<div id="info" class="panel-body panelBody">
 			<h2 id="profileInfo"> Your info: </h2>
-				<table style="width:100%">
+				<table class="tableFullWid">
 					{% if profile.picture %}
 					<img src="{% url 'picture' curr_user %}" width="100px">
                     
                 	{% endif%}
 					<tr>
-						<td style="font-size: 18pt">Username: </td>
-						<td style="font-size: 18pt">{{profile.user}}</td>
+						<td class="titleFont">Username: </td>
+						<td id="userName" class="titleFont">{{profile.user}}</td>
 						
 					</tr>
 					<tr>
-						<td style="font-size: 18pt">Age: </td>
-						<td style="font-size: 18pt">{{profile.age}}</td>
+						<td class="titleFont">Age: </td>
+						<td class="titleFont">{{profile.age}}</td>
 					</tr>
 					<tr>
-						<td style="font-size: 18pt">Bio:</td>
-						<td style="font-size: 18pt">{{profile.bio}}</td>
+						<td class="titleFont">Bio:</td>
+						<td class="titleFont">{{profile.bio}}</td>
 					</tr>
 
 					<tr>
-						<td style="font-size: 18pt">Preference:</td>
-						<td style="font-size: 18pt">
+						<td class="titleFont">Preference:</td>
+						<td class="titleFont">
 							<table>
 							
 								{% for pre in prefer %}
@@ -46,44 +47,8 @@
 					</tr>
 				</table>
 			{% if curr_user == profile.user.username %}
-			<a href="{% url 'edit-profile' %}" class="btn btn-default btn-lg" style="font-size: 18pt">Edit</a>
+			<a href="{% url 'edit-profile' %}" class="btn btn-default btn-lg titleFont">Edit</a>
 			{% endif %}
-			<h2 id="topEvent"> Your Events: </h2>
-			{% for event in your_events %}
-			  	<table style="width:100%" id="yourEvents">
-			  	<tr>
-					<td style="font-size: 18pt">{{event.restaurant.name}}</td>
-					<td style="font-size: 18pt">{{event.num_participants}}</td>
-					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Detail</td>
-				  	
-				 </tr>
-				</table>
-			{% endfor %}
-
-			<h2 id="oldEvent"> Your Past Events: </h2>
-			{% for event in old_events %}
-			  	<table style="width:100%" id="oldEvents">
-			  	<tr>
-					<td style="font-size: 18pt">{{event.restaurant.name}}</td>
-					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
-					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Detail</td>
-				  	
-				 </tr>
-				</table>
-			{% endfor %}
-
-			<h2 id="oldJoinedEvent"> Your Past Joined Events: </h2>
-			{% for j in joined %}
-			  	<table style="width:100%" id="oldEvents">
-			  	<tr>
-					<td style="font-size: 18pt">{{j.event.restaurant.name}}</td>
-					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
-					<td style="font-size: 18pt"> <a href="#" class="btn btn-default btn-lg">Detail</td>
-				  	
-				 </tr>
-				</table>
-			{% endfor %}
-
 
 			</div>
 		</div>
@@ -91,9 +56,11 @@
 
     <div class="col-md-8" >
      	<div class="panel">
-			<div class="panel-body" style="height: 590px;" id="map" ></div>
+			<div class="panel-body" id="map" ></div>
 		</div>
     </div>
 </div>
 {% endblock%}
-
+{% block endbody %}
+</body>
+{% endblock%}
