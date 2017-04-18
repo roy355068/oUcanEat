@@ -26,6 +26,8 @@ urlpatterns = [
     url(r'^confirm-registration/(?P<username>[a-zA-Z0-9_@\+\-]+)/(?P<token>[a-z0-9\-]+)$',
         views.confirm_registration, name='confirm'),
     url(r'^create_event$', views.create_event),
+    url(r'^add_comment$', views.add_comment),
+    url(r'^add_review$', views.add_review),
     url(r'^join_event$', views.join_event),
     url(r'^leave_event$', views.leave_event),
     url(r'^show_info$', views.show_info),
@@ -33,7 +35,7 @@ urlpatterns = [
     url(r'^show_default$', views.show_default),
     url(r'^show_event_page$', views.show_event_page,name="show_event_page"),
     url(r'^show-profile/(?P<post_user>\w+)$', views.show_profile, name="show-profile"),
-
+    url(r'^show-history/(?P<post_user>\w+)$', views.show_history, name="show-history"),
     url(r'^edit-profile$', views.edit_profile, name="edit-profile"),
     url(r'^picture/(?P<curr_user>\w+)$', views.get_picture, name='picture'),
 ]

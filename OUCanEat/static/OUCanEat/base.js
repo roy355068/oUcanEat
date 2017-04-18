@@ -70,10 +70,11 @@ function leave_event(event_id, page_type) {
 }
 
 
-function show_event_page(event_id){
+function show_event_page(event_id, review_flag){
 	$("#info").html("");
 	$("#upcoming_events").html("");
 	$("#top_events").html("");
+	console.log(review_flag)
 	var html =""	
 	var data = {'event_id':event_id, 'csrfmiddlewaretoken': getCSRFToken()}
 	$.ajax({
@@ -87,24 +88,57 @@ function show_event_page(event_id){
 			var restaurants = JSON.parse(response.event_restaurant);
 			var joins = JSON.parse(response.event_join);
 			var participants = JSON.parse(response.event_participant);
+			var comments = JSON.parse(response.event_comment);
+			var comments_user = JSON.parse(response.comment_user);
+			var rating = JSON.parse(response.rating)
+			if (rating = -1){
+				rating = "No rating"
+			}
+			console.log('there')
+			console.log(rating)
 			restaurant_name = restaurants[0].fields.name
 			event_dt = events[0].fields.event_dt
 			event_desc = events[0].fields.desc
 			event_host = hosts[0].fields.first_name
-			var event_participants = []
-			
-			for(i = 0; i< participants.length; i++){
-				if (participants[i].fields.first_name != event_host){
-					event_participants.push(participants[i].fields.first_name)	
-				}			
+
+
+			if (participants.length !=0){	
+				html+= "<h3>"+restaurant_name+"</h3><table style='width:100%''><tr><td>Time: </td><td>"+event_dt+"</td></tr><tr><td>"+
+				"Description: </td><td>"+event_desc+"</td></tr><tr><td>Host: </td><td>"+event_host+"</td></tr><tr><td>Participants: </td><td>"+participants[0].fields.first_name+"</td></tr>"
+				for(i = 1; i<participants.length; i++){			
+					html+="<tr><td></td><td>"+participants[i].fields.first_name+"</td></tr>"
+				}
+				// html+="</table></div>"
+				html+="<tr><td>Avg. Rating: </td><td>"+rating+"</td></tr></table></div>"
+
+			}else{
+				html+= "<h3>"+restaurant_name+"</h3><table style='width:100%''><tr><td>Time: </td><td>"+event_dt+"</td></tr><tr><td>"+
+				"Description: </td><td>"+event_desc+"</td></tr><tr><td>Host: </td><td>"+event_host+
+				"</td></tr><tr><td>Participants: </td><td></td></tr><tr><td>Avg. Rating: </td><td> Not Available</td></tr></table>"
 			}
-			html+= "<h3>"+restaurant_name+"</h3><table style='width:100%''><tr><td>Time: </td><td>"+event_dt+"</tr></td><tr><td>"+
-			"<tr><td>Description: </td><td>"+event_desc+"</tr></td><tr><td>Host: </td><td>"+event_host+"</tr></td><tr><td>Participants: </td><td>"
-			for(i = 0; i<event_participants.length; i++){			
-				html+=event_participants[i]+"</tr></td><td><tr>"
-			} 
-			html+= "</tr></td>"
-			$("#info").prepend(html);			
+
+			html+= "<div id= 'add_comment'></div><div id= 'add_review'></div><div id= 'sub_info'></div>"
+
+
+			$("#info").prepend(html);
+			// $("#sub_info").html("");
+			var html2=""
+			if (comments.length !=0){	
+				console.log('here')
+				html2+= "<br><dl><dt>"+comments[0].fields.content+"</dt><dd>   by "
+				+comments_user[0].fields.first_name+" at "+comments[0].fields.create_dt+"</dd></dl>"
+				for(i = 1; i<comments.length; i++){			
+					html2+="<dl><dt>"+comments[i].fields.content+"</dt><dd>   by "
+				+comments_user[i].fields.first_name+" at "+comments[i].fields.create_dt+"</dd></dl>"
+				}
+			}
+			$("#sub_info").prepend(html2);
+			add_comment_form(event_id,review_flag);
+			if (review_flag==1 && participants.length !=0){
+				add_review_form(event_id);
+			}
+
+			 // $("#info").prepend(html);			
 		}
 
 	});
@@ -144,7 +178,7 @@ function create_event() {
         success: function(response) {
         	event_id = JSON.parse(response.event_id)
 
-			show_event_page(event_id);
+			show_event_page(event_id,0);
         }
     });
 }
@@ -178,7 +212,7 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
     		var datetime = upcoming_events[i].fields.event_dt
     		var event_id = upcoming_events[i].pk
     		var status = upcoming_events_status[i]
-    		html+= "<tr><td style='font-size: 16pt' onclick='show_event_page("+event_id+")'>"+restaurant_name + "</td><td>"+datetime+"</td><td style='text-align: right;'>"
+    		html+= "<tr><td style='font-size: 16pt' onclick='show_event_page("+event_id+",0)'>"+restaurant_name + "</td><td>"+datetime+"</td><td style='text-align: right;'>"
     		if (status=='host'){
     			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>"
     		}else if (status=='joined'){
@@ -203,7 +237,7 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
     		var event_id = top_events[i].pk
     		var num_participants = top_events_num_participants[i]
     		var status = top_events_status[i]
-    		html+= "<tr><td style='font-size: 16pt' onclick='show_event_page("+event_id+")'>"+restaurant_name + "</td><td>"+num_participants+"</td><td style='text-align: right;'>"
+    		html+= "<tr><td style='font-size: 16pt' onclick='show_event_page("+event_id+",0)'>"+restaurant_name + "</td><td>"+num_participants+"</td><td style='text-align: right;'>"
     		if (status=='host'){
     			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>"
     		}else if (status=='joined'){
@@ -228,6 +262,86 @@ function getCSRFToken() {
 	}
 	return "unknown";
 }
+
+function getToday(){
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1;
+	var yyyy = today.getFullYear();
+	 if(dd<10){
+	        dd='0'+dd
+	    } 
+	    if(mm<10){
+	        mm='0'+mm
+	    } 
+	today = yyyy+'-'+mm+'-'+dd;
+	document.getElementById("search_date").setAttribute("min", today);
+
+}
+
+
+function add_comment_form(event_id,review_flag) {
+	$("#add_comment").html("");
+	var html = "<div>"+
+					"<h4>Comment the event!</h4>"+
+      				"<input type='text' id='comment'>"+
+					"<input type='submit' value='Submit' onclick='add_comment("+event_id+","+review_flag+")'>"+
+				"</div>";   
+
+	$("#add_comment").prepend(html);
+}
+
+
+function add_comment(event_id,review_flag) {
+	var comment = $("#comment").val();
+	
+	// var event_form_time = $("#event_time").val();
+	// var event_form_desc = $("#event_desc").val();
+	var data = {'comment':comment, 'event_id':event_id,
+		'csrfmiddlewaretoken': getCSRFToken()}
+    $.ajax({
+        url: "/OUCanEat/add_comment",
+        type: "POST",
+        data: data,
+        success: function(response) {
+        	event_id = JSON.parse(response.event_id)
+
+			show_event_page(event_id,review_flag);
+        }
+    });
+}
+
+function add_review_form(event_id) {
+	$("#add_review").html("");
+	var html = "<div>"+
+					"<h4>Review the event!</h4>"+
+      				"<input type='text' id='review'>"+
+					"<input type='submit' value='Submit' onclick='add_review("+event_id+")'>"+
+				"</div>";   
+
+	$("#add_review").prepend(html);
+}
+
+
+function add_review(event_id) {
+	var review = $("#review").val();
+	
+	// var event_form_time = $("#event_time").val();
+	// var event_form_desc = $("#event_desc").val();
+	var data = {'review':review, 'event_id':event_id,
+		'csrfmiddlewaretoken': getCSRFToken()}
+    $.ajax({
+        url: "/OUCanEat/add_review",
+        type: "POST",
+        data: data,
+        success: function(response) {
+        	event_id = JSON.parse(response.event_id)
+			show_event_page(event_id,1);
+        }
+    });
+}
+
+
 
 //init
 $(function () {

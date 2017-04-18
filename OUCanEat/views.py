@@ -131,6 +131,32 @@ def edit_profile(request):
 	context['user'] = request.user
 	return redirect(reverse('home'))
 
+
+# @login_required
+def show_history(request, post_user):
+	context = {}
+	print (post_user)
+	joined= Join.objects.filter(participant__username = post_user)
+	upcoming_joined= joined.filter(event__event_dt__gte = datetime.date.today())
+	upcoming_events = [u.event for u in upcoming_joined]
+
+	past_joined= joined.filter(event__event_dt__lte = datetime.date.today())
+	past_events = [p.event for p in past_joined]
+	# events = Event.objects.filter(host__username = post_user)
+	# join_events = Join.objects.filter(participant__username = post_user,event.event_dt__gte = datetime.date.today())
+	# join_events.filter(event.event_dt__gte = datetime.date.today()
+	# past_events = events.filter(event_dt__lte = datetime.date.today())
+	for u in upcoming_joined:
+		print (u.event.event_dt)
+
+	for i in upcoming_events:
+		print (i.restaurant.name)
+	context['upcoming_event'] = upcoming_events
+	context['past_event'] = past_events
+
+	return render(request, 'OUCanEat/history.html', context)
+
+
 @login_required
 def show_info(request):
 	if request.method=='POST':
@@ -169,6 +195,44 @@ def create_event(request):
 
 	return HttpResponse(data, content_type='application/json')
 
+@login_required
+def add_comment(request):
+	response_text = ''
+	if request.method=='POST':
+		#need to verify content
+		
+		comment = request.POST['comment']
+		event_id = request.POST['event_id']
+		event = Event.objects.get(pk=event_id)
+
+		review = Comment(user = request.user, event = event, content = comment)
+		review.save()
+
+		data = json.dumps({"event_id":event_id})
+
+		#should add himself
+
+	return HttpResponse(data, content_type='application/json')
+
+@login_required
+def add_review(request):
+	response_text = ''
+	if request.method=='POST':
+		#need to verify content
+		
+		review = request.POST['review']
+		event_id = request.POST['event_id']
+		event = Event.objects.get(pk=event_id)
+
+		review = Review(user = request.user, event = event, rating = review)
+		review.save()
+
+		data = json.dumps({"event_id":event_id})
+
+		#should add himself
+
+	return HttpResponse(data, content_type='application/json')
+
 
 @login_required
 def show_event_page(request):
@@ -178,13 +242,38 @@ def show_event_page(request):
 		event_host = event.host
 		event_restaurant = event.restaurant 	
 		event_join = Join.objects.filter(event__id = event_id)
-		event_participant = [j.participant for j in event_join]	
+		event_participant = [j.participant for j in event_join]
+		review = Review.objects.filter(event__id = event_id)
+		# for r in review:
+		# 	print("rating: "+r.rating)
+		print(len(review))
+		sum_review=0
+		avg_review=0
+		if len(review)>0:
+			for r in review:
+				sum_review=sum_review+r.rating
+			avg_review = sum_review / len(review)
+			print("ya")
+		else: 
+			avg_review = -1
+		print(avg_review)
+
+		for p in event_participant:
+			if p == event_host:
+				event_participant.remove(p)
+		event_comment = Comment.objects.filter(event__id = event_id).order_by('-create_dt')
+		comment_user = [c.user for c in event_comment]
 		response_text = serializers.serialize('json',[event,])
 		response_text2 = serializers.serialize('json',[event_host,])
 		response_text3 = serializers.serialize('json',[event_restaurant,])
 		response_text4 = serializers.serialize('json',event_join)
 		response_text5 = serializers.serialize('json',event_participant)
-		data = {"event":response_text,"event_host":response_text2,"event_restaurant":response_text3,"event_join":response_text4, "event_participant": response_text5}
+		response_text6 = serializers.serialize('json',event_comment)
+		response_text7 = serializers.serialize('json',comment_user)
+		# response_text8 = serializers.serialize('json',[avg_review,])
+		data = {"event":response_text,"event_host":response_text2,"event_restaurant":response_text3,
+		"event_join":response_text4, "event_participant": response_text5, "event_comment": response_text6,
+		 "comment_user": response_text7, "rating":avg_review}
 		data = json.dumps(data)
 		return HttpResponse(data, content_type='application/json')
 

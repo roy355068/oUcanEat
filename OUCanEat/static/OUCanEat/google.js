@@ -79,6 +79,7 @@ function showMapResult() {
 }
 
 function showMapEvent(place_id) {
+	console.log(place_id);
 	var service = new google.maps.places.PlacesService(map);
 	service.getDetails({placeId: place_id}, function (result, status) {
 		createMarker(result, 'purple');
@@ -86,6 +87,7 @@ function showMapEvent(place_id) {
 }
 
 function createMarker(place, color) {
+	console.log(place);
 	var placeLoc = place.geometry.location;
 	var marker = new google.maps.Marker({
 		map: map,

@@ -38,3 +38,9 @@ class Comment(models.Model):
 	event = models.ForeignKey(Event, default=None)
 	content = models.CharField(max_length=500)
 	create_dt = models.DateTimeField(auto_now=True)
+
+class Review(models.Model):
+	user = models.ForeignKey(User, default=None)
+	event = models.ForeignKey(Event, default=None)
+	rating = models.FloatField(default=None)
+	create_dt = models.DateTimeField(auto_now=True)
