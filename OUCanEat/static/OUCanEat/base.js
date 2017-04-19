@@ -189,12 +189,18 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
 	$("#top_events").prepend(html);
 }
 
+function back_home() {
+	window.location= "/OUCanEat/";
+}
+
+
 function show_comments(event_id) {
 	var latestCommentId = 0;
 	$("[id^='comments_']").each(function() {
 		idx = parseInt(this.id.split('_')[1]);
 		if (idx>latestCommentId) latestCommentId = idx;
 	});
+	// var html = "<button onclick='back_home()'>Back</button>"
 	$.ajax({
 		url: "/OUCanEat/get_updated_comments",
 		type: "GET",
@@ -345,5 +351,3 @@ $(function () {
 		});
 	});
 });
-
-var latestCommentId = 0;
