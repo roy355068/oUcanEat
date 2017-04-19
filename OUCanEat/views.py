@@ -228,7 +228,9 @@ def search_events(request):
 def profile_map(request, post_user):
 	if request.method == 'GET':
 		joined = Join.objects.filter(participant__username = post_user)
+		# print(joined)
 		restaurants = [e.event.restaurant for e in joined]
+		print(restaurants)
 		restaurants = serializers.serialize('json', restaurants)
 		response_text = json.dumps({'restaurants': restaurants})
 		return HttpResponse(response_text, content_type="application/json")
