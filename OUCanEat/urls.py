@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^confirm-registration/(?P<username>[a-zA-Z0-9_@\+\-]+)/(?P<token>[a-z0-9\-]+)$',
         views.confirm_registration, name='confirm'),
     url(r'^create_event$', views.create_event),
-    url(r'^add_comment$', views.add_comment),
     url(r'^add_review$', views.add_review),
     url(r'^join_event$', views.join_event),
     url(r'^leave_event$', views.leave_event),

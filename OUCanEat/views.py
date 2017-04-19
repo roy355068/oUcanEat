@@ -193,25 +193,6 @@ def create_event(request):
 	return HttpResponse(data, content_type='application/json')
 
 @login_required
-def add_comment(request):
-	response_text = ''
-	if request.method=='POST':
-		#need to verify content
-		
-		comment = request.POST['comment']
-		event_id = request.POST['event_id']
-		event = Event.objects.get(pk=event_id)
-
-		review = Comment(user = request.user, event = event, content = comment)
-		review.save()
-
-		data = json.dumps({"event_id":event_id})
-
-		#should add himself
-
-	return HttpResponse(data, content_type='application/json')
-
-@login_required
 def add_review(request):
 	response_text = ''
 	if request.method=='POST':
