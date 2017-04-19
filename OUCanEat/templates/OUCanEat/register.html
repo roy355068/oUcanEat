@@ -1,13 +1,13 @@
-{% extends "OUCanEat/base_lin.html"%}
+{% extends "OUCanEat/base.html"%}
 
-{% block title %}
+{% block user-info %}
 
     <div class="bg-primary h2">
         oUcanEat Form
     </div>
 {% endblock %}
 
-{% block content %}
+{% block search %}
     {% for error in errors %}
         <p class="text-danger text-center h3 ">
             {{ error }}
