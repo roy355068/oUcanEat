@@ -188,12 +188,18 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
 	$("#top_events").prepend(html);
 }
 
+function back_home() {
+	window.location= "/OUCanEat/";
+}
+
+
 function show_comments(event_id) {
 	var latestCommentId = 0;
 	$("[id^='comments_']").each(function() {
 		idx = parseInt(this.id.split('_')[1]);
 		if (idx>latestCommentId) latestCommentId = idx;
 	});
+	// var html = "<button onclick='back_home()'>Back</button>"
 	$.ajax({
 		url: "/OUCanEat/get_updated_comments",
 		type: "GET",
@@ -249,7 +255,7 @@ function add_comment(event_id) {
 
 function upload_event_pic(event_id) {
 	var file = $("#id_picture")[0].files[0];
-	$("#pic_btn").click(function(){
+	$("#pic_btn").off().click(function(){
 		var formData = new FormData($('#pic_form')[0]);
 		$.ajax({
 			url: "/OUCanEat/upload_event_pic",
@@ -261,6 +267,7 @@ function upload_event_pic(event_id) {
 				show_event_pictures(event_id);
 			}
 		});
+		$("#pic_form")[0].reset();
 	});
 }
 
@@ -303,6 +310,55 @@ function getCSRFToken() {
 	return "unknown";
 }
 
+function getToday(){
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1;
+	var yyyy = today.getFullYear();
+	 if(dd<10){
+	        dd='0'+dd
+	    } 
+	    if(mm<10){
+	        mm='0'+mm
+	    } 
+	today = yyyy+'-'+mm+'-'+dd;
+	document.getElementById("search_date").setAttribute("min", today);
+
+}
+
+
+function add_review_form(event_id) {
+	$("#add_review").html("");
+	var html = "<div>"+
+					"<h4>Review the event!</h4>"+
+      				"<input type='text' id='review'>"+
+					"<input type='submit' value='Submit' onclick='add_review("+event_id+")'>"+
+				"</div>";   
+
+	$("#add_review").prepend(html);
+}
+
+
+function add_review(event_id) {
+	var review = $("#review").val();
+	
+	// var event_form_time = $("#event_time").val();
+	// var event_form_desc = $("#event_desc").val();
+	var data = {'review':review, 'event_id':event_id,
+		'csrfmiddlewaretoken': getCSRFToken()}
+    $.ajax({
+        url: "/OUCanEat/add_review",
+        type: "POST",
+        data: data,
+        success: function(response) {
+        	event_id = JSON.parse(response.event_id)
+			show_event_page(event_id,1);
+        }
+    });
+}
+
+
+
 //init
 $(function () {
 	$("#search_btn").click(function(){
@@ -344,5 +400,3 @@ $(function () {
 		});
 	});
 });
-
-var latestCommentId = 0;

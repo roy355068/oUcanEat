@@ -1,8 +1,14 @@
-{% extends "OUCanEat/home.html" %}
+{% extends "OUCanEat/map_base.html" %}
 
-{% block frontbody%}
-<body onload="profileMap()">
-{% endblock%}
+{% block init_js %}
+	<script type="text/javascript">
+	$(window).on('load', function() {
+		profileMap();
+	});
+	</script>
+	{% endblock %}
+
+
 {% block map %}
 
 <div class="row marginBotZero" >
@@ -61,6 +67,4 @@
     </div>
 </div>
 {% endblock%}
-{% block endbody %}
-</body>
-{% endblock%}
+

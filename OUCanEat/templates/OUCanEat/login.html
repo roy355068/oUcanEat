@@ -1,13 +1,13 @@
 
-{% extends "OUCanEat/base_lin.html"%}
+{% extends "OUCanEat/base.html"%}
 
-{% block title %}
+{% block user-info %}
     <div class="bg-primary h2">
         oUcanEat Login
     </div>
 {% endblock %}
 
-{% block content %}
+{% block search %}
     {% if form.errors %}
     <p class="text-danger h3 text-center">
         Incorrect user name and password.
@@ -31,14 +31,12 @@
         <input type="hidden" name="next" value="{{ next }}" />
         {% csrf_token %}
     </form>
-{% endblock %}
 
-{% block register %}
     <div class="text-center">
         <a href="{% url 'register' %}">
             <button type="button" class="btn btn-primary btn-md">Register</button>
         </a>
     </div>
-{% endblock %}
 </div>
+{% endblock %}
 

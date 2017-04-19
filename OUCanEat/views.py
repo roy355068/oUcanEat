@@ -129,6 +129,32 @@ def edit_profile(request):
 	context['user'] = request.user
 	return redirect(reverse('home'))
 
+
+# @login_required
+def show_history(request, post_user):
+	context = {}
+	print (post_user)
+	joined= Join.objects.filter(participant__username = post_user)
+	upcoming_joined= joined.filter(event__event_dt__gte = datetime.date.today())
+	upcoming_events = [u.event for u in upcoming_joined]
+
+	past_joined= joined.filter(event__event_dt__lte = datetime.date.today())
+	past_events = [p.event for p in past_joined]
+	# events = Event.objects.filter(host__username = post_user)
+	# join_events = Join.objects.filter(participant__username = post_user,event.event_dt__gte = datetime.date.today())
+	# join_events.filter(event.event_dt__gte = datetime.date.today()
+	# past_events = events.filter(event_dt__lte = datetime.date.today())
+	for u in upcoming_joined:
+		print (u.event.event_dt)
+
+	for i in upcoming_events:
+		print (i.restaurant.name)
+	context['upcoming_event'] = upcoming_events
+	context['past_event'] = past_events
+
+	return render(request, 'OUCanEat/history.html', context)
+
+
 @login_required
 def show_restaurant_info(request):
 	if request.method=='GET':
@@ -164,6 +190,25 @@ def create_event(request):
 		join = Join(event=event, participant=request.user)
 		join.save()
 		data = json.dumps({"event_id":event.id})
+	return HttpResponse(data, content_type='application/json')
+
+@login_required
+def add_review(request):
+	response_text = ''
+	if request.method=='POST':
+		#need to verify content
+		
+		review = request.POST['review']
+		event_id = request.POST['event_id']
+		event = Event.objects.get(pk=event_id)
+
+		review = Review(user = request.user, event = event, rating = review)
+		review.save()
+
+		data = json.dumps({"event_id":event_id})
+
+		#should add himself
+
 	return HttpResponse(data, content_type='application/json')
 
 
@@ -208,7 +253,7 @@ def search_events(request):
 		if 'search_date' in request.GET:
 			search_date = request.GET.get('search_date')
 			try:
-				dt = datetime.datetime.strptime(search_date, '%Y/%m/%d')
+				dt = datetime.datetime.strptime(search_date, '%Y-%m-%d')
 				events = events.filter(event_dt__year=dt.year,
 							event_dt__month=dt.month,
 							event_dt__day=dt.day)
@@ -228,7 +273,9 @@ def search_events(request):
 def profile_map(request, post_user):
 	if request.method == 'GET':
 		joined = Join.objects.filter(participant__username = post_user)
+		# print(joined)
 		restaurants = [e.event.restaurant for e in joined]
+		print(restaurants)
 		restaurants = serializers.serialize('json', restaurants)
 		response_text = json.dumps({'restaurants': restaurants})
 		return HttpResponse(response_text, content_type="application/json")

@@ -80,23 +80,27 @@ function profileMap() {
 		data: {},
 		dataType: "json",
 		success: function(response) {
-			restaurants = JSON.parse(response.restaurants);
+			var restaurants = JSON.parse(response.restaurants);
+			console.log(restaurants);
 			showMapEvents(restaurants, true, false);
 		}
 	})
 }
 
 function showMapEvents(event_restaurants, clear, fromSearch) {
+	console.log(event_restaurants);
 	var color = fromSearch ? 'green': 'purple';
 	var bounds = map.getBounds();
 	if (bounds===undefined || clear) {
 		bounds = new google.maps.LatLngBounds();
 		clearMarkers();
+
 	}
 
 	var google_ids = new Set();
 
-	$(event_restaurants).each(function() {
+	$(event_restaurants).each(function(value) {
+		console.log(value);
 		if (google_ids.has(this.fields.google_id)) return;
 		service.getDetails({placeId: this.fields.google_id}, function (result, status) {
 			if (status==google.maps.places.PlacesServiceStatus.OK) {
