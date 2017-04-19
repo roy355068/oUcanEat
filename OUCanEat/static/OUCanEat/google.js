@@ -44,7 +44,7 @@ function initMap() {
 function callback(results, status) {
 	if (status === google.maps.places.PlacesServiceStatus.OK) {
 		for (var i = 0; i < results.length; i++) {
-			createMarker(results[i], 'red');
+			createMarker(results[i], 'red', false);
 		}
 	}
 }
@@ -62,7 +62,7 @@ function showMapResult() {
 			console.log("Returned place contains no geometry");
 			return;
 		}
-		createMarker(place, 'green');
+		createMarker(place, 'green', false);
 		if (place.geometry.viewport) {
 			bounds.union(place.geometry.viewport);
 		} else {
@@ -86,7 +86,7 @@ function profileMap() {
 	})
 }
 
-function showMapEvents(event_restaurants, clear, fromSearch, inProfile) {
+function showMapEvents(event_restaurants, clear, fromSearch, isPersonal) {
 	var color = fromSearch ? 'green': 'purple';
 	var bounds = map.getBounds();
 	if (bounds===undefined || clear) {
@@ -101,7 +101,7 @@ function showMapEvents(event_restaurants, clear, fromSearch, inProfile) {
 		if (google_ids.has(this.fields.google_id)) return;
 		service.getDetails({placeId: this.fields.google_id}, function (result, status) {
 			if (status==google.maps.places.PlacesServiceStatus.OK) {
-				createMarker(result, color, inProfile);
+				createMarker(result, color, isPersonal);
 				if (result.geometry.viewport) {
 					bounds.union(result.geometry.viewport);
 				} else {
@@ -109,13 +109,12 @@ function showMapEvents(event_restaurants, clear, fromSearch, inProfile) {
 				}
 				map.fitBounds(bounds);
 				google_ids.add(result.place_id);
-
 			}
 		});
 	});
 }
 
-function createMarker(place, color, inProfile) {
+function createMarker(place, color, isPersonal) {
 	if (marker_ids.has(place.place_id)) return;
 
 	var placeLoc = place.geometry.location;
@@ -127,7 +126,7 @@ function createMarker(place, color, inProfile) {
 
 	google.maps.event.addListener(marker, 'click', function() {
 		clicked_place = place;
-		show_restaurant_events(inProfile);
+		show_restaurant_events(isPersonal);
 
 		infowindow.setContent(place.name);
 		infowindow.open(map, this);
