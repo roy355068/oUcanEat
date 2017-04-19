@@ -12,25 +12,18 @@
 
 <body>
 
-{% block map %} 
-<div class="row marginBotZero">
-    <div class="col-md-4"  > 
-		<div class="panel panelTrans">
-			<div class="panel-body panelBody" >
-			<div id="info"></div>
-			<div id="sub_info"></div>
-			<div id="upcoming_events"></div>
-			<div id="top_events"></div>
+{% block content %} 
+	<div class="row marginBotZero">
+
+		{% block info %}
+		{% endblock %}
+
+		<div class="col-md-8" >
+			<div class="panel">
+				<div class="panel-body " id="map" ></div>
 			</div>
 		</div>
 	</div>
-
-    <div class="col-md-8" >
-     	<div class="panel">
-			<div class="panel-body " id="map" ></div>
-		</div>
-    </div>
-</div>
 {% endblock %}
 
 </body>
