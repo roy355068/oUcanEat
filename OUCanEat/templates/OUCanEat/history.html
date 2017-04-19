@@ -1,0 +1,49 @@
+{% extends "OUCanEat/map_base.html" %}
+
+
+{% block map %}
+
+
+<div class="row" style = "margin-bottom: 0pt; background-color:#F5F5F5;">
+    <div class="col-md-4"  > 
+		<div class="panel" style="background-color: transparent;">
+			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
+
+			<h2 id="topEvent"> Your upcoming events: </h2>
+			{% for event in upcoming_event %}
+			  	<table style="width:100%" id="yourEvents">
+			  	<tr>
+					<td style="font-size: 12pt" onclick='show_event_page({{event.pk}},0)'>{{event.restaurant.name}}</td>
+					<td style="font-size: 12pt;text-align: right;">{{event.event_dt}}</td>
+					<!-- <td style="font-size: 12pt;text-align: right;"> <button type='button' class='btn btn-default btn-lg' onclick='show_event_page({{event.pk}})'>Details</button></td> -->
+				  	
+				 </tr>
+				</table>
+			{% endfor %}
+
+			<h2 id="oldEvent"> Your past events: </h2>
+			{% for event in past_event %}
+			  	<table style="width:100%" id="oldEvents">
+			  	<tr>
+					<td style="font-size: 12pt">{{event.restaurant.name}}</td>
+					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
+					<td style="font-size: 10pt; text-align: right;"> <button type='button' class='btn btn-default btn-lg' onclick='show_event_page({{event.pk}},1)'>Review</button></td>				  	
+				 </tr>
+				</table>
+			{% endfor %}
+
+			</div>
+		</div>
+	</div>
+
+    <div class="col-md-8" >
+     	<div class="panel">
+			<div class="panel-body" style="height: 590px;" id="map" ></div>
+		</div>
+    </div>
+</div>
+{% endblock%}
+
+{% block search %} 
+<div> </div>
+{% endblock%}
