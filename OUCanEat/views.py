@@ -156,12 +156,16 @@ def show_history(request, post_user):
 
 
 @login_required
-def show_restaurant_info(request):
+def get_restaurant_events(request):
 	if request.method=='GET':
 		#need to verify content
 		restaurant_google_id = request.GET.get('restaurant_id')
+		isPersonal = request.GET.get('isPersonal')
 		events = Event.objects.filter(restaurant__google_id=restaurant_google_id,
 					event_dt__gte=datetime.date.today()).order_by('event_dt')
+		if isPersonal.lower()=='true':
+			join = Join.objects.filter(participant=request.user, event__in=events)
+			events = [j.event for j in join]
 		events_status= get_events_status(events, request.user)
 
 		response_text1 = serializers.serialize('json', events)

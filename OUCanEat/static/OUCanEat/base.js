@@ -1,5 +1,4 @@
-
-function show_restaurant_info(inProfile) {
+function show_restaurant_info() {
 	$("#info").html("");
 	$("#upcoming_events").html("");
 	$("#top_events").html("");
@@ -16,18 +15,24 @@ function show_restaurant_info(inProfile) {
 	if ("rating" in clicked_place) {
 		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
 	}
-	var data = {'restaurant_id':clicked_place.place_id, 'csrfmiddlewaretoken': getCSRFToken()}
+	$("#info").append(html);
+}
+
+function show_restaurant_events(isPersonal) {
+	show_restaurant_info();
+	var data = {'restaurant_id':clicked_place.place_id, 'isPersonal': isPersonal, 'csrfmiddlewaretoken': getCSRFToken()};
     $.ajax({
-        url: "/OUCanEat/show_restaurant_info",
+        url: "/OUCanEat/get_restaurant_events",
         type: "GET",
         data: data,
         dataType : "json",
         success: function(response) {
+			html = "";
 			html += "<div><table style='width:100%'>";
 			events = JSON.parse(response.events);
 			events_status = response.events_status;
 			$(events).each(function(index) {
-				if (events_status[index]=='notJoined' && inProfile) {
+				if (events_status[index]=='notJoined' && isPersonal) {
 					return true;
 				}
 				html += "<tr><td>"+this.fields.event_dt+"</td>";
@@ -36,13 +41,13 @@ function show_restaurant_info(inProfile) {
 				}else if (events_status[index]=='joined'){
 					html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
 				}else{
-					if (!inProfile) {
+					if (!isPersonal) {
 						html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>"
 					}
 				}
 			});
 			html += "</table></div>"
-			$("#info").prepend(html);
+			$("#info").append(html);
         }
     });
 }
@@ -55,7 +60,7 @@ function join_event(event_id, page_type) {
 		data: data,
 		success: function(response) {
 			if (page_type==0) {
-				show_restaurant_info();
+				show_restaurant_events(false);
 			} else {
 				show_default();
 			}
@@ -71,7 +76,7 @@ function leave_event(event_id, page_type) {
 		data: data,
 		success: function(response) {
 			if (page_type==0) {
-				show_restaurant_info();
+				show_restaurant_events(false);
 			} else {
 				show_default();
 			}
