@@ -72,13 +72,6 @@ function showMapResult() {
 	map.fitBounds(bounds);
 }
 
-<<<<<<< HEAD
-function showMapEvent(place_id) {
-	console.log(place_id);
-	var service = new google.maps.places.PlacesService(map);
-	service.getDetails({placeId: place_id}, function (result, status) {
-		createMarker(result, 'purple');
-=======
 function profileMap() {
 	var userName = $("#userName").html();
 	$.ajax({
@@ -118,17 +111,12 @@ function showMapEvents(event_restaurants, clear, fromSearch) {
 
 			}
 		});
->>>>>>> b2d625beae48422b7f674bfbac7f2d869eefb1b4
 	});
 }
 
 function createMarker(place, color) {
-<<<<<<< HEAD
-	console.log(place);
-=======
 	if (marker_ids.has(place.place_id)) return;
 
->>>>>>> b2d625beae48422b7f674bfbac7f2d869eefb1b4
 	var placeLoc = place.geometry.location;
 	var marker = new google.maps.Marker({
 		map: map,

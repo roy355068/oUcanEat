@@ -1,4 +1,4 @@
-{% extends "OUCanEat/map_base.html" %}
+{% extends "OUCanEat/base.html" %}
 
 {% block map_header %}
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyjb_hSmHUamgvrnOYxtvHTN2kjeex0eI&signed_in=true&libraries=places&callback=initMap" async defer></script>
@@ -7,12 +7,6 @@
     <script type="text/javascript" src="{% static 'OUCanEat/base.js' %}"></script>
 
 	{% block init_js %}
-	<script type="text/javascript">
-	$(window).on('load', function() {
-		show_default();
-		getToday();
-	});
-	</script>
 	{% endblock %}
 {% endblock %}
 
@@ -44,29 +38,6 @@
 
 
 {% block search %} 
-
-<div class="container-fluid containerBG">
-	<form class="form-inline text-center">
-	<br>
-	<br>
-		<div class="form-group formPadding" >
-			<input class="form-control input-lg" id="keyword" type="text" placeholder= "Key Word">
-		</div>
-
-	    
-		<div class="form-group" style="padding-right: 30pt;">
-		    <input class="form-control input-lg" id="search_date" type="date" min= '1900-01-01'>
-		</div>
-		     
-		<div class="form-group">
-		    <button type="button" id="search_btn" class="btn btn-info btn-lg skyblue transparentBorder">
-		      	<span class="glyphicon glyphicon-search"></span> Find Events!
-		    </button>
-		</div>	    
-		    <br>
-		    <br>
-		    <br>
-	</form>
 {% endblock %}
 
 

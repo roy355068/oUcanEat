@@ -272,7 +272,7 @@ def search_events(request):
 		if 'search_date' in request.GET:
 			search_date = request.GET.get('search_date')
 			try:
-				dt = datetime.datetime.strptime(search_date, '%Y/%m/%d')
+				dt = datetime.datetime.strptime(search_date, '%Y-%m-%d')
 				events = events.filter(event_dt__year=dt.year,
 							event_dt__month=dt.month,
 							event_dt__day=dt.day)

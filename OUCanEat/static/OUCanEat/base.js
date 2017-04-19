@@ -16,7 +16,6 @@ function show_restaurant_info() {
 	if ("rating" in clicked_place) {
 		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
 	}
-	console.log(clicked_place);
 	var data = {'restaurant_id':clicked_place.place_id, 'csrfmiddlewaretoken': getCSRFToken()}
     $.ajax({
         url: "/OUCanEat/show_restaurant_info",
@@ -250,7 +249,7 @@ function add_comment(event_id) {
 
 function upload_event_pic(event_id) {
 	var file = $("#id_picture")[0].files[0];
-	$("#pic_btn").click(function(){
+	$("#pic_btn").off().click(function(){
 		var formData = new FormData($('#pic_form')[0]);
 		$.ajax({
 			url: "/OUCanEat/upload_event_pic",
@@ -262,6 +261,7 @@ function upload_event_pic(event_id) {
 				show_event_pictures(event_id);
 			}
 		});
+		$("#pic_form")[0].reset();
 	});
 }
 
@@ -320,37 +320,6 @@ function getToday(){
 
 }
 
-
-function add_comment_form(event_id,review_flag) {
-	$("#add_comment").html("");
-	var html = "<div>"+
-					"<h4>Comment the event!</h4>"+
-      				"<input type='text' id='comment'>"+
-					"<input type='submit' value='Submit' onclick='add_comment("+event_id+","+review_flag+")'>"+
-				"</div>";   
-
-	$("#add_comment").prepend(html);
-}
-
-
-function add_comment(event_id,review_flag) {
-	var comment = $("#comment").val();
-	
-	// var event_form_time = $("#event_time").val();
-	// var event_form_desc = $("#event_desc").val();
-	var data = {'comment':comment, 'event_id':event_id,
-		'csrfmiddlewaretoken': getCSRFToken()}
-    $.ajax({
-        url: "/OUCanEat/add_comment",
-        type: "POST",
-        data: data,
-        success: function(response) {
-        	event_id = JSON.parse(response.event_id)
-
-			show_event_page(event_id,review_flag);
-        }
-    });
-}
 
 function add_review_form(event_id) {
 	$("#add_review").html("");
