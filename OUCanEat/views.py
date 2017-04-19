@@ -127,7 +127,7 @@ def edit_profile(request):
 	context['profile_form'] = profile_form
 	context['username'] = request.user.username
 	context['user'] = request.user
-	return redirect(reverse('home'))
+	return redirect('show-profile/' + request.user.username)
 
 @login_required
 def show_restaurant_info(request):
