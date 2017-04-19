@@ -218,12 +218,12 @@ def show_event_page(request, event_id):
 	try:
 		event = Event.objects.get(id=event_id)
 		event_join = Join.objects.filter(event__id=event_id)
-		event_participant = [j.participant for j in event_join]
+		event_participants = [j.participant for j in event_join if j.participant!=event.host]
 		comments = Comment.objects.filter(event__id=event_id)
 		pic_users = Profile.objects.exclude(picture__isnull=True).exclude(picture__exact='')
 		pic_users = [u.user for u in pic_users]
 		context['event'] = event
-		context['event_participant'] = event_participant
+		context['event_participants'] = event_participants
 		context['comments'] = comments
 		context['pic_users'] = pic_users
 		context['form'] = EventPicForm()
