@@ -16,7 +16,6 @@ function show_restaurant_info() {
 	if ("rating" in clicked_place) {
 		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
 	}
-	console.log(clicked_place);
 	var data = {'restaurant_id':clicked_place.place_id, 'csrfmiddlewaretoken': getCSRFToken()}
     $.ajax({
         url: "/OUCanEat/show_restaurant_info",
@@ -307,11 +306,11 @@ function getCSRFToken() {
 //init
 $(function () {
 	$("#search_btn").click(function(){
-    	var search_date = $("#search_date").val();
-    	var keyword = $("#keyword").val();
+    	var search_date = $("#search_date").val().trim();
+    	var keyword = $("#keyword").val().trim();
 		var place_ids = []
 
-		if (search_date.trim().length==0 && keyword.trim().length==0) {
+		if (search_date.length==0 && keyword.length==0) {
 			return;
 		}
 		service.textSearch({
@@ -319,7 +318,7 @@ $(function () {
 			types: ['restaurant', 'cafe']
 		}, function(places, status) {
 			clearMarkers();
-			if (status === google.maps.places.PlacesServiceStatus.OK) {
+			if (keyword.length>0 && status === google.maps.places.PlacesServiceStatus.OK) {
 				$(places).each(function() {
 					place_ids.push(this.place_id);
 				});
