@@ -81,12 +81,12 @@ function profileMap() {
 		dataType: "json",
 		success: function(response) {
 			var restaurants = JSON.parse(response.restaurants);
-			showMapEvents(restaurants, true, false);
+			showMapEvents(restaurants, true, false, true);
 		}
 	})
 }
 
-function showMapEvents(event_restaurants, clear, fromSearch) {
+function showMapEvents(event_restaurants, clear, fromSearch, inProfile) {
 	var color = fromSearch ? 'green': 'purple';
 	var bounds = map.getBounds();
 	if (bounds===undefined || clear) {
@@ -97,11 +97,11 @@ function showMapEvents(event_restaurants, clear, fromSearch) {
 
 	var google_ids = new Set();
 
-	$(event_restaurants).each(function(value) {
+	$(event_restaurants).each(function() {
 		if (google_ids.has(this.fields.google_id)) return;
 		service.getDetails({placeId: this.fields.google_id}, function (result, status) {
 			if (status==google.maps.places.PlacesServiceStatus.OK) {
-				createMarker(result, color);
+				createMarker(result, color, inProfile);
 				if (result.geometry.viewport) {
 					bounds.union(result.geometry.viewport);
 				} else {
@@ -115,7 +115,7 @@ function showMapEvents(event_restaurants, clear, fromSearch) {
 	});
 }
 
-function createMarker(place, color) {
+function createMarker(place, color, inProfile) {
 	if (marker_ids.has(place.place_id)) return;
 
 	var placeLoc = place.geometry.location;
@@ -127,7 +127,7 @@ function createMarker(place, color) {
 
 	google.maps.event.addListener(marker, 'click', function() {
 		clicked_place = place;
-		show_restaurant_info();
+		show_restaurant_info(inProfile);
 
 		infowindow.setContent(place.name);
 		infowindow.open(map, this);
