@@ -89,14 +89,17 @@ def edit_profile(request):
 	name_form = NameForm(instance = request.user)
 	profile_form = ProfileForm(instance = user_profile)
 	context = {}
-	context['choice_form'] = ChoiceForm()
+	
+	pref_list = [p.choice for p in user_profile.preference.all()]
 
+	context['choice_form'] = ChoiceForm(initial={'choice': pref_list})
 	if request.method == "GET":
 		context['name_form'] = name_form
 		context['profile_form'] = profile_form
 		context['user'] = request.user
 		return render(request, "OUCanEat/edit.html", context)
 	elif request.method == "POST":
+		print(request.POST)
 		name_form = NameForm(request.POST, instance = request.user)
 		profile_form = ProfileForm(request.POST, request.FILES, instance = user_profile)
 		choice_form = ChoiceForm(request.POST)
