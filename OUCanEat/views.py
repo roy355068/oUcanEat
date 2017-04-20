@@ -19,7 +19,7 @@ import json
 from OUCanEat.models import *
 from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm, EventPicForm
 
-from django.forms.models import model_to_dict
+# from django.forms.models import model_to_dict
 
 
 @ensure_csrf_cookie
@@ -73,6 +73,19 @@ def show_profile(request, post_user):
 	context['your_events'] = your_events
 	context['old_events'] = old_events
 	return render(request, 'OUCanEat/profile.html', context)
+
+@login_required
+def profile_map(request, post_user):
+	if request.method == 'GET':
+		joined = Join.objects.filter(participant__username = post_user)
+		restaurants = [e.event.restaurant for e in joined]
+		# print(restaurants)
+		restaurants = serializers.serialize('json', restaurants)
+		response_text = json.dumps({'restaurants': restaurants})
+		return HttpResponse(response_text, content_type="application/json")
+	return HttpResponse()
+
+
 @login_required
 def get_picture(request, curr_user):
 	profile = get_object_or_404(Profile, user__username = curr_user)
@@ -99,7 +112,6 @@ def edit_profile(request):
 		context['user'] = request.user
 		return render(request, "OUCanEat/edit.html", context)
 	elif request.method == "POST":
-		print(request.POST)
 		name_form = NameForm(request.POST, instance = request.user)
 		profile_form = ProfileForm(request.POST, request.FILES, instance = user_profile)
 		choice_form = ChoiceForm(request.POST)
@@ -133,7 +145,7 @@ def edit_profile(request):
 	return redirect('show-profile/' + request.user.username)
 
 
-# @login_required
+@login_required
 def show_history(request, post_user):
 	context = {}
 	print (post_user)
@@ -272,17 +284,6 @@ def search_events(request):
 		return HttpResponse(response_text, content_type='application/json')
 	return HttpResponse()
 
-@login_required
-def profile_map(request, post_user):
-	if request.method == 'GET':
-		joined = Join.objects.filter(participant__username = post_user)
-		# print(joined)
-		restaurants = [e.event.restaurant for e in joined]
-		print(restaurants)
-		restaurants = serializers.serialize('json', restaurants)
-		response_text = json.dumps({'restaurants': restaurants})
-		return HttpResponse(response_text, content_type="application/json")
-	return HttpResponse()
 
 @login_required
 def leave_event(request):

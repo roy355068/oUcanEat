@@ -5,6 +5,7 @@ var clicked_place;
 var searchBox;
 var markers = [];
 var marker_ids = new Set();
+var profile_stream = 'upcoming';
 
 function initMap() {
 	// var pyrmont = {lat: -33.867, lng: 151.195};
@@ -72,8 +73,29 @@ function showMapResult() {
 	map.fitBounds(bounds);
 }
 
+// <button class="btn btn-default btn-lg titleFont">Upcoming Events</button>
+// <button class="btn btn-default btn-lg titleFont">Past Events</button>
+function change_stream() {
+	if (profile_stream === 'upcoming') {
+		profile_stream = 'past';
+	} else {
+		profile_stream = 'upcoming';
+	}
+	profileMap();
+}
+
 function profileMap() {
 	var userName = $("#userName").html();
+	$('#mapPanel').html("");
+	var html = "";
+	if (profile_stream === 'upcoming') {
+		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream()">Past Events</button>';
+	}
+	else {
+		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream()">Upcoming Events</button>';
+	}
+
+	$('#mapPanel').prepend(html);
 	$.ajax({
 		url: "/OUCanEat/profile-map/" + userName,
 		type: "GET",
