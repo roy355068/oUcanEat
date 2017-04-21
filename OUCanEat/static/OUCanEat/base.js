@@ -27,7 +27,6 @@ function show_restaurant_info(inProfile, profile_stream) {
 			events = JSON.parse(response.events);
 			events_status = response.events_status;
 			$(events).each(function(index) {
-				console.log(new Date());
 				if (profile_stream === 'upcoming' && new Date(this.fields.event_dt) < new Date().valueOf()){
 					return true;
 				}
@@ -38,7 +37,10 @@ function show_restaurant_info(inProfile, profile_stream) {
 					return true;
 				}
 				html += "<tr><td>"+this.fields.event_dt+"</td>";
-				if (events_status[index]=='host'){
+				if (profile_stream === 'past') {
+					return true;
+				}
+				else if (events_status[index]=='host'){
 					html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+this.pk+", 0)'>Edit Event</button></td></tr>"
 				}else if (events_status[index]=='joined'){
 					html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"

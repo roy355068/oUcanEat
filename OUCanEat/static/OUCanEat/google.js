@@ -95,7 +95,6 @@ function profileMap() {
 	else {
 		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream()">Upcoming Events</button>';
 	}
-	console.log(userName);
 	$('#mapPanel').prepend(html);
 	$.ajax({
 		url: "/OUCanEat/profile-map/" + userName + '/' + profile_stream,
