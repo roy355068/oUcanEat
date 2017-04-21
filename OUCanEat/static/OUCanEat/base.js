@@ -48,7 +48,6 @@ function show_restaurant_events(isPersonal, profile_stream) {
         success: function(response) {
 			events = JSON.parse(response.events);
 			events_status = response.events_status;
-			console.log(events);
 			show_restaurant_info(events, events_status, profile_stream);
 		}
     });
