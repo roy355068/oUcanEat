@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^show-history/(?P<post_user>\w+)$', views.show_history, name="show-history"),
     url(r'^edit-profile$', views.edit_profile, name="edit-profile"),
     url(r'^add_comment$', views.add_comment, name="add_comment"),
+    url(r'^add_review$', views.add_review, name="add_review"),
     url(r'^get_updated_comments$', views.get_updated_comments, name="get_updated_comments"),
     url(r'^upload_event_pic$', views.upload_event_pic, name="upload_event_pic"),
     url(r'^get_event_pictures$', views.get_event_pictures, name="get_event_pictures"),
