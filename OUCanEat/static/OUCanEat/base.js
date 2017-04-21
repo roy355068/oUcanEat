@@ -1,4 +1,5 @@
-function show_restaurant_info(events, events_status) {
+function show_restaurant_info(events, events_status, profile_stream) {
+
 	$("#info").html("");
 	$("#upcoming_events").html("");
 	$("#top_events").html("");
@@ -17,23 +18,28 @@ function show_restaurant_info(events, events_status) {
 	}
 
 	html += "<div><table style='width:100%'>";
+	
 	$(events).each(function(index) {
 		html += "<tr><td>"+this.fields.event_dt+"</td>";
-		if (events_status[index]=='host'){
-			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+this.pk+", 0)'>Edit Event</button></td></tr>"
-		}else if (events_status[index]=='joined'){
-			html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
-		}else{
-			html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>"
+		if (profile_stream === 'upcoming') {
+			if (events_status[index]=='host'){
+				html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+this.pk+", 0)'>Edit Event</button></td></tr>"
+			}else if (events_status[index]=='joined'){
+				html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
+			}else{
+				html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>"
+			}
 		}
 	});
+	
 
 	html += "</table></div>"
 	$("#info").append(html);
 }
 
-function show_restaurant_events(isPersonal) {
-	var data = {'restaurant_id':clicked_place.place_id, 'isPersonal': isPersonal, 'csrfmiddlewaretoken': getCSRFToken()};
+function show_restaurant_events(isPersonal, profile_stream) {
+	var data = {'restaurant_id':clicked_place.place_id, 'isPersonal': isPersonal, 'csrfmiddlewaretoken': getCSRFToken(),
+				'profile_stream': profile_stream};
     $.ajax({
         url: "/OUCanEat/get_restaurant_events",
         type: "GET",
@@ -42,7 +48,8 @@ function show_restaurant_events(isPersonal) {
         success: function(response) {
 			events = JSON.parse(response.events);
 			events_status = response.events_status;
-			show_restaurant_info(events, events_status);
+			console.log(events);
+			show_restaurant_info(events, events_status, profile_stream);
 		}
     });
 }

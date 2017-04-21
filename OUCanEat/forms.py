@@ -6,11 +6,11 @@ MAX_UPLOAD_SIZE = 2500000
 
 
 RESTAURANT_TYPE = (
-	('japanese', 'Japanese'),
-	('chinese', 'Chinese'),
-	('mexican', 'Mexican'),
-	('american', 'American'),
-	('indian', 'Indian'),
+	('Japanese', 'Japanese'),
+	('Chinese', 'Chinese'),
+	('Mexican', 'Mexican'),
+	('American', 'American'),
+	('Indian', 'Indian'),
 
 ) 
 

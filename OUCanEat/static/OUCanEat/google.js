@@ -5,6 +5,8 @@ var clicked_place;
 var searchBox;
 var markers = [];
 var marker_ids = new Set();
+var profile_stream = 'upcoming';
+var userName;
 
 function initMap() {
 	// var pyrmont = {lat: -33.867, lng: 151.195};
@@ -72,10 +74,33 @@ function showMapResult() {
 	map.fitBounds(bounds);
 }
 
+
+function change_stream() {
+	userName = $("#userName").html();
+	if (profile_stream === 'upcoming') {
+		profile_stream = 'past';
+	} else {
+		profile_stream = 'upcoming';
+	}
+	console.log(profile_stream);
+	profileMap();
+
+}
+
 function profileMap() {
-	var userName = $("#userName").html();
+	userName = $("#userName").html();
+	$('#mapPanel').html("");
+	var html = "";
+	if (profile_stream === 'upcoming') {
+		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream()">Past Events</button>';
+	}
+	else {
+		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream()">Upcoming Events</button>';
+	}
+	console.log(userName);
+	$('#mapPanel').prepend(html);
 	$.ajax({
-		url: "/OUCanEat/profile-map/" + userName,
+		url: "/OUCanEat/profile-map/" + userName + '/' + profile_stream,
 		type: "GET",
 		data: {},
 		dataType: "json",
@@ -126,7 +151,9 @@ function createMarker(place, color, isPersonal) {
 
 	google.maps.event.addListener(marker, 'click', function() {
 		clicked_place = place;
-		show_restaurant_events(isPersonal);
+
+		show_restaurant_events(isPersonal, profile_stream);
+
 
 		infowindow.setContent(place.name);
 		infowindow.open(map, this);
