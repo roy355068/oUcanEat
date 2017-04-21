@@ -17,24 +17,25 @@
 			<h3>{{event.restaurant.name}}</h3>
 			<table style="width:100%">
 				<tr>
-					<td>Time: </td>
-					<td>{{event.event_dt}}</td>
+					<td class="contentFont">Time: </td>
+					<td class="contentFont">{{event.event_dt}}</td>
 				</tr>
 				<tr>
-					<td>Description: </td>
-					<td>{{event.desc}}</td>
+					<td class="contentFont">Description: </td>
+					<td class="contentFont">{{event.desc}}</td>
 				</tr>
 				<tr>
-					<td>Host: </td>
-					<td>{{event.host.username}}</td>
+					<td class="contentFont">Host: </td>
+					<td class="contentFont"><a href="{% url 'show-profile' event.host.username %}">
+					{{event.host.username}}</a></td>
 				</tr>
 				<tr>
-					<td>Participants: </td>
+					<td class="contentFont">Participants: </td>
 				</tr>
 				{% for p in event_participants %}
                 	<tr>
 						<td></td>
-						<td>{{p.username}}</td>
+						<td class="contentFont">{{p.username}}</td>
 					</tr>
 				{% endfor %}
 			</table>
