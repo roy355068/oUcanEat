@@ -19,8 +19,6 @@ import json
 from OUCanEat.models import *
 from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm, EventPicForm
 
-# from django.forms.models import model_to_dict
-
 
 @ensure_csrf_cookie
 @login_required
@@ -75,11 +73,14 @@ def show_profile(request, post_user):
 	return render(request, 'OUCanEat/profile.html', context)
 
 @login_required
-def profile_map(request, post_user):
+def profile_map(request, post_user, profile_stream):
 	if request.method == 'GET':
 		joined = Join.objects.filter(participant__username = post_user)
+		if profile_stream == "upcoming":
+			joined = joined.filter(event__event_dt__gte = datetime.date.today())
+		elif profile_stream == "past":
+			joined = joined.filter(event__event_dt__lte = datetime.date.today())
 		restaurants = [e.event.restaurant for e in joined]
-		# print(restaurants)
 		restaurants = serializers.serialize('json', restaurants)
 		response_text = json.dumps({'restaurants': restaurants})
 		return HttpResponse(response_text, content_type="application/json")
