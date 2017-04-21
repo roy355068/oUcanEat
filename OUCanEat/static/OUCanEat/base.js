@@ -1,5 +1,5 @@
 
-function show_restaurant_info(inProfile) {
+function show_restaurant_info(inProfile, profile_stream) {
 	$("#info").html("");
 	$("#upcoming_events").html("");
 	$("#top_events").html("");
@@ -27,6 +27,13 @@ function show_restaurant_info(inProfile) {
 			events = JSON.parse(response.events);
 			events_status = response.events_status;
 			$(events).each(function(index) {
+				console.log(new Date());
+				if (profile_stream === 'upcoming' && new Date(this.fields.event_dt) < new Date().valueOf()){
+					return true;
+				}
+				if (profile_stream === 'past' && new Date(this.fields.event_dt) >= new Date().valueOf()) {
+					return true;
+				}
 				if (events_status[index]=='notJoined' && inProfile) {
 					return true;
 				}

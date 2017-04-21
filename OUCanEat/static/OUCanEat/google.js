@@ -150,7 +150,7 @@ function createMarker(place, color, inProfile) {
 
 	google.maps.event.addListener(marker, 'click', function() {
 		clicked_place = place;
-		show_restaurant_info(inProfile);
+		show_restaurant_info(inProfile, profile_stream);
 
 		infowindow.setContent(place.name);
 		infowindow.open(map, this);

@@ -176,8 +176,7 @@ def show_restaurant_info(request):
 	if request.method=='GET':
 		#need to verify content
 		restaurant_google_id = request.GET.get('restaurant_id')
-		events = Event.objects.filter(restaurant__google_id=restaurant_google_id,
-					event_dt__gte=datetime.date.today()).order_by('event_dt')
+		events = Event.objects.filter(restaurant__google_id=restaurant_google_id).order_by('event_dt')
 		events_status= get_events_status(events, request.user)
 
 		response_text1 = serializers.serialize('json', events)
