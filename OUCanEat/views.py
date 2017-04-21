@@ -172,11 +172,22 @@ def show_history(request, post_user):
 
 
 @login_required
-def show_restaurant_info(request):
+def get_restaurant_events(request):
 	if request.method=='GET':
 		#need to verify content
 		restaurant_google_id = request.GET.get('restaurant_id')
-		events = Event.objects.filter(restaurant__google_id=restaurant_google_id).order_by('event_dt')
+		profile_stream = request.GET.get('profile_stream')
+		if profile_stream == "upcoming":
+			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
+				event_dt__gte = datetime.date.today()).order_by('event_dt')
+		elif profile_stream == "past":
+			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
+				event_dt__lte = datetime.date.today()).order_by('event_dt')
+
+		isPersonal = request.GET.get('isPersonal')
+		if isPersonal.lower()=='true':
+			join = Join.objects.filter(participant=request.user, event__in=events)
+			events = [j.event for j in join]
 		events_status= get_events_status(events, request.user)
 
 		response_text1 = serializers.serialize('json', events)
@@ -233,12 +244,12 @@ def show_event_page(request, event_id):
 	try:
 		event = Event.objects.get(id=event_id)
 		event_join = Join.objects.filter(event__id=event_id)
-		event_participant = [j.participant for j in event_join]
+		event_participants = [j.participant for j in event_join if j.participant!=event.host]
 		comments = Comment.objects.filter(event__id=event_id)
 		pic_users = Profile.objects.exclude(picture__isnull=True).exclude(picture__exact='')
 		pic_users = [u.user for u in pic_users]
 		context['event'] = event
-		context['event_participant'] = event_participant
+		context['event_participants'] = event_participants
 		context['comments'] = comments
 		context['pic_users'] = pic_users
 		context['form'] = EventPicForm()
@@ -283,6 +294,7 @@ def search_events(request):
 		response_text = json.dumps(response_text)
 		return HttpResponse(response_text, content_type='application/json')
 	return HttpResponse()
+
 
 
 @login_required

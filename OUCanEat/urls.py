@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^add_review$', views.add_review),
     url(r'^join_event$', views.join_event),
     url(r'^leave_event$', views.leave_event),
-    url(r'^show_restaurant_info$', views.show_restaurant_info),
+    url(r'^get_restaurant_events$', views.get_restaurant_events),
     url(r'^search_events$', views.search_events),
     url(r'^show_default$', views.show_default),
     url(r'^show_event_page/(?P<event_id>\d+)$', views.show_event_page,name="show_event_page"),
