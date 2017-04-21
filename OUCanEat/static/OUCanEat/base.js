@@ -12,7 +12,10 @@ function show_restaurant_info(events, events_status, profile_stream) {
 		}
 		html += "<dd style='font-size: 18pt'>"+open+"</dd>";
 	}
-	html += "<dd style='font-size: 14pt'>Address: "+clicked_place.vicinity+"</dd>";
+	var address = clicked_place.vicinity;
+	if (!("vicinity" in clicked_place)) address = clicked_place.formatted_address;
+
+	html += "<dd style='font-size: 14pt'>Address: "+address+"</dd>";
 	if ("rating" in clicked_place) {
 		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
 	}
