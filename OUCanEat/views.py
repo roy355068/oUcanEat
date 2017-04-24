@@ -206,17 +206,22 @@ def create_event(request):
 		lat = request.POST['event_lat']
 
 		try:
-			restaurant = Restaurant.objects.get(google_id=google_id)
+			dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
+			if dt>=datetime.datetime.now():
+				try:
+					restaurant = Restaurant.objects.get(google_id=google_id)
+				except:
+					restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
+					restaurant.save()
+				event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
+				event.save()
+				join = Join(event=event, participant=request.user)
+				join.save()
+				data = json.dumps({"event_id":event.id})
+				return HttpResponse(data, content_type='application/json')
 		except:
-			restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
-			restaurant.save()
-		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
-		event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
-		event.save()
-		join = Join(event=event, participant=request.user)
-		join.save()
-		data = json.dumps({"event_id":event.id})
-	return HttpResponse(data, content_type='application/json')
+			pass
+	return HttpResponse()
 
 @login_required
 def add_review(request):
@@ -228,14 +233,16 @@ def add_review(request):
 		event_id = request.POST['event_id']
 		event = Event.objects.get(pk=event_id)
 
-		review = Review(user = request.user, event = event, rating = review)
-		review.save()
-
-		data = json.dumps({"event_id":event_id})
-
-		#should add himself
-
-	return HttpResponse(data, content_type='application/json')
+		try:
+			Join.objects.get(event = event, participant = request.user)
+			if event_dt<=datetime.datetime.now():
+				review = Review(user = request.user, event = event, rating = review)
+				review.save()
+				data = json.dumps({"event_id":event_id})
+				return HttpResponse(data, content_type='application/json')
+		except:
+			pass
+	return HttpResponse()
 
 
 @login_required
@@ -263,8 +270,9 @@ def join_event(request):
 		user = request.user
 		try:
 			event = Event.objects.get(id=request.POST['event_id'])
-			join = Join(event=event, participant=user)
-			join.save()
+			if event.event_dt>=datetime.datetime.now():
+				join = Join(event=event, participant=user)
+				join.save()
 		except Exception as e:
 			pass
 	return HttpResponse()
@@ -303,7 +311,8 @@ def leave_event(request):
 		raise Http404
 	user = request.user
 	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
-	unjoin.delete()
+	if unjoin.event.event_dt>=datetime.datetime.now():
+		unjoin.delete()
 	return HttpResponse()
 
 @login_required
