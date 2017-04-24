@@ -475,3 +475,24 @@ def get_events_status(events, user):
 		except:
 			events_status.append('notJoined')
 	return events_status
+
+
+from twilio.rest import Client
+import os, configparser
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+config = configparser.ConfigParser()
+config.read(os.path.join(BASE_DIR, 'config.ini'))
+
+account_sid = config.get('Twilio', 'sid')
+auth_token = config.get('Twilio', 'auth_token')
+from_number = config.get('Twilio', 'from_number')
+
+
+def send_notification(recipients):
+	client = Client(account_sid, auth_token)
+	content = ''
+	for recipient in recipients:
+		message = client.messages.create(to=recipient,	from_=from_number, body=content)
+		print(message.sid)
+
