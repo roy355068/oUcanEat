@@ -20,8 +20,6 @@ import json
 from OUCanEat.models import *
 from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm, EventPicForm
 
-from django.forms.models import model_to_dict
-
 
 @ensure_csrf_cookie
 @login_required
@@ -74,6 +72,22 @@ def show_profile(request, post_user):
 	context['your_events'] = your_events
 	context['old_events'] = old_events
 	return render(request, 'OUCanEat/profile.html', context)
+
+@login_required
+def profile_map(request, post_user, profile_stream):
+	if request.method == 'GET':
+		joined = Join.objects.filter(participant__username = post_user)
+		if profile_stream == "upcoming":
+			joined = joined.filter(event__event_dt__gte = datetime.date.today())
+		elif profile_stream == "past":
+			joined = joined.filter(event__event_dt__lte = datetime.date.today())
+		restaurants = [e.event.restaurant for e in joined]
+		restaurants = serializers.serialize('json', restaurants)
+		response_text = json.dumps({'restaurants': restaurants})
+		return HttpResponse(response_text, content_type="application/json")
+	return HttpResponse()
+
+
 @login_required
 def get_picture(request, curr_user):
 	profile = get_object_or_404(Profile, user__username = curr_user)
@@ -90,8 +104,10 @@ def edit_profile(request):
 	name_form = NameForm(instance = request.user)
 	profile_form = ProfileForm(instance = user_profile)
 	context = {}
-	context['choice_form'] = ChoiceForm()
+	
+	pref_list = [p.choice for p in user_profile.preference.all()]
 
+	context['choice_form'] = ChoiceForm(initial={'choice': pref_list})
 	if request.method == "GET":
 		context['name_form'] = name_form
 		context['profile_form'] = profile_form
@@ -128,10 +144,10 @@ def edit_profile(request):
 	context['profile_form'] = profile_form
 	context['username'] = request.user.username
 	context['user'] = request.user
-	return redirect(reverse('home'))
+	return redirect('show-profile/' + request.user.username)
 
 
-# @login_required
+@login_required
 def show_history(request, post_user):
 	context = {}
 	print (post_user)
@@ -154,12 +170,22 @@ def show_history(request, post_user):
 
 
 @login_required
-def show_restaurant_info(request):
+def get_restaurant_events(request):
 	if request.method=='GET':
 		#need to verify content
 		restaurant_google_id = request.GET.get('restaurant_id')
-		events = Event.objects.filter(restaurant__google_id=restaurant_google_id,
-					event_dt__gte=datetime.date.today()).order_by('event_dt')
+		profile_stream = request.GET.get('profile_stream')
+		if profile_stream == "upcoming":
+			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
+				event_dt__gte = datetime.date.today()).order_by('event_dt')
+		elif profile_stream == "past":
+			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
+				event_dt__lte = datetime.date.today()).order_by('event_dt')
+
+		isPersonal = request.GET.get('isPersonal')
+		if isPersonal.lower()=='true':
+			join = Join.objects.filter(participant=request.user, event__in=events)
+			events = [j.event for j in join]
 		events_status= get_events_status(events, request.user)
 
 		response_text1 = serializers.serialize('json', events)
@@ -206,7 +232,7 @@ def add_review(request):
 			for r in reviews:
 				sum_rating = sum_rating + r.rating
 
-			avg_rating = sum_rating/count
+			avg_rating = count(sum_rating/count)
 			data = json.dumps({"avg_rating":avg_rating})
 
 		except Exception as error:
@@ -223,7 +249,7 @@ def show_event_page(request, event_id):
 
 		# events_status = event.filter(event__event_dt__lte = datetime.date.today())
 		event_join = Join.objects.filter(event__id=event_id)
-		event_participant = [j.participant for j in event_join]
+		event_participants = [j.participant for j in event_join if j.participant!=event.host]
 		comments = Comment.objects.filter(event__id=event_id)
 		review = Review.objects.filter(event__id = event_id)
 		count = review.count()
@@ -238,7 +264,7 @@ def show_event_page(request, event_id):
 					if r.user == request.user:
 						event_status = 'rated'
 					sum_rating = sum_rating + r.rating
-				avg_rating = sum_rating / count
+				avg_rating = round(sum_rating / count,1)
 			else:
 				avg_rating = 'Be the first one to rate'
 		else:
@@ -249,7 +275,7 @@ def show_event_page(request, event_id):
 		pic_users = Profile.objects.exclude(picture__isnull=True).exclude(picture__exact='')
 		pic_users = [u.user for u in pic_users]
 		context['event'] = event
-		context['event_participant'] = event_participant
+		context['event_participants'] = event_participants
 		context['comments'] = comments
 		context['pic_users'] = pic_users
 		context['form'] = EventPicForm()
@@ -298,17 +324,7 @@ def search_events(request):
 		return HttpResponse(response_text, content_type='application/json')
 	return HttpResponse()
 
-@login_required
-def profile_map(request, post_user):
-	if request.method == 'GET':
-		joined = Join.objects.filter(participant__username = post_user)
-		# print(joined)
-		restaurants = [e.event.restaurant for e in joined]
-		print(restaurants)
-		restaurants = serializers.serialize('json', restaurants)
-		response_text = json.dumps({'restaurants': restaurants})
-		return HttpResponse(response_text, content_type="application/json")
-	return HttpResponse()
+
 
 @login_required
 def leave_event(request):

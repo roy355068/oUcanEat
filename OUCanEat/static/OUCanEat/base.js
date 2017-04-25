@@ -1,5 +1,5 @@
+function show_restaurant_info(events, events_status, profile_stream) {
 
-function show_restaurant_info() {
 	$("#info").html("");
 	$("#upcoming_events").html("");
 	$("#top_events").html("");
@@ -16,29 +16,40 @@ function show_restaurant_info() {
 	if ("rating" in clicked_place) {
 		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
 	}
-	var data = {'restaurant_id':clicked_place.place_id, 'csrfmiddlewaretoken': getCSRFToken()}
+
+	html += "<div><table style='width:100%'>";
+	
+	$(events).each(function(index) {
+		html += "<tr><td>"+this.fields.event_dt+"</td>";
+		if (profile_stream === 'upcoming') {
+			if (events_status[index]=='host'){
+				html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+this.pk+", 0)'>Edit Event</button></td></tr>"
+			}else if (events_status[index]=='joined'){
+				html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
+			}else{
+				html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>"
+			}
+		}
+	});
+	
+
+	html += "</table></div>"
+	$("#info").append(html);
+}
+
+function show_restaurant_events(isPersonal, profile_stream) {
+	var data = {'restaurant_id':clicked_place.place_id, 'isPersonal': isPersonal, 'csrfmiddlewaretoken': getCSRFToken(),
+				'profile_stream': profile_stream};
     $.ajax({
-        url: "/OUCanEat/show_restaurant_info",
+        url: "/OUCanEat/get_restaurant_events",
         type: "GET",
         data: data,
         dataType : "json",
         success: function(response) {
-			html += "<div><table style='width:100%'>";
 			events = JSON.parse(response.events);
 			events_status = response.events_status;
-			$(events).each(function(index) {
-				html += "<tr><td>"+this.fields.event_dt+"</td>";
-				if (events_status[index]=='host'){
-					html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+this.pk+", 0)'>Edit Event</button></td></tr>"
-				}else if (events_status[index]=='joined'){
-					html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
-				}else{
-					html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>"
-				}
-			});
-			html += "</table></div>"
-			$("#info").prepend(html);
-        }
+			show_restaurant_info(events, events_status, profile_stream);
+		}
     });
 }
 
@@ -50,7 +61,7 @@ function join_event(event_id, page_type) {
 		data: data,
 		success: function(response) {
 			if (page_type==0) {
-				show_restaurant_info();
+				show_restaurant_events(false);
 			} else {
 				show_default();
 			}
@@ -66,7 +77,7 @@ function leave_event(event_id, page_type) {
 		data: data,
 		success: function(response) {
 			if (page_type==0) {
-				show_restaurant_info();
+				show_restaurant_events(false);
 			} else {
 				show_default();
 			}
@@ -77,12 +88,16 @@ function leave_event(event_id, page_type) {
 function show_event_page(event_id){
 	show_comments(event_id);
 	show_event_pictures(event_id);
+
+	///////
+    ///asdasdasd
+	///////
 	$.ajax({
 		url:"/OUCanEat/get_event_restaurant/"+event_id,
 		type:"GET",
 		success: function(response){
 			var restaurants = JSON.parse(response.restaurant);
-			showMapEvents(restaurants, true, false);
+			showMapEvents(restaurants, true, false, false);
 		}
 	});
 }
@@ -134,8 +149,8 @@ function show_default(){
    			var top_events_num_participants = response.top_events_num_participants;
    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,5);
 			show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,5);
-			showMapEvents(upcoming_events_restaurant, true, false);
-			showMapEvents(top_events_restaurant, false, false);
+			showMapEvents(upcoming_events_restaurant, true, false, false);
+			showMapEvents(top_events_restaurant, false, false, false);
 		}
 	});
 }
@@ -188,19 +203,17 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
 	$("#top_events").prepend(html);
 }
 
-function back_home() {
-	window.location= "/OUCanEat/";
-}
+
 
 
 
 function show_comments(event_id) {
 	var latestCommentId = 0;
+	var url = window.location.pathname;
 	$("[id^='comments_']").each(function() {
 		idx = parseInt(this.id.split('_')[1]);
 		if (idx>latestCommentId) latestCommentId = idx;
 	});
-	// var html = "<button onclick='back_home()'>Back</button>"
 	$.ajax({
 		url: "/OUCanEat/get_updated_comments",
 		type: "GET",
@@ -329,21 +342,25 @@ function getToday(){
 
 
 function add_review(event_id) {
-	var reviewElement = $("#new_review_"+event_id);
-	var reviewValue = reviewElement.val();
-	reviewElement.val('');
-	console.log(reviewValue)
+	var checked_rating = $( "input:checked" ).val();
+	var html;
+	$("#error").html("");
+	if(!checked_rating){
+		html = "<span>give a rating number</span>";
+		$("#error").append(html);
+		return;
+	}
 
+
+	console.log(checked_rating)
 	$.ajax({
 		url: "/OUCanEat/add_review",
 		type: "POST",
-		data: "new_review="+reviewValue+"&event_id="+event_id+"&csrfmiddlewaretoken="+getCSRFToken(),
+		data: "new_review="+checked_rating+"&event_id="+event_id+"&csrfmiddlewaretoken="+getCSRFToken(),
 		success: function(response) {
 			// show_comments(event_id);
 			rating = JSON.parse(response.avg_rating)
 			// events_status = JSON.parse(response.events_status)
-			console.log(rating)
-			console.log(event)
 			$("#latest_rating").html("");
 			$("#latest_rating").html(rating);
 			$("#review").html("");
@@ -386,7 +403,7 @@ $(function () {
 					restaurants = JSON.parse(response.restaurants);
 					events_status = response.events_status;
 					show_upcoming_event(events, restaurants, events_status, 5);
-					showMapEvents(restaurants, place_ids.length==0, true);
+					showMapEvents(restaurants, place_ids.length==0, true, false);
 					$("#info").html("");
 					$("#top_events").html("");
 				}

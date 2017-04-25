@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^add_review$', views.add_review),
     url(r'^join_event$', views.join_event),
     url(r'^leave_event$', views.leave_event),
-    url(r'^show_restaurant_info$', views.show_restaurant_info),
+    url(r'^get_restaurant_events$', views.get_restaurant_events),
     url(r'^search_events$', views.search_events),
     url(r'^show_default$', views.show_default),
     url(r'^show_event_page/(?P<event_id>\d+)$', views.show_event_page,name="show_event_page"),
@@ -43,6 +43,6 @@ urlpatterns = [
     url(r'^get_event_pictures$', views.get_event_pictures, name="get_event_pictures"),
     url(r'^get_event_restaurant/(?P<event_id>\d+)$', views.get_event_restaurant,name="get_event_restaurant"),
     url(r'^picture/(?P<curr_user>\w+)$', views.get_picture, name='picture'),
-    url(r'^profile-map/(?P<post_user>\w+)$', views.profile_map, name="profile-map"),
+    url(r'^profile-map/(?P<post_user>\w+)/(?P<profile_stream>\w+)$', views.profile_map, name="profile-map"),
     url(r'^event_picture/(?P<event_pic_id>\d+)$', views.get_event_picture, name='event_picture'),
 ]
