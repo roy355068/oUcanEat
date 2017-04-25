@@ -24,7 +24,14 @@
 			  	<tr>
 					<td style="font-size: 12pt">{{event.restaurant.name}}</td>
 					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
-					<td style="font-size: 10pt; text-align: right;"> <button type='button' class='btn btn-default btn-lg' onclick='show_event_page({{event.pk}},1)'>Review</button></td>				  	
+					<td style="font-size: 10pt; text-align: right;"> <!-- <button type='button' class='btn btn-default btn-lg' onclick='show_event_page({{event.pk}})'>Review</button> -->
+					<form action="{% url 'show_event_page' event.pk %}" method="get">
+            			<input class="submit" type="submit" value="Review">
+        			</form>						
+						
+					</td>				 
+
+ 	
 				 </tr>
 				</table>
 			{% endfor %}

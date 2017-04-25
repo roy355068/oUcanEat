@@ -14,6 +14,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Count
 
+
 import datetime
 import json
 from OUCanEat.models import *
@@ -156,10 +157,7 @@ def show_history(request, post_user):
 
 	past_joined= joined.filter(event__event_dt__lte = datetime.date.today())
 	past_events = [p.event for p in past_joined]
-	# events = Event.objects.filter(host__username = post_user)
-	# join_events = Join.objects.filter(participant__username = post_user,event.event_dt__gte = datetime.date.today())
-	# join_events.filter(event.event_dt__gte = datetime.date.today()
-	# past_events = events.filter(event_dt__lte = datetime.date.today())
+
 	for u in upcoming_joined:
 		print (u.event.event_dt)
 
@@ -225,34 +223,60 @@ def create_event(request):
 
 @login_required
 def add_review(request):
-	response_text = ''
-	if request.method=='POST':
-		#need to verify content
-		
-		review = request.POST['review']
-		event_id = request.POST['event_id']
-		event = Event.objects.get(pk=event_id)
-
+	if request.method=='POST' and 'event_id' in request.POST and 'new_review' in request.POST and request.POST['new_review']:
 		try:
-			Join.objects.get(event = event, participant = request.user)
-			if event_dt<=datetime.datetime.now():
-				review = Review(user = request.user, event = event, rating = review)
-				review.save()
-				data = json.dumps({"event_id":event_id})
-				return HttpResponse(data, content_type='application/json')
-		except:
-			pass
-	return HttpResponse()
+			event = Event.objects.get(id=request.POST['event_id'])
+			new_review = Review(user=request.user, event=event, rating=request.POST['new_review'])
+			new_review.save()
 
+			reviews = Review.objects.filter(event=event)
+			sum_rating = 0
+			count = reviews.count()
+			avg_rating = 0
+
+			for r in reviews:
+				sum_rating = sum_rating + r.rating
+
+			avg_rating = sum_rating/count
+			data = json.dumps({"avg_rating":avg_rating})
+
+		except Exception as error:
+			pass		
+	return HttpResponse(data, content_type='application/json')
 
 @login_required
 def show_event_page(request, event_id):
 	context = {}
 	try:
 		event = Event.objects.get(id=event_id)
+		now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+		event_time = event.event_dt.strftime('%Y-%m-%d %H:%M:%S')
+
+		# events_status = event.filter(event__event_dt__lte = datetime.date.today())
 		event_join = Join.objects.filter(event__id=event_id)
 		event_participants = [j.participant for j in event_join if j.participant!=event.host]
 		comments = Comment.objects.filter(event__id=event_id)
+		review = Review.objects.filter(event__id = event_id)
+		count = review.count()
+
+		event_status = 'toRate'
+		sum_rating = 0
+		avg_rating = 0
+		if now_time > event_time:
+			if(len(review)>0):
+				for r in review:
+					print (r.user)
+					if r.user == request.user:
+						event_status = 'rated'
+					sum_rating = sum_rating + r.rating
+				avg_rating = sum_rating / count
+			else:
+				avg_rating = 'Be the first one to rate'
+		else:
+			event_status = 'cantRate'
+			avg_rating = 'Not Available'
+
+
 		pic_users = Profile.objects.exclude(picture__isnull=True).exclude(picture__exact='')
 		pic_users = [u.user for u in pic_users]
 		context['event'] = event
@@ -260,6 +284,9 @@ def show_event_page(request, event_id):
 		context['comments'] = comments
 		context['pic_users'] = pic_users
 		context['form'] = EventPicForm()
+		context['rating'] = avg_rating
+		context['event_status'] = event_status		
+
 	except Exception as e:
 		pass
 	return render(request, 'OUCanEat/event_page.html', context)
