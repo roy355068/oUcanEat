@@ -9,9 +9,7 @@
 {% endblock %}
 
 
-
-{% block map %}
-<div class="row" style = "margin-bottom: 0pt; ">
+{% block info %}
     <div class="col-md-4"  > 
 		<div class="panel" style="background-color: transparent;">
 			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
@@ -77,7 +75,6 @@
 				<div class="col-md-10">
 				<textarea class="form-control" rows="1" placeholder="add your comment" id="new_comment_{{event.id}}"></textarea>
 				</div>
-				<button onclick="back_home()">Back</button>
 				<button class="btn btn-primary" onclick="add_comment({{event.id}})">Add</button>
 				</div>
 			</div>
@@ -86,12 +83,5 @@
 			</div>
 		</div>
 	</div>
-
-    <div class="col-md-8" >
-     	<div class="panel">
-			<div class="panel-body" style="height: 590px;" id="map" ></div>
-		</div>
-    </div>
-</div>
 {% endblock%}
 
