@@ -158,7 +158,6 @@ def show_history(request, post_user):
 	past_joined= joined.filter(event__event_dt__lte = datetime.date.today())
 	past_events = [p.event for p in past_joined]
 
-	for i in upcoming_events:
 	context['upcoming_event'] = upcoming_events
 	context['past_event'] = past_events
 
