@@ -151,7 +151,6 @@ def edit_profile(request):
 @login_required
 def show_history(request, post_user):
 	context = {}
-	print (post_user)
 	joined= Join.objects.filter(participant__username = post_user)
 	upcoming_joined= joined.filter(event__event_dt__gte = datetime.date.today())
 	upcoming_events = [u.event for u in upcoming_joined]
@@ -159,11 +158,7 @@ def show_history(request, post_user):
 	past_joined= joined.filter(event__event_dt__lte = datetime.date.today())
 	past_events = [p.event for p in past_joined]
 
-	for u in upcoming_joined:
-		print (u.event.event_dt)
-
 	for i in upcoming_events:
-		print (i.restaurant.name)
 	context['upcoming_event'] = upcoming_events
 	context['past_event'] = past_events
 
@@ -223,6 +218,20 @@ def create_event(request):
 	return HttpResponse()
 
 @login_required
+def update_event(request):
+	response_text = ''
+	if request.method=='POST':
+		event_id = request.POST['event_id']
+
+		try:
+			dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
+			if dt>=datetime.datetime.now():
+				Event.objects.filter(id=event_id).update(event_dt=dt, desc=request.POST['event_desc'])
+		except Exception as e:
+			pass
+	return HttpResponse()
+
+@login_required
 def add_review(request):
 	if request.method=='POST' and 'event_id' in request.POST and 'new_review' in request.POST and request.POST['new_review']:
 		try:
@@ -266,7 +275,6 @@ def show_event_page(request, event_id):
 		if now_time > event_time:
 			if(len(review)>0):
 				for r in review:
-					print (r.user)
 					if r.user == request.user:
 						event_status = 'rated'
 					sum_rating = sum_rating + r.rating
@@ -342,6 +350,21 @@ def leave_event(request):
 	if unjoin.event.event_dt>=datetime.datetime.now():
 		unjoin.delete()
 	return HttpResponse()
+
+@login_required
+def edit_event(request, event_id):
+	context = {}
+	try:
+		event = Event.objects.get(id=event_id, host=request.user) #check host is current user
+		event_join = Join.objects.filter(event__id=event_id)
+		event_participants = [j.participant for j in event_join if j.participant!=event.host]
+
+		context['event'] = event
+		context['event_participants'] = event_participants
+	except Exception as e:
+		pass
+	return render(request, 'OUCanEat/edit_event.html', context)
+	
 
 @login_required
 def add_comment(request):
