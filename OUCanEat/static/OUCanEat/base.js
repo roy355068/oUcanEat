@@ -341,20 +341,23 @@ function getToday(){
 
 
 function add_review(event_id) {
-	var reviewElement = $("#new_review_"+event_id);
-	var reviewValue = reviewElement.val();
-	reviewElement.val('');
-	console.log(reviewValue)
+	var checked_rating = $( "input:checked" ).val();
+	var html;
+	$("#error").html("");
+	if(!checked_rating){
+		html = "<span>give a rating number</span>";
+		$("#error").append(html);
+		return;
+	}
+
 	$.ajax({
 		url: "/OUCanEat/add_review",
 		type: "POST",
-		data: "new_review="+reviewValue+"&event_id="+event_id+"&csrfmiddlewaretoken="+getCSRFToken(),
+		data: "new_review="+checked_rating+"&event_id="+event_id+"&csrfmiddlewaretoken="+getCSRFToken(),
 		success: function(response) {
 			// show_comments(event_id);
 			rating = JSON.parse(response.avg_rating)
 			// events_status = JSON.parse(response.events_status)
-			console.log(rating)
-			console.log(event)
 			$("#latest_rating").html("");
 			$("#latest_rating").html(rating);
 			$("#review").html("");
