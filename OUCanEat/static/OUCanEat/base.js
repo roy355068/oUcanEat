@@ -136,6 +136,22 @@ function create_event() {
     });
 }
 
+function update_event(event_id) {
+	var event_date = $("#event_date").val();
+	var event_time = $("#event_time").val();
+	var event_desc = $("#event_desc").val();
+	var data = {'event_id': event_id, 'event_date':event_date, 'event_time':event_time, 'event_desc':event_desc,
+		'csrfmiddlewaretoken': getCSRFToken()}
+    $.ajax({
+        url: "/OUCanEat/update_event",
+        type: "POST",
+        data: data,
+        success: function(response) {
+			window.location="/OUCanEat/";
+        }
+    });
+}
+
 function show_default(){
 	$.ajax({
 		url: "/OUCanEat/show_default",
@@ -171,7 +187,7 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
     		html+= "<tr><td style='font-size: 16pt'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td><td>"+datetime+"</td><td style='text-align: right;'>";
 
     		if (status=='host'){
-    			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>";
+    			html+="<button type='button' class='btn btn-default btn-lg' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit Event</button></td></tr>"
     		}else if (status=='joined'){
     			html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>";
     		}else{
@@ -196,7 +212,7 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
     		var status = top_events_status[i];
 			html+= "<tr><td style='font-size: 16pt'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name + "</a></td><td>"+num_participants+"</td><td style='text-align: right;'>"
     		if (status=='host'){
-    			html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+event_id+", 1)'>Edit Event</button></td></tr>"
+    			html+="<button type='button' class='btn btn-default btn-lg' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit Event</button></td></tr>"
     		}else if (status=='joined'){
     			html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>"
     		}else{

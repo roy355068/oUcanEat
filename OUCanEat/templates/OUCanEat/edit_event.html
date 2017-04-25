@@ -1,0 +1,57 @@
+{% extends "OUCanEat/home.html" %}
+
+{% block init_js %}
+	<script language="javascript">
+	$(window).on('load', function() {
+		show_event_page({{ event.id }});
+	});
+	</script>
+{% endblock %}
+
+
+{% block info %}
+    <div class="col-md-4"  > 
+		<div class="panel" style="background-color: transparent;">
+			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
+
+			<h3>{{event.name}}</h3>
+			<table style="width:100%">
+				<tr>
+					<td>Restaurant: </td>
+					<td>{{event.restaurant.name}}</td>
+				</tr>
+				<tr>
+					<td>Date: </td>
+					<td><input type="date" id="event_date" placeholder={{event.event_dt}}></td>
+				</tr>
+				<tr>
+					<td>Time: </td>
+					<td><input type="time" id="event_time" placeholder={{event.event_dt}}></td>
+				</tr>
+				<tr>
+					<td>Description: </td>
+					<td><input type="text" id="event_desc" value={{event.desc}}></td>
+				</tr>
+				<tr>
+					<td>Host: </td>
+					<td>{{event.host.username}}</td>
+				</tr>
+				<tr>
+					<td>Participants: </td>
+				</tr>
+				{% for p in event_participants %}
+                	<tr>
+						<td></td>
+						<td>{{p.username}}</td>
+					</tr>
+				{% endfor %}
+				<tr>
+					<td><input type="submit" value="Update" onclick="update_event({{ event.id }})"></td>
+				</tr>
+			</table>
+
+			</div>
+		</div>
+	</div>
+{% endblock%}
+
