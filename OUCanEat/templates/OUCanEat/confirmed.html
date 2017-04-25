@@ -1,11 +1,13 @@
 {% extends "OUCanEat/base.html" %}
 
-{% block user-info %}
-    <div class="bg-primary h2">oUcanEat Confirmation Success</div>
+{% block navbar %}
+	<div class="bg-primary h2 skyblue navbarTitle">
+        oUcanEat Welcome!
+    </div>
 {% endblock %}
 
 
-{% block search %}
+{% block content %}
 <p class="text-center h3 text-success">
 Thank you for confirming your email address.
 Please <a href="{% url 'login' %}" class="text-warning">login</a> to access your address book.

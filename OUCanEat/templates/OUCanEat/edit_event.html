@@ -14,8 +14,12 @@
 		<div class="panel" style="background-color: transparent;">
 			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
 
-			<h3>{{event.restaurant.name}}</h3>
+			<h3>{{event.name}}</h3>
 			<table style="width:100%">
+				<tr>
+					<td>Restaurant: </td>
+					<td>{{event.restaurant.name}}</td>
+				</tr>
 				<tr>
 					<td>Date: </td>
 					<td><input type="date" id="event_date" placeholder={{event.event_dt}}></td>

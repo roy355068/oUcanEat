@@ -14,8 +14,12 @@
 		<div class="panel panelTrans">
 			<div id="info" class="panel-body panelBody">
 
-			<h3>{{event.restaurant.name}}</h3>
+			<h3>{{event.name}}</h3>
 			<table style="width:100%">
+				<tr>
+					<td class="contentFont">Restaurant: </td>
+					<td class="contentFont">{{event.restaurant.name}}</td>
+				</tr>
 				<tr>
 					<td class="contentFont">Time: </td>
 					<td class="contentFont">{{event.event_dt}}</td>
@@ -25,8 +29,8 @@
 					<td class="contentFont">{{event.desc}}</td>
 				</tr>
 				<tr>
-					<td>Rating: </td>
-					<td id="latest_rating">{{rating}}</td>
+					<td class="contentFont">Rating: </td>
+					<td class="contentFont" id="latest_rating">{{rating}}</td>
 				</tr>
 				<tr>
 					<td class="contentFont">Host: </td>
@@ -51,26 +55,40 @@
 			</table>
 			</div>
 
-			<form id="pic_form" enctype="multipart/form-data"  method="post" onchange="upload_event_pic({{event.id}})">
-				<table>
-					{{ form }}
+			<form class="contentFont" id="pic_form" enctype="multipart/form-data"  method="post" onchange="upload_event_pic({{event.id}})">
+				<table >
+					<tr>
+						<td>{{ form }}</td>
+						<td><button id="pic_btn" type="button">Upload</button></td>
+					</tr>
 				</table>
 				<input type="hidden" name="event_id"  value="{{event.id}}">
-				<button id="pic_btn" type="button">Upload</button>
+				
 				{% csrf_token %}
 			</form>
 			{% if event_status == "toRate" %}
+						{% endif %}
 
 			<div id="review" class="list-group">
 				<div>
 				<div class="col-md-10">
-				<textarea class="form-control" rows="1" placeholder="rate your event" id="new_review_{{event.id}}"></textarea>
+				<input type="radio" value=1 name="rating">1  
+				<input type="radio" value=2 name="rating">2
+				<input type="radio" value=3 name="rating">3
+				<input type="radio" value=4 name="rating">4
+				<input type="radio" value=5 name="rating">5
+				
+				<span id="error"></span>
 				</div>
 				<button onclick="back_home()">Back</button>
+
 				<button class="btn btn-primary" onclick="add_review({{event.id}})">Rate</button>
 				</div>
 			</div>
-			{% endif %}
+
+
+
+			
 			<div id="comments" class="list-group">
 				<div>
 				<div class="col-md-10">
