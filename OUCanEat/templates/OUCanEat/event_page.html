@@ -25,6 +25,10 @@
 					<td>{{event.desc}}</td>
 				</tr>
 				<tr>
+					<td>Rating: </td>
+					<td id="latest_rating">{{rating}}</td>
+				</tr>
+				<tr>
 					<td>Host: </td>
 					<td>{{event.host.username}}</td>
 				</tr>
@@ -54,7 +58,18 @@
 				<button id="pic_btn" type="button">Upload</button>
 				{% csrf_token %}
 			</form>
+			{% if event_status == "toRate" %}
 
+			<div id="review" class="list-group">
+				<div>
+				<div class="col-md-10">
+				<textarea class="form-control" rows="1" placeholder="rate your event" id="new_review_{{event.id}}"></textarea>
+				</div>
+				<button onclick="back_home()">Back</button>
+				<button class="btn btn-primary" onclick="add_review({{event.id}})">Rate</button>
+				</div>
+			</div>
+			{% endif %}
 			<div id="comments" class="list-group">
 				<div>
 				<div class="col-md-10">
@@ -63,6 +78,7 @@
 				<button class="btn btn-primary" onclick="add_comment({{event.id}})">Add</button>
 				</div>
 			</div>
+
 
 			</div>
 		</div>
