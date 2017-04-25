@@ -24,6 +24,10 @@ html, body {
 	font-size: 18pt;
 }
 
+.contentFont {
+	font-size: 16pt;
+}
+
 .panelTrans {
 	background-color: transparent;
 }

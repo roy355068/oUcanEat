@@ -23,12 +23,12 @@
 		<div class="collapse navbar-collapse">
 			<ul class="nav navbar-nav navbar-right" >
 				<li class="active" >
-					<a href="#" class="navbarColor skyblue" style="background-color:#48D1CC;" id="userName">{{user}}</a>
+					<a href="#" class="navbarColor skyblue titleFont" style="background-color:#48D1CC;" id="userName">Welcome {{user}} !</a>
 				</li>
-				<li><a href="{% url 'show-profile' user.username %}">Profile</a></li>
-				<li><a href="{% url 'show-history' user.username %}">Event History</a></li>
-				<li><a href="#">Notification<span class="badge">4</span></a></li>
-				<li><a href="{% url 'logout' %}">Log Out</a></li>
+				<li><a href="{% url 'show-profile' user.username %}" class="titleFont">Profile</a></li>
+				<li><a href="{% url 'show-history' user.username %}" class="titleFont">Event History</a></li>
+				<li><a href="#" class="titleFont">Notification<span class="badge">4</span></a></li>
+				<li><a href="{% url 'logout' %}" class="titleFont">Log Out</a></li>
 			</ul>
 		</div>
 	</div>
