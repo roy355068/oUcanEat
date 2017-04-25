@@ -68,7 +68,8 @@ def show_profile(request, post_user):
 	context['joined'] = joined
 	context['profile'] = profile
 	context['prefer'] = my_prefer
-	context['curr_user'] = post_user
+	context['post_user'] = post_user
+	context['curr_user'] = request.user.username
 	context['your_events'] = your_events
 	context['old_events'] = old_events
 	return render(request, 'OUCanEat/profile.html', context)

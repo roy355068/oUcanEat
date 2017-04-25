@@ -88,10 +88,6 @@ function leave_event(event_id, page_type) {
 function show_event_page(event_id){
 	show_comments(event_id);
 	show_event_pictures(event_id);
-
-	///////
-    ///asdasdasd
-	///////
 	$.ajax({
 		url:"/OUCanEat/get_event_restaurant/"+event_id,
 		type:"GET",
@@ -346,7 +342,6 @@ function add_review(event_id) {
 	var reviewValue = reviewElement.val();
 	reviewElement.val('');
 	console.log(reviewValue)
-
 	$.ajax({
 		url: "/OUCanEat/add_review",
 		type: "POST",
@@ -365,6 +360,12 @@ function add_review(event_id) {
 	});
 }
 
+function sanitizer(keyword) {
+	return keyword.replace(/&/g, '&amp;')
+				  .replace(/</g, '&lt;')
+				  .replace(/>/g, '&gt;')
+				  .replace(/"/g, '&quot;');
+}
 
 //init
 $(function () {
@@ -372,6 +373,9 @@ $(function () {
     	var search_date = $("#search_date").val().trim();
     	var keyword = $("#keyword").val().trim();
 		var place_ids = []
+		
+		search_date = sanitizer(search_date);
+		keyword = sanitizer(keyword);
 
 		if (search_date.length==0 && keyword.length==0) {
 			return;
