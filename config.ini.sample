@@ -1,11 +1,9 @@
-[DB]
-Password: <Password>
 [Email]
 Host: smtp.andrew.cmu.edu
 Port: 465
-User: <andrew id>
-Password: <Password>
+User: bochengl
+Password: Fack61012!
 [Twilio]
-sid: <account sid>
-auth_token: <auth_token>
-from_number: <phone number>
+sid: AC191858972b1fb5a479b61c15928b45b2
+auth_token: a23a52fc1abf6e570bd100302333f1d8
+from_number: +14125670248

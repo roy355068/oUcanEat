@@ -14,7 +14,7 @@
 	{% block map_header %}
 	{% endblock %}
 </head>
-
+	{% block navbar %}
 <nav class="navbar navbar-default skyblue marginBotZero">
 	<div class="container-fluid">
 		<div class="navbar-header">
@@ -23,7 +23,7 @@
 		<div class="collapse navbar-collapse">
 			<ul class="nav navbar-nav navbar-right" >
 				<li class="active" >
-					<a href="#" class="navbarColor skyblue titleFont" style="background-color:#48D1CC;" id="userName">Welcome {{user}} !</a>
+					<a href="#" class="navbarColor skyblue titleFont" style="background-color:#48D1CC;" id="userName">{{user}}</a>
 				</li>
 				<li><a href="{% url 'show-profile' user.username %}" class="titleFont">Profile</a></li>
 				<li><a href="{% url 'show-history' user.username %}" class="titleFont">Event History</a></li>
@@ -33,6 +33,7 @@
 		</div>
 	</div>
 </nav>
+	{% endblock %}
 	
 	{% block login_banner %}
 	{% endblock %}
