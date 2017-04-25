@@ -14,6 +14,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Count
 
+
 import datetime
 import json
 from OUCanEat.models import *
@@ -157,10 +158,7 @@ def show_history(request, post_user):
 
 	past_joined= joined.filter(event__event_dt__lte = datetime.date.today())
 	past_events = [p.event for p in past_joined]
-	# events = Event.objects.filter(host__username = post_user)
-	# join_events = Join.objects.filter(participant__username = post_user,event.event_dt__gte = datetime.date.today())
-	# join_events.filter(event.event_dt__gte = datetime.date.today()
-	# past_events = events.filter(event_dt__lte = datetime.date.today())
+
 	for u in upcoming_joined:
 		print (u.event.event_dt)
 
@@ -207,46 +205,79 @@ def create_event(request):
 		lat = request.POST['event_lat']
 
 		try:
-			restaurant = Restaurant.objects.get(google_id=google_id)
+			dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
+			if dt>=datetime.datetime.now():
+				try:
+					restaurant = Restaurant.objects.get(google_id=google_id)
+				except:
+					restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
+					restaurant.save()
+				event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
+				event.save()
+				join = Join(event=event, participant=request.user)
+				join.save()
+				data = json.dumps({"event_id":event.id})
+				return HttpResponse(data, content_type='application/json')
 		except:
-			restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
-			restaurant.save()
-		dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
-		event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
-		event.save()
-		join = Join(event=event, participant=request.user)
-		join.save()
-		data = json.dumps({"event_id":event.id})
-	return HttpResponse(data, content_type='application/json')
+			pass
+	return HttpResponse()
 
 @login_required
 def add_review(request):
-	response_text = ''
-	if request.method=='POST':
-		#need to verify content
-		
-		review = request.POST['review']
-		event_id = request.POST['event_id']
-		event = Event.objects.get(pk=event_id)
+	if request.method=='POST' and 'event_id' in request.POST and 'new_review' in request.POST and request.POST['new_review']:
+		try:
+			event = Event.objects.get(id=request.POST['event_id'])
+			new_review = Review(user=request.user, event=event, rating=request.POST['new_review'])
+			new_review.save()
 
-		review = Review(user = request.user, event = event, rating = review)
-		review.save()
+			reviews = Review.objects.filter(event=event)
+			sum_rating = 0
+			count = reviews.count()
+			avg_rating = 0
 
-		data = json.dumps({"event_id":event_id})
+			for r in reviews:
+				sum_rating = sum_rating + r.rating
 
-		#should add himself
+			avg_rating = sum_rating/count
+			data = json.dumps({"avg_rating":avg_rating})
 
+		except Exception as error:
+			pass		
 	return HttpResponse(data, content_type='application/json')
-
 
 @login_required
 def show_event_page(request, event_id):
 	context = {}
 	try:
 		event = Event.objects.get(id=event_id)
+		now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+		event_time = event.event_dt.strftime('%Y-%m-%d %H:%M:%S')
+
+		# events_status = event.filter(event__event_dt__lte = datetime.date.today())
 		event_join = Join.objects.filter(event__id=event_id)
 		event_participants = [j.participant for j in event_join if j.participant!=event.host]
 		comments = Comment.objects.filter(event__id=event_id)
+		review = Review.objects.filter(event__id = event_id)
+		count = review.count()
+
+		event_status = 'toRate'
+		sum_rating = 0
+		avg_rating = 0
+		if now_time > event_time:
+			if(len(review)>0):
+				for r in review:
+					print (r.user)
+					if r.user == request.user:
+						event_status = 'rated'
+					sum_rating = sum_rating + r.rating
+				avg_rating = sum_rating / count
+			else:
+				avg_rating = 'Be the first one to rate'
+		else:
+			event_status = 'cantRate'
+			avg_rating = 'Not Available'
+
+
 		pic_users = Profile.objects.exclude(picture__isnull=True).exclude(picture__exact='')
 		pic_users = [u.user for u in pic_users]
 		context['event'] = event
@@ -254,6 +285,9 @@ def show_event_page(request, event_id):
 		context['comments'] = comments
 		context['pic_users'] = pic_users
 		context['form'] = EventPicForm()
+		context['rating'] = avg_rating
+		context['event_status'] = event_status		
+
 	except Exception as e:
 		pass
 	return render(request, 'OUCanEat/event_page.html', context)
@@ -264,8 +298,9 @@ def join_event(request):
 		user = request.user
 		try:
 			event = Event.objects.get(id=request.POST['event_id'])
-			join = Join(event=event, participant=user)
-			join.save()
+			if event.event_dt>=datetime.datetime.now():
+				join = Join(event=event, participant=user)
+				join.save()
 		except Exception as e:
 			pass
 	return HttpResponse()
@@ -304,7 +339,8 @@ def leave_event(request):
 		raise Http404
 	user = request.user
 	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
-	unjoin.delete()
+	if unjoin.event.event_dt>=datetime.datetime.now():
+		unjoin.delete()
 	return HttpResponse()
 
 @login_required
@@ -467,3 +503,24 @@ def get_events_status(events, user):
 		except:
 			events_status.append('notJoined')
 	return events_status
+
+
+from twilio.rest import Client
+import os, configparser
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+config = configparser.ConfigParser()
+config.read(os.path.join(BASE_DIR, 'config.ini'))
+
+account_sid = config.get('Twilio', 'sid')
+auth_token = config.get('Twilio', 'auth_token')
+from_number = config.get('Twilio', 'from_number')
+
+
+def send_notification(recipients):
+	client = Client(account_sid, auth_token)
+	content = ''
+	for recipient in recipients:
+		message = client.messages.create(to=recipient,	from_=from_number, body=content)
+		print(message.sid)
+

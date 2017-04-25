@@ -1,0 +1,11 @@
+[DB]
+Password: <Password>
+[Email]
+Host: smtp.andrew.cmu.edu
+Port: 465
+User: <andrew id>
+Password: <Password>
+[Twilio]
+sid: <account sid>
+auth_token: <auth_token>
+from_number: <phone number>

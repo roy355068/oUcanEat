@@ -12,7 +12,10 @@ function show_restaurant_info(events, events_status, profile_stream) {
 		}
 		html += "<dd style='font-size: 18pt'>"+open+"</dd>";
 	}
-	html += "<dd style='font-size: 14pt'>Address: "+clicked_place.vicinity+"</dd>";
+	var address = clicked_place.vicinity;
+	if (!("vicinity" in clicked_place)) address = clicked_place.formatted_address;
+
+	html += "<dd style='font-size: 14pt'>Address: "+address+"</dd>";
 	if ("rating" in clicked_place) {
 		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
 	}
@@ -202,6 +205,7 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
 
 
 
+
 function show_comments(event_id) {
 	var latestCommentId = 0;
 	var url = window.location.pathname;
@@ -336,34 +340,27 @@ function getToday(){
 }
 
 
-function add_review_form(event_id) {
-	$("#add_review").html("");
-	var html = "<div>"+
-					"<h4>Review the event!</h4>"+
-      				"<input type='text' id='review'>"+
-					"<input type='submit' value='Submit' onclick='add_review("+event_id+")'>"+
-				"</div>";   
-
-	$("#add_review").prepend(html);
-}
-
-
 function add_review(event_id) {
-	var review = $("#review").val();
-	
-	// var event_form_time = $("#event_time").val();
-	// var event_form_desc = $("#event_desc").val();
-	var data = {'review':review, 'event_id':event_id,
-		'csrfmiddlewaretoken': getCSRFToken()}
-    $.ajax({
-        url: "/OUCanEat/add_review",
-        type: "POST",
-        data: data,
-        success: function(response) {
-        	event_id = JSON.parse(response.event_id)
-			show_event_page(event_id,1);
-        }
-    });
+	var reviewElement = $("#new_review_"+event_id);
+	var reviewValue = reviewElement.val();
+	reviewElement.val('');
+	console.log(reviewValue)
+	$.ajax({
+		url: "/OUCanEat/add_review",
+		type: "POST",
+		data: "new_review="+reviewValue+"&event_id="+event_id+"&csrfmiddlewaretoken="+getCSRFToken(),
+		success: function(response) {
+			// show_comments(event_id);
+			rating = JSON.parse(response.avg_rating)
+			// events_status = JSON.parse(response.events_status)
+			console.log(rating)
+			console.log(event)
+			$("#latest_rating").html("");
+			$("#latest_rating").html(rating);
+			$("#review").html("");
+			
+		}
+	});
 }
 
 function sanitizer(keyword) {
