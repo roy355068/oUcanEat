@@ -1,49 +1,33 @@
-<!doctype html>
-<html>
-<head>
-    <title>OUCanEat</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    
-    {% load staticfiles %}
-    <link rel=stylesheet type="text/css" href="{% static 'OUCanEat/base.css' %}">
-
-</head>
-
-<body>
-
-    <div class="bg-primary h2">
-        oUcanEat Form
-    </div>
-
-    {% for error in errors %}
-        <p class="text-danger text-center h3 ">
-            {{ error }}
-        </p>
-    {% endfor %}
-    <div class="container">
-        
-        <form method="post" action="{% url 'register' %}" class="h3 text-center form-horizontal">
-            <div class="control-group">
-            <table>
-                
-                {{form}}
-                
-            </table>
-            </div>
-
-            <button class="btn btn-primary btn-md" type="submit" value="Register">Register</button>
-            
-            {% csrf_token %}
-
-        </form>
-            <div class="text-center">
-            <a href="/OUCanEat/"><button class="btn btn-success btn-md">Back</button></a>
+{% extends "OUCanEat/base.html" %}
+    {% block navbar %}
+        <div class="bg-primary h2 skyblue navbarTitle">
+            oUcanEat Registration
         </div>
-    </div>
-</body>
-</html>
+    {% endblock %}
+    {% block content %}
+        {% for error in errors %}
+            <p class="text-danger text-center h3 ">
+                {{ error }}
+            </p>
+        {% endfor %}
+        <div class="container">
+            
+            <form method="post" action="{% url 'register' %}" class="h3 text-center form-horizontal">
+                <div class="control-group">
+                <table>
+                    
+                    {{form}}
+                    
+                </table>
+                </div>
 
+                <button class="btn btn-primary btn-md" type="submit" value="Register">Register</button>
+                
+                {% csrf_token %}
+
+            </form>
+                <div class="text-center">
+                <a href="/OUCanEat/"><button class="btn btn-success btn-md">Back</button></a>
+            </div>
+        </div>
+    {% endblock %}
