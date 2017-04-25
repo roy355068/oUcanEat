@@ -67,17 +67,28 @@
 				{% csrf_token %}
 			</form>
 			{% if event_status == "toRate" %}
+						{% endif %}
 
 			<div id="review" class="list-group">
 				<div>
 				<div class="col-md-10">
-				<textarea class="form-control" rows="1" placeholder="rate your event" id="new_review_{{event.id}}"></textarea>
+				<input type="radio" value=1 name="rating">1  
+				<input type="radio" value=2 name="rating">2
+				<input type="radio" value=3 name="rating">3
+				<input type="radio" value=4 name="rating">4
+				<input type="radio" value=5 name="rating">5
+				
+				<span id="error"></span>
 				</div>
 				<button onclick="back_home()">Back</button>
+
 				<button class="btn btn-primary" onclick="add_review({{event.id}})">Rate</button>
 				</div>
 			</div>
-			{% endif %}
+
+
+
+			
 			<div id="comments" class="list-group">
 				<div>
 				<div class="col-md-10">

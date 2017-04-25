@@ -238,7 +238,7 @@ def add_review(request):
 			for r in reviews:
 				sum_rating = sum_rating + r.rating
 
-			avg_rating = sum_rating/count
+			avg_rating = round(sum_rating/count, 1)
 			data = json.dumps({"avg_rating":avg_rating})
 
 		except Exception as error:
@@ -270,7 +270,7 @@ def show_event_page(request, event_id):
 					if r.user == request.user:
 						event_status = 'rated'
 					sum_rating = sum_rating + r.rating
-				avg_rating = sum_rating / count
+				avg_rating = round(sum_rating / count,1)
 			else:
 				avg_rating = 'Be the first one to rate'
 		else:
