@@ -232,7 +232,7 @@ def add_review(request):
 			for r in reviews:
 				sum_rating = sum_rating + r.rating
 
-			avg_rating = count(sum_rating/count)
+			avg_rating = round(sum_rating/count, 1)
 			data = json.dumps({"avg_rating":avg_rating})
 
 		except Exception as error:
