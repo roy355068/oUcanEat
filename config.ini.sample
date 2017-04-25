@@ -1,0 +1,9 @@
+[Email]
+Host: smtp.andrew.cmu.edu
+Port: 465
+User: <andrew_id>
+Password: <andrew_password>
+[Twilio]
+sid: AC191858972b1fb5a479b61c15928b45b2
+auth_token: a23a52fc1abf6e570bd100302333f1d8
+from_number: +14125670248

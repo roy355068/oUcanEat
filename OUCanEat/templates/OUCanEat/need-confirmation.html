@@ -1,11 +1,14 @@
 {% extends "OUCanEat/base.html" %}
 
-{% block user-info %}
-    <div class="bg-primary h2">oUcanEat Request Confirmation Page</div>
+{% block navbar %}
+	<div class="bg-primary h2 skyblue navbarTitle">
+        oUcanEat Confirmation
+    </div>
 {% endblock %}
 
+
 <br/>
-{% block search %}
+{% block content %}
 <p class="text-center h3 text-success">
 A confirmation email has been sent to {{email}}.  
 <br/>

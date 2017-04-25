@@ -21,6 +21,7 @@ class Restaurant(models.Model):
 	lng = models.FloatField()
 
 class Event(models.Model):
+	name = models.CharField(max_length=500, blank=True)
 	host = models.ForeignKey(User, default=None)
 	restaurant = models.ForeignKey(Restaurant, default=None)
 	desc = models.CharField(max_length=500, blank=True)

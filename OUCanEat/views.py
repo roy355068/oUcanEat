@@ -19,7 +19,7 @@ import datetime
 import json
 from OUCanEat.models import *
 from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm, EventPicForm
-
+from twilio.rest import Client
 
 @ensure_csrf_cookie
 @login_required
@@ -203,7 +203,7 @@ def create_event(request):
 		restaurant_name = request.POST['event_restaurant']
 		lng = request.POST['event_lng']
 		lat = request.POST['event_lat']
-
+		event_name = request.POST['event_name']
 		try:
 			dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
 			if dt>=datetime.datetime.now():
@@ -212,7 +212,7 @@ def create_event(request):
 				except:
 					restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
 					restaurant.save()
-				event = Event(host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
+				event = Event(name= event_name, host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
 				event.save()
 				join = Join(event=event, participant=request.user)
 				join.save()

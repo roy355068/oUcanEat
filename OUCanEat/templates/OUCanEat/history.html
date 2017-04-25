@@ -10,8 +10,8 @@
 			{% for event in upcoming_event %}
 			  	<table style="width:100%" id="yourEvents">
 			  	<tr>
-					<td style="font-size: 12pt" onclick='show_event_page({{event.pk}},0)'>{{event.restaurant.name}}</td>
-					<td style="font-size: 12pt;text-align: right;">{{event.event_dt}}</td>
+					<td class="contentFont"><a href='/OUCanEat/show_event_page/{{event.id}}'>{{event.name}}</a></td>
+					<td class="contentFont" style="text-align: right;">{{event.event_dt}}</td>
 					<!-- <td style="font-size: 12pt;text-align: right;"> <button type='button' class='btn btn-default btn-lg' onclick='show_event_page({{event.pk}})'>Details</button></td> -->
 				  	
 				 </tr>
@@ -22,10 +22,10 @@
 			{% for event in past_event %}
 			  	<table style="width:100%" id="oldEvents">
 			  	<tr>
-					<td style="font-size: 12pt">{{event.restaurant.name}}</td>
+					<td class="contentFont"><a href='/OUCanEat/show_event_page/{{event.id}}'>{{event.name}}</a></td>
 					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
 					<td style="font-size: 10pt; text-align: right;"> <!-- <button type='button' class='btn btn-default btn-lg' onclick='show_event_page({{event.pk}})'>Review</button> -->
-					<form action="{% url 'show_event_page' event.pk %}" method="get">
+					<form action="{% url 'show_event_page' event.pk %}" method="get" class="contentFont">
             			<input class="submit" type="submit" value="Review">
         			</form>						
 						
