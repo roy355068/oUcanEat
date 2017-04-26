@@ -250,14 +250,7 @@ def add_review(request):
 				new_review = Review(user=request.user, event=event, rating=request.POST['new_review'])
 				new_review.save()
 
-				reviews = Review.objects.filter(event=event)
-				sum_rating = 0
-				count = reviews.count()
-				avg_rating = 0
-
-				for r in reviews:
-					sum_rating = sum_rating + r.rating
-				avg_rating = round(sum_rating/count, 1)
+				(event_status, avg_rating) = get_event_rating(event)
 				data = json.dumps({"avg_rating":avg_rating})
 		except Exception as error:
 			pass
@@ -276,22 +269,7 @@ def show_event_page(request, event_id):
 		review = Review.objects.filter(event__id = event_id)
 		count = review.count()
 
-		event_status = 'toRate'
-		sum_rating = 0
-		avg_rating = 0
-		if now_dt > event.event_dt:
-			if(len(review)>0):
-				for r in review:
-					if r.user == request.user:
-						event_status = 'rated'
-					sum_rating = sum_rating + r.rating
-				avg_rating = round(sum_rating / count,1)
-			else:
-				avg_rating = 'Be the first one to rate'
-		else:
-			event_status = 'cantRate'
-			avg_rating = 'Not Available'
-
+		(event_status, avg_rating) = get_event_rating(event)
 
 		pic_users = Profile.objects.exclude(picture__isnull=True).exclude(picture__exact='')
 		pic_users = [u.user for u in pic_users]
@@ -531,6 +509,28 @@ def get_events_status(events, user):
 			events_status.append('notJoined')
 				
 	return events_status
+
+def get_event_rating(event):
+	review = Review.objects.filter(event = event)
+	count = review.count()
+	now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+
+	event_status = 'toRate'
+	sum_rating = 0
+	avg_rating = 0
+	if now_dt >= event.event_dt:
+		if(len(review)>0):
+			for r in review:
+				if r.user == request.user:
+					event_status = 'rated'
+				sum_rating = sum_rating + r.rating
+			avg_rating = round(sum_rating / count,1)
+		else:
+			avg_rating = 'Be the first one to rate'
+	else:
+		event_status = 'cantRate'
+		avg_rating = 'Not Available'
+	return (event_status, avg_rating)
 
 
 from twilio.rest import Client
