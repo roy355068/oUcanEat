@@ -47,6 +47,10 @@
 								</table>
 							</td>
 						</tr>
+						<tr>
+							<td class="titleFont">Rating:</td>
+							<td class="titleFont">{{avg_rating}}</td>
+						</tr>
 					</table>
 				{% if curr_user == profile.user.username %}
 					<a href="{% url 'edit-profile' %}" class="btn btn-default btn-lg titleFont">Edit</a>

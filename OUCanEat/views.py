@@ -67,6 +67,17 @@ def show_profile(request, post_user):
 
 	my_prefer = profile.preference.all()
 
+	ratings, rating_cnt = 0, 0
+	for e in old_events:
+		(event_status, avg_rating) = get_event_rating(e)
+		if avg_rating>0:
+			ratings += avg_rating
+			rating_cnt += 1
+	if rating_cnt>0:
+		avg_rating = ratings/float(rating_cnt)
+	else:
+		avg_rating = 'No rating'
+
 	context['joined'] = joined
 	context['profile'] = profile
 	context['prefer'] = my_prefer
@@ -74,6 +85,7 @@ def show_profile(request, post_user):
 	context['curr_user'] = request.user.username
 	context['your_events'] = your_events
 	context['old_events'] = old_events
+	context['avg_rating'] = avg_rating
 	return render(request, 'OUCanEat/profile.html', context)
 
 @login_required
