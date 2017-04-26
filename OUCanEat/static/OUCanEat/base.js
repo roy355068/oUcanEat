@@ -107,14 +107,16 @@ function create_event_form() {
 					"Event Date and Time<br>"+
 					"<div id='datetimepicker' class='input-append date'>"+
 					"<input type='name' id='event_name' placeholder= 'Name'><br><br>"+
-      				"<input type='date' id='event_date' placeholder= 'Date'><br><br>"+
+      				"<input type='date' id='event_date' placeholder= 'Date' min= '1900-01-01' ><br><br>"+
       				"<input type='time' id='event_time' placeholder= 'time'><br><br>"+
 					"Event Description:<br>"+
 					"<input type='text' id='event_desc' placeholder= 'Description'><br><br>"+
 					"<input type='submit' value='Create' onclick='create_event()'>"+
-				"</div>";   
+				"</div>"
+				;   
 
 	$("#info").prepend(html);
+	getTomorrow();
 }
 
 function create_event() {
@@ -345,19 +347,35 @@ function getCSRFToken() {
 	return "unknown";
 }
 
-function getToday(){
-	var today = new Date();
-	var dd = today.getDate();
-	var mm = today.getMonth()+1;
-	var yyyy = today.getFullYear();
+function getTomorrow(){
+	var tmr = new Date();
+	var dd = tmr.getDate()+1;
+	var mm = tmr.getMonth()+1;
+	var yyyy = tmr.getFullYear();
 	 if(dd<10){
 	        dd='0'+dd
 	    } 
 	    if(mm<10){
 	        mm='0'+mm
 	    } 
-	today = yyyy+'-'+mm+'-'+dd;
-	document.getElementById("search_date").setAttribute("min", today);
+	tmr = yyyy+'-'+mm+'-'+dd;
+	document.getElementById("event_date").setAttribute("min", tmr);
+
+}
+
+function getToday(){
+	var tmr = new Date();
+	var dd = tmr.getDate();
+	var mm = tmr.getMonth()+1;
+	var yyyy = tmr.getFullYear();
+	 if(dd<10){
+	        dd='0'+dd
+	    } 
+	    if(mm<10){
+	        mm='0'+mm
+	    } 
+	tmr = yyyy+'-'+mm+'-'+dd;
+	document.getElementById("search_date").setAttribute("min", tmr);
 
 }
 

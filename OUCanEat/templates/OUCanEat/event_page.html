@@ -66,9 +66,7 @@
 				
 				{% csrf_token %}
 			</form>
-			{% if event_status == "toRate" %}
-						{% endif %}
-
+			{% if event_status == "toRate" %}						
 			<div id="review" class="list-group">
 				<div>
 				<div class="col-md-10">
@@ -85,8 +83,7 @@
 				<button class="btn btn-primary" onclick="add_review({{event.id}})">Rate</button>
 				</div>
 			</div>
-
-
+			{% endif %}
 
 			
 			<div id="comments" class="list-group">
