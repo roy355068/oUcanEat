@@ -4,7 +4,6 @@ from .models import *
 from django.db.models.fields.files import FieldFile
 MAX_UPLOAD_SIZE = 2500000
 
-
 RESTAURANT_TYPE = (
 	('Japanese', 'Japanese'),
 	('Chinese', 'Chinese'),
@@ -20,6 +19,8 @@ class RegistrationForm(forms.Form):
 	username   = forms.CharField(max_length = 30)
 	email      = forms.CharField(max_length = 50, 
 							     widget = forms.EmailInput())
+	phone_number = forms.RegexField(regex= r'^\+?1?\d{9,15}$', 
+		error_message = ("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."))
 	password1  = forms.CharField(max_length = 150,
 								 label = 'Password',
 								 widget = forms.PasswordInput())
@@ -34,6 +35,7 @@ class RegistrationForm(forms.Form):
 			        widget=forms.CheckboxSelectMultiple,
 			        choices=RESTAURANT_TYPE,
 			    )
+
 
 	def clean(self):
 		cleaned_data = super(RegistrationForm, self).clean()
@@ -74,16 +76,15 @@ class ProfileForm(forms.ModelForm):
 			'content_type',
 			'preference',
 		)
-
+	
 	def clean_picture(self):
 		picture = self.cleaned_data['picture']
 		if not isinstance(picture, FieldFile):
-			if not picture:
-				raise forms.ValidationError("You must upload a picture")
-			if not picture.content_type or not picture.content_type.startswith('image'):
-				raise forms.ValidationError('File type is not image')
-			if picture.size > MAX_UPLOAD_SIZE:
-				raise forms.ValidationError('File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
+			if picture:
+				if not picture.content_type or not picture.content_type.startswith('image'):
+					raise forms.ValidationError('File type is not image')
+				if picture.size > MAX_UPLOAD_SIZE:
+					raise forms.ValidationError('File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
 		return picture
 
 class EventPicForm(forms.ModelForm):

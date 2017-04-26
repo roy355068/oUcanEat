@@ -26,7 +26,7 @@ function show_restaurant_info(events, events_status, profile_stream) {
 		html += "<tr><td>"+this.fields.event_dt+"</td>";
 		if (profile_stream === 'upcoming') {
 			if (events_status[index]=='host'){
-				html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+this.pk+", 0)'>Edit Event</button></td></tr>"
+				html+="<button type='button' class='btn btn-default btn-lg' onclick=\"window.location.href='/OUCanEat/edit_event/"+this.pk+"'\">Edit Event</button></td></tr>"
 			}else if (events_status[index]=='joined'){
 				html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
 			}else{
@@ -395,13 +395,10 @@ function add_review(event_id) {
 		type: "POST",
 		data: "new_review="+checked_rating+"&event_id="+event_id+"&csrfmiddlewaretoken="+getCSRFToken(),
 		success: function(response) {
-			// show_comments(event_id);
 			rating = JSON.parse(response.avg_rating)
-			// events_status = JSON.parse(response.events_status)
 			$("#latest_rating").html("");
 			$("#latest_rating").html(rating);
 			$("#review").html("");
-			
 		}
 	});
 }

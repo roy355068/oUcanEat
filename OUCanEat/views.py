@@ -30,7 +30,7 @@ def home(request):
 @login_required
 def show_default(request):
 	if request.method=='GET':
-		upcoming_events = Event.objects.filter(event_dt__gte = datetime.date.today()).order_by('event_dt')
+		upcoming_events = Event.objects.filter(event_dt__gte = datetime.datetime.now()).order_by('event_dt')
 		upcoming_events_restaurant = [r.restaurant for r in upcoming_events]	
 		upcoming_events_status= get_events_status(upcoming_events, request.user)
 
@@ -57,11 +57,11 @@ def show_profile(request, post_user):
 	profile = Profile.objects.get(user__username = post_user)
 	temp_events = Event.objects.filter(host__username = post_user)
 
-	your_events = temp_events.filter(event_dt__gte = datetime.date.today()).annotate(num_participants = Count('event_join'))
-	old_events = temp_events.filter(event_dt__lte = datetime.date.today())
+	your_events = temp_events.filter(event_dt__gte = datetime.datetime.now()).annotate(num_participants = Count('event_join'))
+	old_events = temp_events.filter(event_dt__lte = datetime.datetime.now())
 	
 	joined_temp = Join.objects.filter(participant__username = post_user)
-	joined      = joined_temp.filter(event__event_dt__gte = datetime.date.today())
+	joined      = joined_temp.filter(event__event_dt__gte = datetime.datetime.now())
 
 	my_prefer = profile.preference.all()
 
@@ -79,9 +79,9 @@ def profile_map(request, post_user, profile_stream):
 	if request.method == 'GET':
 		joined = Join.objects.filter(participant__username = post_user)
 		if profile_stream == "upcoming":
-			joined = joined.filter(event__event_dt__gte = datetime.date.today())
+			joined = joined.filter(event__event_dt__gte = datetime.datetime.now())
 		elif profile_stream == "past":
-			joined = joined.filter(event__event_dt__lte = datetime.date.today())
+			joined = joined.filter(event__event_dt__lte = datetime.datetime.now())
 		restaurants = [e.event.restaurant for e in joined]
 		restaurants = serializers.serialize('json', restaurants)
 		response_text = json.dumps({'restaurants': restaurants})
@@ -118,6 +118,9 @@ def edit_profile(request):
 		name_form = NameForm(request.POST, instance = request.user)
 		profile_form = ProfileForm(request.POST, request.FILES, instance = user_profile)
 		choice_form = ChoiceForm(request.POST)
+		context['name_form'] = name_form
+		context['profile_form'] = profile_form
+
 		if choice_form.is_valid():
 			choice = choice_form.cleaned_data['choice']
 			
@@ -138,8 +141,9 @@ def edit_profile(request):
 				name_form.save()
 				profile_form.save()
 		else:
-			name_form.save()
-			Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'])
+			return render(request, 'OUCanEat/edit.html', context)
+			# name_form.save()
+			# Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'], phone_number=request.POST['phone_number'])
             
 	context['name_form'] = name_form
 	context['profile_form'] = profile_form
@@ -152,10 +156,10 @@ def edit_profile(request):
 def show_history(request, post_user):
 	context = {}
 	joined= Join.objects.filter(participant__username = post_user)
-	upcoming_joined= joined.filter(event__event_dt__gte = datetime.date.today())
+	upcoming_joined= joined.filter(event__event_dt__gte = datetime.datetime.now())
 	upcoming_events = [u.event for u in upcoming_joined]
 
-	past_joined= joined.filter(event__event_dt__lte = datetime.date.today())
+	past_joined= joined.filter(event__event_dt__lte = datetime.datetime.now())
 	past_events = [p.event for p in past_joined]
 
 	context['upcoming_event'] = upcoming_events
@@ -172,10 +176,10 @@ def get_restaurant_events(request):
 		profile_stream = request.GET.get('profile_stream')
 		if profile_stream == "upcoming":
 			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
-				event_dt__gte = datetime.date.today()).order_by('event_dt')
+				event_dt__gte = datetime.datetime.now()).order_by('event_dt')
 		elif profile_stream == "past":
 			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
-				event_dt__lte = datetime.date.today()).order_by('event_dt')
+				event_dt__lte = datetime.datetime.now()).order_by('event_dt')
 
 		isPersonal = request.GET.get('isPersonal')
 		if isPersonal.lower()=='true':
@@ -232,25 +236,25 @@ def update_event(request):
 
 @login_required
 def add_review(request):
+	data = {}
 	if request.method=='POST' and 'event_id' in request.POST and 'new_review' in request.POST and request.POST['new_review']:
 		try:
 			event = Event.objects.get(id=request.POST['event_id'])
-			new_review = Review(user=request.user, event=event, rating=request.POST['new_review'])
-			new_review.save()
+			if dt.event_dt<=datetime.datetime.now():
+				new_review = Review(user=request.user, event=event, rating=request.POST['new_review'])
+				new_review.save()
 
-			reviews = Review.objects.filter(event=event)
-			sum_rating = 0
-			count = reviews.count()
-			avg_rating = 0
+				reviews = Review.objects.filter(event=event)
+				sum_rating = 0
+				count = reviews.count()
+				avg_rating = 0
 
-			for r in reviews:
-				sum_rating = sum_rating + r.rating
-
-			avg_rating = round(sum_rating/count, 1)
-			data = json.dumps({"avg_rating":avg_rating})
-
+				for r in reviews:
+					sum_rating = sum_rating + r.rating
+				avg_rating = round(sum_rating/count, 1)
+				data = json.dumps({"avg_rating":avg_rating})
 		except Exception as error:
-			pass		
+			pass
 	return HttpResponse(data, content_type='application/json')
 
 @login_required
@@ -315,7 +319,7 @@ def join_event(request):
 @login_required
 def search_events(request):
 	if request.method=='GET':
-		events = Event.objects.filter(event_dt__gte=datetime.date.today()).order_by('event_dt')
+		events = Event.objects.filter(event_dt__gte=datetime.datetime.now()).order_by('event_dt')
 		if 'search_places' in request.GET:
 			search_places = json.loads(request.GET.get('search_places'))
 			if len(search_places)>0: events = Event.objects.filter(restaurant__google_id__in=search_places)
@@ -488,6 +492,7 @@ def register(request):
     new_user_profile = Profile(user = new_user,
                                age = form.cleaned_data['age'],
                                bio = form.cleaned_data['bio'],
+                               phone_number = form.cleaned_data['phone_number']
                                )
 
     new_user_profile.save()
