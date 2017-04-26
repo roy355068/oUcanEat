@@ -132,7 +132,6 @@ def edit_profile(request):
 					user_profile.preference.add(new_choice)
 
 		if profile_form.is_valid() and name_form.is_valid():
-			print("in")
 			if not request.FILES:
 				name_form.save()
 				profile_form.save()
@@ -141,10 +140,7 @@ def edit_profile(request):
 				user_profile.save()
 				name_form.save()
 				profile_form.save()
-				# print("Hiiii")
-				# Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'], phone_number=request.POST['phone_number'])
 		else:
-			print("out")
 			return render(request, 'OUCanEat/edit.html', context)
 			# name_form.save()
 			# Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'], phone_number=request.POST['phone_number'])

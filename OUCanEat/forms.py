@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from .models import *
 from django.db.models.fields.files import FieldFile
 MAX_UPLOAD_SIZE = 2500000
-import re
 
 RESTAURANT_TYPE = (
 	('Japanese', 'Japanese'),
@@ -80,14 +79,11 @@ class ProfileForm(forms.ModelForm):
 	
 	def clean_picture(self):
 		picture = self.cleaned_data['picture']
-		print (picture)
 		if not isinstance(picture, FieldFile):
 			if picture:
 				if not picture.content_type or not picture.content_type.startswith('image'):
-					print("2")
 					raise forms.ValidationError('File type is not image')
 				if picture.size > MAX_UPLOAD_SIZE:
-					print("3")
 					raise forms.ValidationError('File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
 		return picture
 
