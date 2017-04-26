@@ -14,9 +14,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Count
 
-
 import datetime
 import json
+import pytz
 from OUCanEat.models import *
 from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm, EventPicForm
 from twilio.rest import Client
@@ -30,7 +30,8 @@ def home(request):
 @login_required
 def show_default(request):
 	if request.method=='GET':
-		upcoming_events = Event.objects.filter(event_dt__gte = datetime.datetime.now()).order_by('event_dt')
+		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+		upcoming_events = Event.objects.filter(event_dt__gte = now_dt).order_by('event_dt')
 		upcoming_events_restaurant = [r.restaurant for r in upcoming_events]	
 		upcoming_events_status= get_events_status(upcoming_events, request.user)
 
@@ -57,11 +58,12 @@ def show_profile(request, post_user):
 	profile = Profile.objects.get(user__username = post_user)
 	temp_events = Event.objects.filter(host__username = post_user)
 
-	your_events = temp_events.filter(event_dt__gte = datetime.datetime.now()).annotate(num_participants = Count('event_join'))
-	old_events = temp_events.filter(event_dt__lte = datetime.datetime.now())
+	now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+	your_events = temp_events.filter(event_dt__gte = now_dt).annotate(num_participants = Count('event_join'))
+	old_events = temp_events.filter(event_dt__lte = now_dt)
 	
 	joined_temp = Join.objects.filter(participant__username = post_user)
-	joined      = joined_temp.filter(event__event_dt__gte = datetime.datetime.now())
+	joined      = joined_temp.filter(event__event_dt__gte = now_dt)
 
 	my_prefer = profile.preference.all()
 
@@ -78,10 +80,11 @@ def show_profile(request, post_user):
 def profile_map(request, post_user, profile_stream):
 	if request.method == 'GET':
 		joined = Join.objects.filter(participant__username = post_user)
+		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
 		if profile_stream == "upcoming":
-			joined = joined.filter(event__event_dt__gte = datetime.datetime.now())
+			joined = joined.filter(event__event_dt__gte = now_dt)
 		elif profile_stream == "past":
-			joined = joined.filter(event__event_dt__lte = datetime.datetime.now())
+			joined = joined.filter(event__event_dt__lte = now_dt)
 		restaurants = [e.event.restaurant for e in joined]
 		restaurants = serializers.serialize('json', restaurants)
 		response_text = json.dumps({'restaurants': restaurants})
@@ -142,8 +145,6 @@ def edit_profile(request):
 				profile_form.save()
 		else:
 			return render(request, 'OUCanEat/edit.html', context)
-			# name_form.save()
-			# Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'], phone_number=request.POST['phone_number'])
             
 	context['name_form'] = name_form
 	context['profile_form'] = profile_form
@@ -156,10 +157,11 @@ def edit_profile(request):
 def show_history(request, post_user):
 	context = {}
 	joined= Join.objects.filter(participant__username = post_user)
-	upcoming_joined= joined.filter(event__event_dt__gte = datetime.datetime.now())
+	now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+	upcoming_joined= joined.filter(event__event_dt__gte = now_dt)
 	upcoming_events = [u.event for u in upcoming_joined]
 
-	past_joined= joined.filter(event__event_dt__lte = datetime.datetime.now())
+	past_joined= joined.filter(event__event_dt__lte = now_dt)
 	past_events = [p.event for p in past_joined]
 
 	context['upcoming_event'] = upcoming_events
@@ -174,12 +176,13 @@ def get_restaurant_events(request):
 		#need to verify content
 		restaurant_google_id = request.GET.get('restaurant_id')
 		profile_stream = request.GET.get('profile_stream')
+		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
 		if profile_stream == "upcoming":
 			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
-				event_dt__gte = datetime.datetime.now()).order_by('event_dt')
+				event_dt__gte = now_dt).order_by('event_dt')
 		elif profile_stream == "past":
 			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
-				event_dt__lte = datetime.datetime.now()).order_by('event_dt')
+				event_dt__lte = now_dt).order_by('event_dt')
 
 		isPersonal = request.GET.get('isPersonal')
 		if isPersonal.lower()=='true':
@@ -203,8 +206,9 @@ def create_event(request):
 		lat = request.POST['event_lat']
 		event_name = request.POST['event_name']
 		try:
-			dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
-			if dt>=datetime.datetime.now():
+			dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
+			now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+			if dt>=now_dt:
 				try:
 					restaurant = Restaurant.objects.get(google_id=google_id)
 				except:
@@ -216,7 +220,7 @@ def create_event(request):
 				join.save()
 				data = json.dumps({"event_id":event.id})
 				return HttpResponse(data, content_type='application/json')
-		except:
+		except Exception as e:
 			pass
 	return HttpResponse()
 
@@ -227,8 +231,9 @@ def update_event(request):
 		event_id = request.POST['event_id']
 
 		try:
-			dt = datetime.datetime.strptime(request.POST['event_date']+' '+request.POST['event_time'], '%Y-%m-%d %H:%M')
-			if dt>=datetime.datetime.now():
+			dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
+			now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+			if dt>=now_dt:
 				Event.objects.filter(id=event_id).update(event_dt=dt, desc=request.POST['event_desc'])
 		except Exception as e:
 			pass
@@ -240,7 +245,8 @@ def add_review(request):
 	if request.method=='POST' and 'event_id' in request.POST and 'new_review' in request.POST and request.POST['new_review']:
 		try:
 			event = Event.objects.get(id=request.POST['event_id'])
-			if dt.event_dt<=datetime.datetime.now():
+			now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+			if event.event_dt<=now_dt:
 				new_review = Review(user=request.user, event=event, rating=request.POST['new_review'])
 				new_review.save()
 
@@ -262,10 +268,8 @@ def show_event_page(request, event_id):
 	context = {}
 	try:
 		event = Event.objects.get(id=event_id)
-		now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-		event_time = event.event_dt.strftime('%Y-%m-%d %H:%M:%S')
+		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
 
-		# events_status = event.filter(event__event_dt__lte = datetime.date.today())
 		event_join = Join.objects.filter(event__id=event_id)
 		event_participants = [j.participant for j in event_join if j.participant!=event.host]
 		comments = Comment.objects.filter(event__id=event_id)
@@ -275,7 +279,7 @@ def show_event_page(request, event_id):
 		event_status = 'toRate'
 		sum_rating = 0
 		avg_rating = 0
-		if now_time > event_time:
+		if now_dt > event.event_dt:
 			if(len(review)>0):
 				for r in review:
 					if r.user == request.user:
@@ -297,8 +301,7 @@ def show_event_page(request, event_id):
 		context['pic_users'] = pic_users
 		context['form'] = EventPicForm()
 		context['rating'] = avg_rating
-		context['event_status'] = event_status		
-
+		context['event_status'] = event_status
 	except Exception as e:
 		pass
 	return render(request, 'OUCanEat/event_page.html', context)
@@ -309,7 +312,8 @@ def join_event(request):
 		user = request.user
 		try:
 			event = Event.objects.get(id=request.POST['event_id'])
-			if event.event_dt>=datetime.datetime.now():
+			now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+			if event.event_dt>=now_dt:
 				join = Join(event=event, participant=user)
 				join.save()
 		except Exception as e:
@@ -319,7 +323,8 @@ def join_event(request):
 @login_required
 def search_events(request):
 	if request.method=='GET':
-		events = Event.objects.filter(event_dt__gte=datetime.datetime.now()).order_by('event_dt')
+		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+		events = Event.objects.filter(event_dt__gte=now_dt).order_by('event_dt')
 		if 'search_places' in request.GET:
 			search_places = json.loads(request.GET.get('search_places'))
 			if len(search_places)>0: events = Event.objects.filter(restaurant__google_id__in=search_places)
@@ -350,7 +355,7 @@ def leave_event(request):
 		raise Http404
 	user = request.user
 	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
-	if unjoin.event.event_dt>=datetime.datetime.now():
+	if unjoin.event.event_dt>=timezone.now():
 		unjoin.delete()
 	return HttpResponse()
 
@@ -503,12 +508,7 @@ def register(request):
     
     context['email'] = form.cleaned_data['email']
     return render(request, 'OUCanEat/need-confirmation.html', context)
-    # Logs in the new user and redirects to his/her todo list
-    # new_user = authenticate(username=form.cleaned_data['username'],
-    #                         password=form.cleaned_data['password1'],)
-    
-    # login(request, new_user)
-    # return redirect(reverse('home'))
+
 def confirm_registration(request, username, token):
     user = get_object_or_404(User, username = username)
 
