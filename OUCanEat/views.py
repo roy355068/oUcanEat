@@ -178,6 +178,7 @@ def show_history(request, post_user):
 
 	context['upcoming_event'] = upcoming_events
 	context['past_event'] = past_events
+	context['post_user'] = post_user
 
 	return render(request, 'OUCanEat/history.html', context)
 

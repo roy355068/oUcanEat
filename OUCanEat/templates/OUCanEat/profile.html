@@ -3,7 +3,7 @@
 {% block init_js %}
 	<script type="text/javascript">
 	$(window).on('load', function() {
-		profileMap();
+		profileMap("{{ post_user }}");
 	});
 	</script>
 {% endblock %}

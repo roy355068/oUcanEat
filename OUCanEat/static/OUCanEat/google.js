@@ -6,7 +6,6 @@ var searchBox;
 var markers = [];
 var marker_ids = new Set();
 var profile_stream = 'upcoming';
-var userName;
 
 function initMap() {
 	// var pyrmont = {lat: -33.867, lng: 151.195};
@@ -75,30 +74,28 @@ function showMapResult() {
 }
 
 
-function change_stream() {
-	userName = $("#userName").html();
+function change_stream(username) {
 	if (profile_stream === 'upcoming') {
 		profile_stream = 'past';
 	} else {
 		profile_stream = 'upcoming';
 	}
-	profileMap();
+	profileMap(username);
 
 }
 
-function profileMap() {
-	userName = $("#userName").html();
+function profileMap(username) {
 	$('#mapPanel').html("");
 	var html = "";
 	if (profile_stream === 'upcoming') {
-		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream()">Past Events</button>';
+		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream('+username+')">Past Events</button>';
 	}
 	else {
-		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream()">Upcoming Events</button>';
+		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream('+username+')">Upcoming Events</button>';
 	}
 	$('#mapPanel').prepend(html);
 	$.ajax({
-		url: "/OUCanEat/profile-map/" + userName + '/' + profile_stream,
+		url: "/OUCanEat/profile-map/" + username + '/' + profile_stream,
 		type: "GET",
 		data: {},
 		dataType: "json",
