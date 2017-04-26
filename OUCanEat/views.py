@@ -139,7 +139,7 @@ def edit_profile(request):
 				profile_form.save()
 		else:
 			name_form.save()
-			Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'])
+			Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'], phone_number=request.POST['phone_number'])
             
 	context['name_form'] = name_form
 	context['profile_form'] = profile_form
@@ -488,6 +488,7 @@ def register(request):
     new_user_profile = Profile(user = new_user,
                                age = form.cleaned_data['age'],
                                bio = form.cleaned_data['bio'],
+                               phone_number = form.cleaned_data['phone_number']
                                )
 
     new_user_profile.save()

@@ -20,6 +20,8 @@ class RegistrationForm(forms.Form):
 	username   = forms.CharField(max_length = 30)
 	email      = forms.CharField(max_length = 50, 
 							     widget = forms.EmailInput())
+	phone_number = forms.RegexField(regex= r'^\+?1?\d{9,15}$', 
+		error_message = ("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."))
 	password1  = forms.CharField(max_length = 150,
 								 label = 'Password',
 								 widget = forms.PasswordInput())
@@ -34,6 +36,7 @@ class RegistrationForm(forms.Form):
 			        widget=forms.CheckboxSelectMultiple,
 			        choices=RESTAURANT_TYPE,
 			    )
+
 
 	def clean(self):
 		cleaned_data = super(RegistrationForm, self).clean()
@@ -67,6 +70,8 @@ class ChoiceForm(forms.Form):
 class ProfileForm(forms.ModelForm):
 	picture = forms.FileField(required=False, widget=forms.FileInput)
 	age = forms.IntegerField(min_value = 0)
+	phone_number = forms.RegexField(regex=r'^\+?1?\d{9,15}$', 
+            error_message = ("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."))
 	class Meta:
 		model = Profile
 		exclude = (

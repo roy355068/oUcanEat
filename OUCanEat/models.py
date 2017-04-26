@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 
 class Choice(models.Model):
 	choice = models.CharField(max_length=500, blank=True)
@@ -12,6 +13,9 @@ class Profile(models.Model):
 	picture = models.FileField(upload_to="images", blank=True)
 	content_type = models.CharField(max_length=50, blank=True)
 	preference = models.ManyToManyField(Choice)
+	phone_regex = RegexValidator(regex= r'^\+?1?\d{9,15}$', 
+		message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+	phone_number = models.CharField(validators=[phone_regex], max_length = 15, blank = True)
 
 class Restaurant(models.Model):
 	name = models.CharField(max_length=500, blank=True)
