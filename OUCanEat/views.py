@@ -118,6 +118,9 @@ def edit_profile(request):
 		name_form = NameForm(request.POST, instance = request.user)
 		profile_form = ProfileForm(request.POST, request.FILES, instance = user_profile)
 		choice_form = ChoiceForm(request.POST)
+		context['name_form'] = name_form
+		context['profile_form'] = profile_form
+
 		if choice_form.is_valid():
 			choice = choice_form.cleaned_data['choice']
 			
@@ -138,8 +141,9 @@ def edit_profile(request):
 				name_form.save()
 				profile_form.save()
 		else:
-			name_form.save()
-			Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'])
+			return render(request, 'OUCanEat/edit.html', context)
+			# name_form.save()
+			# Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'], phone_number=request.POST['phone_number'])
             
 	context['name_form'] = name_form
 	context['profile_form'] = profile_form
@@ -488,6 +492,7 @@ def register(request):
     new_user_profile = Profile(user = new_user,
                                age = form.cleaned_data['age'],
                                bio = form.cleaned_data['bio'],
+                               phone_number = form.cleaned_data['phone_number']
                                )
 
     new_user_profile.save()
