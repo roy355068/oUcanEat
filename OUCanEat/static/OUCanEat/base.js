@@ -395,6 +395,33 @@ function sanitizer(keyword) {
 				  .replace(/"/g, '&quot;');
 }
 
+$(document).on('change', 'input[id="id_picture"]' , function(){
+	console.log("HIHIH");
+	preview_photo(this);
+});
+
+// $(document).ready(function() {
+// 	console.log("asdasdasd");
+// });
+
+function preview_photo(input) {
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#preview').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// $("#id_picture").change(function(){
+//     readURL(this);
+// });
+
+
 //init
 $(function () {
 	$("#search_btn").click(function(){
@@ -439,3 +466,5 @@ $(function () {
 		});
 	});
 });
+
+

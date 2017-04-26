@@ -1,9 +1,18 @@
 {% extends "OUCanEat/base.html" %}
+{% block map_header %}
+    
+	{% load staticfiles %}
+    <!-- <script type="text/javascript" src="{% static 'OUCanEat/google.js' %}"></script> -->
+    <script type="text/javascript" src="{% static 'OUCanEat/base.js' %}"></script>
 
+	{% block init_js %}
+	{% endblock %}
+{% endblock %}
 {% block content %}
 
 	<div class="container" id="inputForm">
-		<form method="post" action="{% url 'edit-profile' %}" class="h3 text-center form-horizontal" enctype="multipart/form-data">
+		<form method="post" action="{% url 'edit-profile' %}" class="h3 text-center form-horizontal" enctype="multipart/form-data"
+		runat="server">
 
 				{% for field in name_form.visible_fields %}
 					<div class="form-group">
@@ -16,8 +25,15 @@
 
 				{% for field in profile_form.visible_fields %}
 					<div class="form-group">
+						{% if field.id_for_label == "id_picture" %}
+							<button type="button" class="btn btn-success btn-md">{{field.label_tag}}</button>
+							<br/>
+							<img id="preview" alt="preview photo" width='200px'/>
 
-						{{field.label_tag}}
+						{% else %}
+							{{field.label_tag}}
+						{% endif %}
+
 						{{field}}
 						{% for error in field.errors %} {{error}} {% endfor %}
 					</div>
@@ -41,4 +57,6 @@
 	        <button class="btn btn-primary btn-md" type="submit" value="Update">Update</button>
 		</form>
 	</div>
+
+
 {% endblock %}

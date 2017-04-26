@@ -71,10 +71,13 @@ class ChoiceForm(forms.Form):
 			        widget=forms.SelectMultiple(attrs={'class': 'form-check-input'}),
 			        choices=RESTAURANT_TYPE,
 			)
+	def __init__(self, *args, **kwargs):
+		super(ChoiceForm, self).__init__(*args, **kwargs)
+		self.fields['choice'].label = "Tell us your preference!"
 		
 class ProfileForm(forms.ModelForm):
 	picture = forms.FileField(required=False, widget=forms.FileInput(attrs={'class': 'inputFile'}))
-	age = forms.IntegerField(min_value = 0)
+	age = forms.IntegerField(min_value = 0, widget = forms.NumberInput(attrs={'class': 'form-control'}))
 	class Meta:
 		model = Profile
 		exclude = (
@@ -83,11 +86,12 @@ class ProfileForm(forms.ModelForm):
 			'preference',
 		)
 		widgets = {
-			'age' : forms.NumberInput(attrs={'class': 'form-control'}),
 			'bio' : forms.Textarea(attrs={'class': 'form-control'}),
 			'phone_number' : forms.TextInput(attrs={'class': 'form-control'}),
-
 		}
+	def __init__(self, *args, **kwargs):
+		super(ProfileForm, self).__init__(*args, **kwargs)
+		self.fields['picture'].label = "Upload your picture here!"
 	
 	def clean_picture(self):
 		picture = self.cleaned_data['picture']
