@@ -156,7 +156,7 @@ def edit_profile(request):
 @login_required
 def show_history(request, post_user):
 	context = {}
-	joined= Join.objects.filter(participant__username = post_user)
+	joined= Join.objects.filter(participant__username = post_user).order_by('event__event_dt')
 	now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
 	upcoming_joined= joined.filter(event__event_dt__gte = now_dt)
 	upcoming_events = [u.event for u in upcoming_joined]
