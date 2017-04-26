@@ -377,13 +377,10 @@ function add_review(event_id) {
 		type: "POST",
 		data: "new_review="+checked_rating+"&event_id="+event_id+"&csrfmiddlewaretoken="+getCSRFToken(),
 		success: function(response) {
-			// show_comments(event_id);
 			rating = JSON.parse(response.avg_rating)
-			// events_status = JSON.parse(response.events_status)
 			$("#latest_rating").html("");
 			$("#latest_rating").html(rating);
 			$("#review").html("");
-			
 		}
 	});
 }

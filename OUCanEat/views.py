@@ -232,25 +232,25 @@ def update_event(request):
 
 @login_required
 def add_review(request):
+	data = {}
 	if request.method=='POST' and 'event_id' in request.POST and 'new_review' in request.POST and request.POST['new_review']:
 		try:
 			event = Event.objects.get(id=request.POST['event_id'])
-			new_review = Review(user=request.user, event=event, rating=request.POST['new_review'])
-			new_review.save()
+			if dt.event_dt<=datetime.datetime.now():
+				new_review = Review(user=request.user, event=event, rating=request.POST['new_review'])
+				new_review.save()
 
-			reviews = Review.objects.filter(event=event)
-			sum_rating = 0
-			count = reviews.count()
-			avg_rating = 0
+				reviews = Review.objects.filter(event=event)
+				sum_rating = 0
+				count = reviews.count()
+				avg_rating = 0
 
-			for r in reviews:
-				sum_rating = sum_rating + r.rating
-
-			avg_rating = round(sum_rating/count, 1)
-			data = json.dumps({"avg_rating":avg_rating})
-
+				for r in reviews:
+					sum_rating = sum_rating + r.rating
+				avg_rating = round(sum_rating/count, 1)
+				data = json.dumps({"avg_rating":avg_rating})
 		except Exception as error:
-			pass		
+			pass
 	return HttpResponse(data, content_type='application/json')
 
 @login_required
