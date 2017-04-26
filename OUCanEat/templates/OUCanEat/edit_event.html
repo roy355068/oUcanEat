@@ -22,11 +22,11 @@
 				</tr>
 				<tr>
 					<td>Date: </td>
-					<td><input type="date" id="event_date" placeholder={{event.event_dt}}></td>
+					<td><input type="date" id="event_date" value={{event.event_dt|date:"Y-m-d"}}></td>
 				</tr>
 				<tr>
 					<td>Time: </td>
-					<td><input type="time" id="event_time" placeholder={{event.event_dt}}></td>
+					<td><input type="time" id="event_time" value={{event.event_dt|date:"H:i"}}></td>
 				</tr>
 				<tr>
 					<td>Description: </td>
