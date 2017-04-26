@@ -14,25 +14,27 @@ RESTAURANT_TYPE = (
 ) 
 
 class RegistrationForm(forms.Form):
-	first_name = forms.CharField(max_length = 30)
-	last_name  = forms.CharField(max_length = 30)
-	username   = forms.CharField(max_length = 30)
+	first_name = forms.CharField(max_length = 30, widget=forms.TextInput(attrs={'class': 'form-control'}))
+	last_name  = forms.CharField(max_length = 30, widget=forms.TextInput(attrs={'class': 'form-control'}))
+	username   = forms.CharField(max_length = 30, widget=forms.TextInput(attrs={'class': 'form-control'}))
 	email      = forms.CharField(max_length = 50, 
-							     widget = forms.EmailInput())
+							     widget = forms.EmailInput(attrs={'class': 'form-control'}))
 	phone_number = forms.RegexField(regex= r'^\+?1?\d{9,15}$', 
-		error_message = ("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."))
+		error_message = ("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+		, widget=forms.TextInput(attrs={'class': 'form-control'}))
 	password1  = forms.CharField(max_length = 150,
 								 label = 'Password',
-								 widget = forms.PasswordInput())
+								 widget = forms.PasswordInput(attrs={'class': 'form-control'}))
 	password2  = forms.CharField(max_length = 150,
 								 label = 'Confirm password',
-								 widget = forms.PasswordInput())
-	age 	   = forms.IntegerField(min_value = 0)
+								 widget = forms.PasswordInput(attrs={'class': 'form-control'}))
+	age 	   = forms.IntegerField(min_value = 0, 
+								widget = forms.NumberInput(attrs={'class': 'form-control'}))
 	bio		   = forms.CharField(max_length = 430,
-							     widget = forms.Textarea)
+							     widget = forms.Textarea(attrs={'class': 'form-control'}))
 	preference = forms.MultipleChoiceField(
 			        required=False,
-			        widget=forms.CheckboxSelectMultiple,
+			        widget=forms.SelectMultiple(attrs={'class': 'form-check-input'}),
 			        choices=RESTAURANT_TYPE,
 			    )
 
@@ -58,16 +60,20 @@ class NameForm(forms.ModelForm):
 			'first_name',
 			'last_name',
 		)
+		widgets = {
+			'first_name' : forms.TextInput(attrs={'class': 'form-control'}),
+			'last_name' : forms.TextInput(attrs={'class': 'form-control'}),
+		}
 		
 class ChoiceForm(forms.Form):
 	choice = forms.MultipleChoiceField(
 			        required=False,
-			        widget=forms.CheckboxSelectMultiple,
+			        widget=forms.SelectMultiple(attrs={'class': 'form-check-input'}),
 			        choices=RESTAURANT_TYPE,
 			)
 		
 class ProfileForm(forms.ModelForm):
-	picture = forms.FileField(required=False, widget=forms.FileInput)
+	picture = forms.FileField(required=False, widget=forms.FileInput(attrs={'class': 'inputFile'}))
 	age = forms.IntegerField(min_value = 0)
 	class Meta:
 		model = Profile
@@ -76,6 +82,12 @@ class ProfileForm(forms.ModelForm):
 			'content_type',
 			'preference',
 		)
+		widgets = {
+			'age' : forms.NumberInput(attrs={'class': 'form-control'}),
+			'bio' : forms.Textarea(attrs={'class': 'form-control'}),
+			'phone_number' : forms.TextInput(attrs={'class': 'form-control'}),
+
+		}
 	
 	def clean_picture(self):
 		picture = self.cleaned_data['picture']

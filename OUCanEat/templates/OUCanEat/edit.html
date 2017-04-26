@@ -2,36 +2,38 @@
 
 {% block content %}
 
-	<div class="container">
-		<form class="text-center h3" enctype="multipart/form-data" method="post" action="{% url 'edit-profile' %}" >
-			<div class="text-center h3">
+	<div class="container" id="inputForm">
+		<form method="post" action="{% url 'edit-profile' %}" class="h3 text-center form-horizontal" enctype="multipart/form-data">
 
-				<div class="form-group">
-				<table>
-					{% for field in name_form.visible_fields %}
-						<tr>
-							<td> {{field.label_tag}} </td>
-							<td> {{field}} </td>
-							<td class="text-danger">
-								{% for error in field.errors %} {{error}} {% endfor %}
-							</td>
-						</tr>
-					{% endfor%}
-					{% for field in profile_form.visible_fields %}
-						<tr>
-							<td> {{field.label_tag}} </td>
-							<td> {{field}} </td>
-							<td class="text-danger">
-								{% for error in field.errors %} {{error}} {% endfor %}
-							</td>
-						</tr>
-					{% endfor %}
-					
-					{{choice_form}}
+				{% for field in name_form.visible_fields %}
+					<div class="form-group">
 
-				</table>
-				</div>
-			</div>
+						{{field.label_tag}}
+						{{field}}
+						{% for error in field.errors %} {{error}} {% endfor %}
+					</div>
+				{% endfor%}
+
+				{% for field in profile_form.visible_fields %}
+					<div class="form-group">
+
+						{{field.label_tag}}
+						{{field}}
+						{% for error in field.errors %} {{error}} {% endfor %}
+					</div>
+				{% endfor %}
+				
+				{% for field in choice_form.visible_fields %}
+                    <div class="form-group">
+                    
+                        {{field.label_tag}}
+                        {{field}}
+                        {% for error in field.errors %} {{error}} {% endfor %}
+                            
+                    </div>
+
+                {% endfor %}
+
 			{% for field in profile_form.hidden_fields %}
 	            {{field}} {{field.errors}}
 	        {% endfor %}
