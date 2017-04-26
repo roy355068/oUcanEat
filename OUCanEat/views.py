@@ -118,6 +118,9 @@ def edit_profile(request):
 		name_form = NameForm(request.POST, instance = request.user)
 		profile_form = ProfileForm(request.POST, request.FILES, instance = user_profile)
 		choice_form = ChoiceForm(request.POST)
+		context['name_form'] = name_form
+		context['profile_form'] = profile_form
+
 		if choice_form.is_valid():
 			choice = choice_form.cleaned_data['choice']
 			
@@ -129,6 +132,7 @@ def edit_profile(request):
 					user_profile.preference.add(new_choice)
 
 		if profile_form.is_valid() and name_form.is_valid():
+			print("in")
 			if not request.FILES:
 				name_form.save()
 				profile_form.save()
@@ -137,9 +141,13 @@ def edit_profile(request):
 				user_profile.save()
 				name_form.save()
 				profile_form.save()
+				# print("Hiiii")
+				# Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'], phone_number=request.POST['phone_number'])
 		else:
-			name_form.save()
-			Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'], phone_number=request.POST['phone_number'])
+			print("out")
+			return render(request, 'OUCanEat/edit.html', context)
+			# name_form.save()
+			# Profile.objects.filter(user__username = request.user.username).update(bio=request.POST['bio'], age=request.POST['age'], phone_number=request.POST['phone_number'])
             
 	context['name_form'] = name_form
 	context['profile_form'] = profile_form
