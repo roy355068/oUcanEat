@@ -88,10 +88,10 @@ function profileMap(username) {
 	$('#mapPanel').html("");
 	var html = "";
 	if (profile_stream === 'upcoming') {
-		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream('+username+')">Past Events</button>';
+		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream(\''+username+'\')">Past Events</button>';
 	}
 	else {
-		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream('+username+')">Upcoming Events</button>';
+		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream(\''+username+'\')">Upcoming Events</button>';
 	}
 	$('#mapPanel').prepend(html);
 	$.ajax({
