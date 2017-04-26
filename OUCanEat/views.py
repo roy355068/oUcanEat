@@ -245,7 +245,8 @@ def update_event(request):
 		try:
 			dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
 			now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
-			if dt>=now_dt:
+			event = Event.objects.get(id=event_id)
+			if event.event_dt>=now_dt and dt>=now_dt: #can only update upcoming events & future date
 				Event.objects.filter(id=event_id).update(event_dt=dt, desc=request.POST['event_desc'])
 		except Exception as e:
 			pass
@@ -345,7 +346,8 @@ def leave_event(request):
 		raise Http404
 	user = request.user
 	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
-	if unjoin.event.event_dt>=timezone.now():
+	now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+	if unjoin.event.event_dt>=now_dt:
 		unjoin.delete()
 	return HttpResponse()
 
