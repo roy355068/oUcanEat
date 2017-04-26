@@ -45,7 +45,7 @@ function initMap() {
 function callback(results, status) {
 	if (status === google.maps.places.PlacesServiceStatus.OK) {
 		for (var i = 0; i < results.length; i++) {
-			createMarker(results[i], 'red', false);
+			createMarker(results[i], 'red', '');
 		}
 	}
 }
@@ -63,7 +63,7 @@ function showMapResult() {
 			console.log("Returned place contains no geometry");
 			return;
 		}
-		createMarker(place, 'green', false);
+		createMarker(place, 'green', '');
 		if (place.geometry.viewport) {
 			bounds.union(place.geometry.viewport);
 		} else {
@@ -101,12 +101,12 @@ function profileMap(username) {
 		dataType: "json",
 		success: function(response) {
 			var restaurants = JSON.parse(response.restaurants);
-			showMapEvents(restaurants, true, false, true);
+			showMapEvents(restaurants, true, false, username);
 		}
 	})
 }
 
-function showMapEvents(event_restaurants, clear, fromSearch, isPersonal) {
+function showMapEvents(event_restaurants, clear, fromSearch, username) {
 	var color = fromSearch ? 'green': 'purple';
 	var bounds = map.getBounds();
 	if (bounds===undefined || clear) {
@@ -121,7 +121,7 @@ function showMapEvents(event_restaurants, clear, fromSearch, isPersonal) {
 		if (google_ids.has(this.fields.google_id)) return;
 		service.getDetails({placeId: this.fields.google_id}, function (result, status) {
 			if (status==google.maps.places.PlacesServiceStatus.OK) {
-				createMarker(result, color, isPersonal);
+				createMarker(result, color, username);
 				if (result.geometry.viewport) {
 					bounds.union(result.geometry.viewport);
 				} else {
@@ -134,7 +134,7 @@ function showMapEvents(event_restaurants, clear, fromSearch, isPersonal) {
 	});
 }
 
-function createMarker(place, color, isPersonal) {
+function createMarker(place, color, username) {
 	if (marker_ids.has(place.place_id)) return;
 
 	var placeLoc = place.geometry.location;
@@ -147,7 +147,7 @@ function createMarker(place, color, isPersonal) {
 	google.maps.event.addListener(marker, 'click', function() {
 		clicked_place = place;
 
-		show_restaurant_events(isPersonal, profile_stream);
+		show_restaurant_events(username, profile_stream);
 
 
 		infowindow.setContent(place.name);

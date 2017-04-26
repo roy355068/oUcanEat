@@ -197,9 +197,9 @@ def get_restaurant_events(request):
 			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
 				event_dt__lte = now_dt).order_by('event_dt')
 
-		isPersonal = request.GET.get('isPersonal')
-		if isPersonal.lower()=='true':
-			join = Join.objects.filter(participant=request.user, event__in=events)
+		username = request.GET.get('username').strip()
+		if len(username)>0:
+			join = Join.objects.filter(participant__username=username, event__in=events)
 			events = [j.event for j in join]
 		events_status= get_events_status(events, request.user)
 

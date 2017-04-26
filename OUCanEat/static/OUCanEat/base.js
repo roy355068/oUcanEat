@@ -40,8 +40,8 @@ function show_restaurant_info(events, events_status, profile_stream) {
 	$("#info").append(html);
 }
 
-function show_restaurant_events(isPersonal, profile_stream) {
-	var data = {'restaurant_id':clicked_place.place_id, 'isPersonal': isPersonal, 'csrfmiddlewaretoken': getCSRFToken(),
+function show_restaurant_events(username, profile_stream) {
+	var data = {'restaurant_id':clicked_place.place_id, 'username': username, 'csrfmiddlewaretoken': getCSRFToken(),
 				'profile_stream': profile_stream};
     $.ajax({
         url: "/OUCanEat/get_restaurant_events",
@@ -64,7 +64,7 @@ function join_event(event_id, page_type) {
 		data: data,
 		success: function(response) {
 			if (page_type==0) {
-				show_restaurant_events(false);
+				show_restaurant_events('', 'upcoming');
 			} else {
 				show_default();
 			}
@@ -80,7 +80,7 @@ function leave_event(event_id, page_type) {
 		data: data,
 		success: function(response) {
 			if (page_type==0) {
-				show_restaurant_events(false);
+				show_restaurant_events('', 'upcoming');
 			} else {
 				show_default();
 			}
@@ -96,7 +96,7 @@ function show_event_page(event_id){
 		type:"GET",
 		success: function(response){
 			var restaurants = JSON.parse(response.restaurant);
-			showMapEvents(restaurants, true, false, false);
+			showMapEvents(restaurants, true, false, '');
 		}
 	});
 }
@@ -170,8 +170,8 @@ function show_default(){
    			var top_events_num_participants = response.top_events_num_participants;
    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,5);
 			show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,5);
-			showMapEvents(upcoming_events_restaurant, true, false, false);
-			showMapEvents(top_events_restaurant, false, false, false);
+			showMapEvents(upcoming_events_restaurant, true, false, '');
+			showMapEvents(top_events_restaurant, false, false, '');
 		}
 	});
 }
@@ -447,7 +447,7 @@ $(function () {
 					restaurants = JSON.parse(response.restaurants);
 					events_status = response.events_status;
 					show_upcoming_event(events, restaurants, events_status, 5);
-					showMapEvents(restaurants, place_ids.length==0, true, false);
+					showMapEvents(restaurants, place_ids.length==0, true, '');
 					$("#info").html("");
 					$("#top_events").html("");
 				}
