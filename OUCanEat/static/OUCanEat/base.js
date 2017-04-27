@@ -3,34 +3,39 @@ function show_restaurant_info(events, events_status, profile_stream) {
 	$("#info").html("");
 	$("#upcoming_events").html("");
 	$("#top_events").html("");
-	var html = "<dl><dt style='font-size: 20pt'>"+clicked_place.name+"</dt><button type='button' class='btn btn-default btn-lg' onclick='create_event_form()'>Create Event</button>";
+	var html = "<table class='tableFullWid'><tr><th id= 'restaurant_name' >"+clicked_place.name+"</th><th class= 'event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='create_event_form()'>Create Event</button></th><table>";
 	if ("opening_hours" in clicked_place) {
 		if(clicked_place.opening_hours.open_now){
 			var open = "open now";
 		} else {
 			var open = "closed now";
 		}
-		html += "<dd style='font-size: 18pt'>"+open+"</dd>";
+		html += "<dd id = 'restaurant_open' >"+open+"</dd>";
 	}
 	var address = clicked_place.vicinity;
 	if (!("vicinity" in clicked_place)) address = clicked_place.formatted_address;
 
-	html += "<dd style='font-size: 14pt'>Address: "+address+"</dd>";
+	html += "<dd id = 'restaurant_detail'>Address: "+address+"</dd>";
 	if ("rating" in clicked_place) {
-		html += "<dd style='font-size: 14pt'>Rating: "+clicked_place.rating+"</dd></dl>";
+		html += "<dd id = 'restaurant_detail'>Rating: "+clicked_place.rating+"</dd></dl><br>";
 	}
 
-	html += "<div><table style='width:100%'>";
+	html += "<div><table class='table table-hover tableFullWid'>";
 	
 	$(events).each(function(index) {
-		html += "<tr><td>"+this.fields.event_dt+"</td>";
+		var formated_dt = get_formated_time(this.fields.event_dt)
+		var formated_date = formated_dt[0]
+		var formated_time = formated_dt[1]
+
+		html += "<tr><td class='event_table'>"+this.fields.name+"</td>";
+		html += "<td class='event_table'>"+formated_date+ "<br>"+formated_time+"</td>";
 		if (profile_stream === 'upcoming') {
 			if (events_status[index]=='host'){
-				html+="<button type='button' class='btn btn-default btn-lg' onclick=\"window.location.href='/OUCanEat/edit_event/"+this.pk+"'\">Edit Event</button></td></tr>"
+				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+this.pk+"'\">Edit Event</button></td></tr>"
 			}else if (events_status[index]=='joined'){
-				html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
+				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
 			}else{
-				html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>"
+				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>"
 			}
 		}
 	});
@@ -176,24 +181,27 @@ function show_default(){
 
 function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,upcoming_events_length) {
 	$("#upcoming_events").html("");
-	var html = "<h2> Upcomping Events: </h2>";
-    html+= "<table style='width:100%'>";
+	var html = "<h2> Upcomping Events </h2>";
+    html+= "<table class='table table-hover tableFullWid contentFont'>";
     if (upcoming_events){
 		for (i = 0; i < Math.min(upcoming_events_length, upcoming_events.length); i++){
 			var event_name = upcoming_events[i].fields.name;
     		var restaurant_name = upcoming_events_restaurant[i].fields.name;
     		var datetime = upcoming_events[i].fields.event_dt;
+    		var formated_dt = get_formated_time(datetime)
+			var formated_date = formated_dt[0]
+			var formated_time = formated_dt[1]
     		var event_id = upcoming_events[i].pk;
     		var status = upcoming_events_status[i];
     		// html+= "<tr><td style='font-size: 16pt'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+restaurant_name+"</a></td><td>"+datetime+"</td><td style='text-align: right;'>"
-    		html+= "<tr><td style='font-size: 16pt'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td><td>"+datetime+"</td><td style='text-align: right;'>";
+    		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td><td class='event_table'>"+formated_date+"<br>"+formated_time+"</td><td class='event_table_button'>";
 
     		if (status=='host'){
-    			html+="<button type='button' class='btn btn-default btn-lg' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit Event</button></td></tr>"
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit Event</button></td></tr>"
     		}else if (status=='joined'){
-    			html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>";
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>";
     		}else{
-    			html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+event_id+", 1)'>Join Event</button></td></tr>";
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+event_id+", 1)'>Join Event</button></td></tr>";
     		}
     	}   
 	}
@@ -203,8 +211,8 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
 
 function show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,top_events_length) {
 	$("#top_events").html("");
-	var html = "<h2> Top Events: </h2>"
-    html+= "<table style='width:100%'>"		
+	var html = "<h2> Top Events </h2>"
+    html+= "<table class='table table-hover tableFullWid contentFont'>"		
     if (top_events){
     	for (i = 0; i < Math.min(top_events_length, top_events.length); i++){
     		var event_name = top_events[i].fields.name;
@@ -212,13 +220,13 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
     		var event_id = top_events[i].pk;
     		var num_participants = top_events_num_participants[i];
     		var status = top_events_status[i];
-			html+= "<tr><td style='font-size: 16pt'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name + "</a></td><td>"+num_participants+"</td><td style='text-align: right;'>"
+			html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name + "</a></td><td class='event_table'>"+num_participants+"   going</td><td class='event_table_button'>"
     		if (status=='host'){
-    			html+="<button type='button' class='btn btn-default btn-lg' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit Event</button></td></tr>"
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit Event</button></td></tr>"
     		}else if (status=='joined'){
-    			html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>"
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>"
     		}else{
-    			html+="<button type='button' class='btn btn-default btn-lg' onclick='join_event("+event_id+", 1)'>Join Event</button></td></tr>"
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+event_id+", 1)'>Join Event</button></td></tr>"
     		}
     	}   
 	}
@@ -408,6 +416,33 @@ function sanitizer(keyword) {
 				  .replace(/</g, '&lt;')
 				  .replace(/>/g, '&gt;')
 				  .replace(/"/g, '&quot;');
+}
+
+function get_formated_time(time){
+		var date = new Date (time);
+		var d = date.getDate();
+		var m = date.getMonth()+1;
+		var y = date.getFullYear();
+		var h = date.getHours();
+		var mm = date.getMinutes();
+		if (m<10){
+			m='0'+m
+		}
+		if (d<10){
+			d='0'+d
+		}
+
+		if (h<10){
+			h='0'+h
+		}
+		if (mm<10){
+			mm='0'+mm
+		}
+
+		var formated_date = y+"/"+m+"/"+d
+		var formated_time = h+":"+mm
+
+	return([formated_date,formated_time])
 }
 
 //init

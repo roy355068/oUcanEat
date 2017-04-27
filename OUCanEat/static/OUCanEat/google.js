@@ -91,10 +91,10 @@ function profileMap() {
 	$('#mapPanel').html("");
 	var html = "";
 	if (profile_stream === 'upcoming') {
-		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream()">Past Events</button>';
+		html += '<br><button class="btn btn-info btn-lg skyblue transparentBorder" onclick="change_stream()">Past Events</button>';
 	}
 	else {
-		html += '<button class="btn btn-default btn-lg titleFont" onclick="change_stream()">Upcoming Events</button>';
+		html += '<button class="btn btn-info btn-lg skyblue transparentBorder" onclick="change_stream()">Upcoming Events</button>';
 	}
 	$('#mapPanel').prepend(html);
 	$.ajax({

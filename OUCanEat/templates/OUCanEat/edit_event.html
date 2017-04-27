@@ -5,6 +5,7 @@
 	$(window).on('load', function() {
 		show_event_page({{ event.id }});
 		getTomorrow();
+		getToday();
 	});
 	</script>
 {% endblock %}
@@ -47,7 +48,7 @@
 					</tr>
 				{% endfor %}
 				<tr>
-					<td><input type="submit" value="Update" onclick="update_event({{ event.id }})"></td>
+					<td><input class="btn btn-info btn-lg skyblue transparentBorder" type="submit" value="Update" onclick="update_event({{ event.id }})"></td>
 				</tr>
 			</table>
 

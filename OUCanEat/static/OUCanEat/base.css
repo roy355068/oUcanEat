@@ -26,6 +26,7 @@ html, body {
 
 .contentFont {
 	font-size: 16pt;
+	color: #696969; 
 }
 
 .panelTrans {
@@ -64,5 +65,25 @@ html, body {
     padding-top: 5px;
     padding-bottom: 5px;
     text-align: center;
+}
 
+.event_table{
+	font-size: 18pt;
+	color: #696969; 
+}
+
+.event_table_button{
+	text-align: right;
+}
+
+#restaurant_name{
+	font-size: 20pt
+}
+
+#restaurant_open{
+	font-size: 18pt
+}
+
+#restaurant_detail{
+	font-size: 14pt
 }
