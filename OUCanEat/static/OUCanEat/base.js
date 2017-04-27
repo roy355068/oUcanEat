@@ -108,17 +108,22 @@ function show_event_page(event_id){
 
 function create_event_form() {
 	$("#info").html("");
-	var html = "<div>"+
-					"Event Date and Time<br>"+
-					"<div id='datetimepicker' class='input-append date'>"+
-					"<input type='name' id='event_name' placeholder= 'Name'><br><br>"+
-      				"<input type='date' id='event_date' placeholder= 'Date' min= '1900-01-01' ><br><br>"+
-      				"<input type='time' id='event_time' placeholder= 'time'><br><br>"+
-					"Event Description:<br>"+
-					"<input type='text' id='event_desc' placeholder= 'Description'><br><br>"+
-					"<input type='submit' value='Create' onclick='create_event()'>"+
-				"</div>"
-				;   
+	var html = "<div class='container' id='inputForm'>"+
+					"<div class='col-xs-6'>"+
+					"<span style='font-size:16pt'>Event Name</span>"+
+					"<div id='datetimepicker' class='input-append date form-group'>"+
+					"<input class='form-control' type='name' id='event_name' placeholder='Name'><br><br>"+
+					"<span style='font-size:16pt'>Event Date</span><br>"+
+      				"<input class='form-control' type='date' id='event_date' placeholder= 'Date'><br><br>"+
+      				"<span style='font-size:16pt'>Time</span><br>"+
+      				"<input class='form-control' type='time' id='event_time' placeholder= 'time'><br><br>"+
+					"<span style='font-size:16pt'>Event Description</span><br>"+
+					"<input class='form-control' type='text' id='event_desc' placeholder= 'Description'><br><br>"+
+					"<input class='btn btn-primary btn-md' type='submit' value='Create' onclick='create_event()'>"+
+					"</div>"+
+					"</div>"+
+				"</div>";   
+
 
 	$("#info").prepend(html);
 	getTomorrow();
@@ -418,6 +423,7 @@ function sanitizer(keyword) {
 				  .replace(/"/g, '&quot;');
 }
 
+
 function get_formated_time(time){
 		var date = new Date (time);
 		var d = date.getDate();
@@ -444,6 +450,28 @@ function get_formated_time(time){
 
 	return([formated_date,formated_time])
 }
+
+
+$(document).on('change', 'input[id="id_picture"]' , function(){
+	console.log("HIHIH");
+	preview_photo(this);
+});
+
+
+
+function preview_photo(input) {
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#preview').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 
 //init
 $(function () {
@@ -489,3 +517,5 @@ $(function () {
 		});
 	});
 });
+
+
