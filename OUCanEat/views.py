@@ -312,7 +312,7 @@ def join_event(request):
 			if event.event_dt>=now_dt:
 				join = Join(event=event, participant=user)
 				join.save()
-				send_notification('join', [user])
+				send_notification('join', [join.event.host])
 		except Exception as e:
 			pass
 	return HttpResponse()
