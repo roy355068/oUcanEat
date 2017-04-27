@@ -104,7 +104,7 @@ class ProfileForm(forms.ModelForm):
 		return picture
 
 class EventPicForm(forms.ModelForm):
-	picture = forms.FileField(required=True, widget=forms.FileInput)
+	picture = forms.FileField(required=True, widget=forms.FileInput(attrs={'class': 'inputFile'}))
 	class Meta:
 		model = EventPicture
 		fields = ('picture',)
