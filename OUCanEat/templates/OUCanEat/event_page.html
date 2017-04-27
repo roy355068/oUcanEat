@@ -57,14 +57,16 @@
 			</div>
 
 			<form class="contentFont" id="pic_form" enctype="multipart/form-data"  method="post" onchange="upload_event_pic({{event.id}})">
-				<table >
-					<tr>
-						<td>{{ form }}</td>
-						<td><button class="btn btn-info btn-lg skyblue transparentBorder" id="pic_btn" type="button">Upload</button></td>
-					</tr>
-				</table>
-				<input type="hidden" name="event_id"  value="{{event.id}}">
-				
+				{% for field in form.visible_fields %}
+					<button type="button" class="btn btn-success btn-md">{{field.label_tag}}</button>
+					<br/>
+					<img id="preview" width='200px'/>
+					<button class="btn btn-info btn-lg skyblue transparentBorder" id="pic_btn" type="button">Upload</button>
+					{{field}}
+					{% for error in field.errors %} {{error}} {% endfor %}
+
+				<input type="hidden" name="event_id" value="{{event.id}}">
+				{% endfor %}
 				{% csrf_token %}
 			</form>
 			{% if event_status == "toRate" %}

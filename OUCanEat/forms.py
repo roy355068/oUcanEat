@@ -104,10 +104,14 @@ class ProfileForm(forms.ModelForm):
 		return picture
 
 class EventPicForm(forms.ModelForm):
-	picture = forms.FileField(required=True, widget=forms.FileInput)
+	picture = forms.FileField(required=True, widget=forms.FileInput(attrs={'class': 'inputFile'}))
 	class Meta:
 		model = EventPicture
 		fields = ('picture',)
+
+	def __init__(self, *args, **kwargs):
+		super(EventPicForm, self).__init__(*args, **kwargs)
+		self.fields['picture'].label = "Upload your picture here!"
 
 	def clean_picture(self):
 		picture = self.cleaned_data['picture']
