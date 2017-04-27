@@ -4,9 +4,45 @@ html, body {
 	padding: 0;
 }
 
+label {
+	font-family: sans-serif;
+	display: flex;
+}
+
+#loginForm label {
+	display: inherit;
+}
+.fieldInput {
+	margin-top: 1rem;
+}
 #map {
 	/*height: 80%;*/
 	height: 590px;
+}
+.inputFile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+
+}
+/**/
+label[for="id_picture"] {
+	cursor: pointer;
+	font-weight: 700px;
+	font-size: 18px;
+	/*outline: 1px dotted #000;*/
+	/*outline: -webkit-focus-ring-color auto 5px;*/
+}
+/**/
+
+#inputForm {
+	width: 700px;
+	padding: 5rem;
+	border: solid #f7f7f9;
+	border-width: .2rem;
 }
 .transparentBorder {
 	border-color: transparent;
