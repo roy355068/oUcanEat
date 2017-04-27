@@ -21,14 +21,16 @@ function show_restaurant_info(events, events_status, profile_stream) {
 	}
 
 	html += "<div><table class='table table-hover tableFullWid'>";
-	
+
 	$(events).each(function(index) {
 		var event_dt = new Date(this.fields.event_dt).toLocaleString();
 		var formated_dt = get_formated_time(event_dt);
 		var formated_date = formated_dt[0];
 		var formated_time = formated_dt[1];
+		var event_name = this.fields.name;
+		var event_id = this.pk;
 
-		html += "<tr><td class='event_table'>"+this.fields.name+"</td>";
+		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td>";
 		html += "<td class='event_table'>"+formated_date+ "<br>"+formated_time+"</td>";
 		if (profile_stream === 'upcoming') {
 			if (events_status[index]=='host'){
