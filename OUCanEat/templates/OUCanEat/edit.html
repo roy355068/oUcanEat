@@ -28,7 +28,9 @@
 						{% if field.id_for_label == "id_picture" %}
 							<button type="button" class="btn btn-success btn-md">{{field.label_tag}}</button>
 							<br/>
-							<img id="preview" alt="preview photo" width='200px'/>
+							<span id="compliment"></span>
+							<br/>
+							<img id="preview" width='200px'/>
 
 						{% else %}
 							{{field.label_tag}}

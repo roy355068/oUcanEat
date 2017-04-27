@@ -113,7 +113,7 @@ function create_event_form() {
 					"<div class='col-xs-6'>"+
 					"<span style='font-size:16pt'>Event Name</span>"+
 					"<div id='datetimepicker' class='input-append date form-group'>"+
-					"<input class='form-control' type='name' id='event_name' placeholder='Name'><br><br>"+
+					"<input maxlength='500' class='form-control' type='name' id='event_name' placeholder='Name'><br><br>"+
 					"<span style='font-size:16pt'>Event Date</span><br>"+
       				"<input class='form-control' type='date' id='event_date' placeholder= 'Date'><br><br>"+
       				"<span style='font-size:16pt'>Time</span><br>"+
@@ -196,7 +196,9 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
 			var event_name = upcoming_events[i].fields.name;
     		var restaurant_name = upcoming_events_restaurant[i].fields.name;
     		var datetime = new Date(upcoming_events[i].fields.event_dt).toLocaleString();
+    		console.log(datetime);
     		var formated_dt = get_formated_time(datetime);
+    		console.log(formated_dt);
 			var formated_date = formated_dt[0];
 			var formated_time = formated_dt[1];
     		var event_id = upcoming_events[i].pk;
@@ -456,7 +458,6 @@ function get_formated_time(time){
 
 
 $(document).on('change', 'input[id="id_picture"]' , function(){
-	console.log("HIHIH");
 	preview_photo(this);
 });
 
@@ -472,6 +473,7 @@ function preview_photo(input) {
         }
 
         reader.readAsDataURL(input.files[0]);
+        $('#compliment').html("Daaaarn! You look gorgeous!");
     }
 }
 
