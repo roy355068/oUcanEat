@@ -315,6 +315,7 @@ function upload_event_pic(event_id) {
 			contentType: false,
 			success : function(response) {
 				show_event_pictures(event_id);
+				$('#preview').attr('src', "");
 			}
 		});
 		$("#pic_form")[0].reset();
