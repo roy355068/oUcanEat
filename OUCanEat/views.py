@@ -524,9 +524,9 @@ def get_events_status(events, user):
 		try:
 			j = Join.objects.get(event = e, participant = user)
 			if e.host == user:
-					events_status.append('host')
+				events_status.append('host')
 			else:
-					events_status.append('joined')
+				events_status.append('joined')
 		except:
 			events_status.append('notJoined')
 				

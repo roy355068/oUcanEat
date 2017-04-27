@@ -10,34 +10,40 @@
 
 
 {% block info %}
-    <div class="col-md-4"  > 
+    <div class="col-md-4 containerBG"  > 
 		<div class="panel panelTrans">
 			<div id="info" class="panel-body panelBody">
-
-				<h2 id="profileInfo"> Your info: </h2>
-					<table class="tableFullWid">
+				<table class="tableFullWid">
+					<th id="profileInfo"> <h2>{{profile.user}}'s Profile </h2></th>
+			 		<th class="event_table_button">
+					{% if curr_user == profile.user.username %}
+								<a href="{% url 'edit-profile' %}" class="btn btn-info btn-lg skyblue transparentBorder">Edit</a>
+					{% endif %}
+					</th>
+				</table>
+					<table class="tableFullWid table">
 						{% if profile.picture %}
 						<img src="{% url 'picture' post_user %}" width="100px">
                 		{% endif%}
 						<tr>
-							<td class="titleFont">Username: </td>
-							<td id="userName" class="titleFont">{{profile.user}}</td>
+							<td class="contentFont">Username: </td>
+							<td id="userName" class="contentFont ">{{profile.user}}</td>
 						</tr>
 						<tr>
-							<td class="titleFont">Age: </td>
-							<td class="titleFont">{{profile.age}}</td>
+							<td class="contentFont">Age: </td>
+							<td class="contentFont ">{{profile.age}}</td>
 						</tr>
 						<tr>
-							<td class="titleFont">Bio:</td>
-							<td class="titleFont">{{profile.bio}}</td>
+							<td class="contentFont">Bio:</td>
+							<td class="contentFont ">{{profile.bio}}</td>
 						</tr>
 						<tr>
-							<td class="titleFont">Phone:</td>
-							<td class="titleFont">{{profile.phone_number}}</td>
+							<td class="contentFont">Phone:</td>
+							<td class="contentFont ">{{profile.phone_number}}</td>
 						</tr>
 						<tr>
-							<td class="titleFont">Preference:</td>
-							<td class="titleFont">
+							<td class="contentFont">Preference:</td>
+							<td class="contentFont ">
 								<table>
 									{% for pre in prefer %}
 										<tr>
@@ -48,9 +54,7 @@
 							</td>
 						</tr>
 					</table>
-				{% if curr_user == profile.user.username %}
-					<a href="{% url 'edit-profile' %}" class="btn btn-default btn-lg titleFont">Edit</a>
-				{% endif %}
+				
 			</div>
 		</div>
 	</div>
