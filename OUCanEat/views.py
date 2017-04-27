@@ -13,6 +13,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Count
+from django.utils import timezone
 
 import datetime
 import json
@@ -30,7 +31,7 @@ def home(request):
 @login_required
 def show_default(request):
 	if request.method=='GET':
-		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+		now_dt = timezone.now()
 		upcoming_events = Event.objects.filter(event_dt__gte = now_dt).order_by('event_dt')
 		upcoming_events_restaurant = [r.restaurant for r in upcoming_events]	
 		upcoming_events_status= get_events_status(upcoming_events, request.user)
@@ -58,7 +59,7 @@ def show_profile(request, post_user):
 	profile = Profile.objects.get(user__username = post_user)
 	temp_events = Event.objects.filter(host__username = post_user)
 
-	now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+	now_dt = timezone.now() 
 	your_events = temp_events.filter(event_dt__gte = now_dt).annotate(num_participants = Count('event_join'))
 	old_events = temp_events.filter(event_dt__lte = now_dt)
 	
@@ -69,7 +70,7 @@ def show_profile(request, post_user):
 
 	ratings, rating_cnt = 0, 0
 	for e in old_events:
-		(event_status, avg_rating) = get_event_rating(e)
+		(event_status, avg_rating) = get_event_rating(request, e)
 		if avg_rating>0:
 			ratings += avg_rating
 			rating_cnt += 1
@@ -92,7 +93,7 @@ def show_profile(request, post_user):
 def profile_map(request, post_user, profile_stream):
 	if request.method == 'GET':
 		joined = Join.objects.filter(participant__username = post_user)
-		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+		now_dt = timezone.now()
 		if profile_stream == "upcoming":
 			joined = joined.filter(event__event_dt__gte = now_dt)
 		elif profile_stream == "past":
@@ -169,7 +170,7 @@ def edit_profile(request):
 def show_history(request, post_user):
 	context = {}
 	joined= Join.objects.filter(participant__username = post_user).order_by('event__event_dt')
-	now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+	now_dt = timezone.now()
 	upcoming_joined= joined.filter(event__event_dt__gte = now_dt)
 	upcoming_events = [u.event for u in upcoming_joined]
 
@@ -189,7 +190,7 @@ def get_restaurant_events(request):
 		#need to verify content
 		restaurant_google_id = request.GET.get('restaurant_id')
 		profile_stream = request.GET.get('profile_stream')
-		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+		now_dt = timezone.now()
 		if profile_stream == "upcoming":
 			events = Event.objects.filter(restaurant__google_id=restaurant_google_id, 
 				event_dt__gte = now_dt).order_by('event_dt')
@@ -220,7 +221,7 @@ def create_event(request):
 		event_name = request.POST['event_name']
 		try:
 			dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
-			now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+			now_dt = timezone.now()
 			if dt>=now_dt:
 				try:
 					restaurant = Restaurant.objects.get(google_id=google_id)
@@ -245,7 +246,7 @@ def update_event(request):
 
 		try:
 			dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
-			now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+			now_dt = timezone.now()
 			event = Event.objects.get(id=event_id)
 			if event.event_dt>=now_dt and dt>=now_dt: #can only update upcoming events & future date
 				Event.objects.filter(id=event_id).update(event_dt=dt, desc=request.POST['event_desc'])
@@ -259,12 +260,12 @@ def add_review(request):
 	if request.method=='POST' and 'event_id' in request.POST and 'new_review' in request.POST and request.POST['new_review']:
 		try:
 			event = Event.objects.get(id=request.POST['event_id'])
-			now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+			now_dt = timezone.now()
 			if event.event_dt<=now_dt:
 				new_review = Review(user=request.user, event=event, rating=request.POST['new_review'])
 				new_review.save()
 
-				(event_status, avg_rating) = get_event_rating(event)
+				(event_status, avg_rating) = get_event_rating(request, event)
 				data = json.dumps({"avg_rating":avg_rating})
 		except Exception as error:
 			pass
@@ -275,7 +276,7 @@ def show_event_page(request, event_id):
 	context = {}
 	try:
 		event = Event.objects.get(id=event_id)
-		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+		now_dt = timezone.now()
 
 		event_join = Join.objects.filter(event__id=event_id)
 		event_participants = [j.participant for j in event_join if j.participant!=event.host]
@@ -283,7 +284,7 @@ def show_event_page(request, event_id):
 		review = Review.objects.filter(event__id = event_id)
 		count = review.count()
 
-		(event_status, avg_rating) = get_event_rating(event)
+		(event_status, avg_rating) = get_event_rating(request, event)
 
 		pic_users = Profile.objects.exclude(picture__isnull=True).exclude(picture__exact='')
 		pic_users = [u.user for u in pic_users]
@@ -304,7 +305,7 @@ def join_event(request):
 		user = request.user
 		try:
 			event = Event.objects.get(id=request.POST['event_id'])
-			now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+			now_dt = timezone.now()
 			if event.event_dt>=now_dt:
 				join = Join(event=event, participant=user)
 				join.save()
@@ -315,7 +316,7 @@ def join_event(request):
 @login_required
 def search_events(request):
 	if request.method=='GET':
-		now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+		now_dt = timezone.now()
 		events = Event.objects.filter(event_dt__gte=now_dt).order_by('event_dt')
 		if 'search_places' in request.GET:
 			search_places = json.loads(request.GET.get('search_places'))
@@ -347,7 +348,7 @@ def leave_event(request):
 		raise Http404
 	user = request.user
 	unjoin = get_object_or_404(Join, event__id=request.POST['event_id'], participant=user)
-	now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+	now_dt = timezone.now()
 	if unjoin.event.event_dt>=now_dt:
 		unjoin.delete()
 	return HttpResponse()
@@ -525,10 +526,10 @@ def get_events_status(events, user):
 				
 	return events_status
 
-def get_event_rating(event):
+def get_event_rating(request, event):
 	review = Review.objects.filter(event = event)
 	count = review.count()
-	now_dt = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+	now_dt = timezone.now()
 
 	event_status = 'toRate'
 	sum_rating = 0

@@ -23,7 +23,9 @@ function show_restaurant_info(events, events_status, profile_stream) {
 	html += "<div><table style='width:100%'>";
 	
 	$(events).each(function(index) {
-		html += "<tr><td>"+this.fields.event_dt+"</td>";
+		var event_dt = new Date(this.fields.event_dt);
+		
+		html += "<tr><td>"+event_dt.toLocaleString()+"</td>";
 		if (profile_stream === 'upcoming') {
 			if (events_status[index]=='host'){
 				html+="<button type='button' class='btn btn-default btn-lg' onclick=\"window.location.href='/OUCanEat/edit_event/"+this.pk+"'\">Edit Event</button></td></tr>"
