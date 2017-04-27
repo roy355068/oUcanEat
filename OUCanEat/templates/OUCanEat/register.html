@@ -10,16 +10,20 @@
                 {{ error }}
             </p>
         {% endfor %}
-        <div class="container">
+        <div class="container" id="inputForm">
             
-            <form method="post" action="{% url 'register' %}" class="h3 text-center form-horizontal">
-                <div class="control-group">
-                <table>
-                    
-                    {{form}}
-                    
-                </table>
-                </div>
+            <form method="post" action="{% url 'register' %}" class="h3 text-center form-horizontal" id="registerForm">
+                
+                    {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        {{field.label_tag}}
+                        {{field}}
+                            
+                        {% for error in field.errors %} {{error}} {% endfor %}
+                            
+                    </div>
+                    {% endfor %}
+
 
                 <button class="btn btn-primary btn-md" type="submit" value="Register">Register</button>
                 
@@ -28,6 +32,5 @@
             </form>
                 <div class="text-center">
                 <a href="/OUCanEat/"><button class="btn btn-success btn-md">Back</button></a>
-            </div>
         </div>
     {% endblock %}

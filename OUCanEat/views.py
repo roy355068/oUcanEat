@@ -71,7 +71,7 @@ def show_profile(request, post_user):
 	ratings, rating_cnt = 0, 0
 	for e in old_events:
 		(event_status, avg_rating) = get_event_rating(request, e)
-		if avg_rating>0:
+		if isinstance(avg_rating, (int, float)):
 			ratings += avg_rating
 			rating_cnt += 1
 	if rating_cnt>0:
@@ -518,9 +518,9 @@ def get_events_status(events, user):
 		try:
 			j = Join.objects.get(event = e, participant = user)
 			if e.host == user:
-					events_status.append('host')
+				events_status.append('host')
 			else:
-					events_status.append('joined')
+				events_status.append('joined')
 		except:
 			events_status.append('notJoined')
 				

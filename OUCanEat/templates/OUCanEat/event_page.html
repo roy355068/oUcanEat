@@ -15,8 +15,8 @@
 		<div class="panel panelTrans">
 			<div id="info" class="panel-body panelBody">
 
-			<h3>{{event.name}}</h3>
-			<table style="width:100%">
+			<h2>{{event.name}}</h2>
+			<table class="tableFullWid table">
 				<tr>
 					<td class="contentFont">Restaurant: </td>
 					<td class="contentFont">{{event.restaurant.name}}</td>
@@ -60,39 +60,51 @@
 				<table >
 					<tr>
 						<td>{{ form }}</td>
-						<td><button id="pic_btn" type="button">Upload</button></td>
+						<td><button class="btn btn-info btn-lg skyblue transparentBorder" id="pic_btn" type="button">Upload</button></td>
 					</tr>
 				</table>
 				<input type="hidden" name="event_id"  value="{{event.id}}">
 				
 				{% csrf_token %}
 			</form>
-			{% if event_status == "toRate" %}						
+			{% if event_status == "toRate" %}
+			{% endif %}						
 			<div id="review" class="list-group">
 				<div>
 				<div class="col-md-10">
-				<input type="radio" value=1 name="rating">1  
-				<input type="radio" value=2 name="rating">2
-				<input type="radio" value=3 name="rating">3
-				<input type="radio" value=4 name="rating">4
-				<input type="radio" value=5 name="rating">5
+				<label class="radio-inline">
+					<input class="radio" type="radio" value=1 name="rating">1 
+				</label> 
+				<label class="radio-inline">
+					<input type="radio" value=2 name="rating">2
+				</label> 
+				<label class="radio-inline">
+					<input type="radio" value=3 name="rating">3
+				</label> 
+				<label class="radio-inline">
+					<input type="radio" value=4 name="rating">4
+				</label> 
+				<label class="radio-inline">
+					<input type="radio" value=5 name="rating">5
+				</label> 
 				
 				<span id="error"></span>
 				</div>
-				<button onclick="back_home()">Back</button>
 
-				<button class="btn btn-primary" onclick="add_review({{event.id}})">Rate</button>
+				<button class= "btn btn-info btn-lg skyblue transparentBorder" onclick="back_home()">Back</button>
+
+				<button class="btn btn-info btn-lg skyblue transparentBorder" onclick="add_review({{event.id}})">Rate</button>
 				</div>
 			</div>
-			{% endif %}
+			
 
 			
 			<div id="comments" class="list-group">
 				<div>
-				<div class="col-md-10">
-				<textarea class="form-control" rows="1" placeholder="add your comment" id="new_comment_{{event.id}}"></textarea>
-				</div>
-				<button class="btn btn-primary" onclick="add_comment({{event.id}})">Add</button>
+			
+				<textarea class="form-control" rows="3" placeholder="Say something..." id="new_comment_{{event.id}}"></textarea>
+				
+				<button  class="orm-control btn btn-info btn-lg skyblue transparentBorder " onclick="add_comment({{event.id}})">Comment</button>
 				</div>
 			</div>
 

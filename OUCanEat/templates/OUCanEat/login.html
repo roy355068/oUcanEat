@@ -13,9 +13,8 @@
         </p>
         {% endif %}
         <div class="container">
-            <form method="post" action="{% url 'login' %}">
+            <form method="post" action="{% url 'login' %}" id="loginForm" class="h3 text-center form-horizontal">
 
-                <div class="text-center h3">
                     <div class="form-group">
                         {{ form.username.label_tag }}
                         {{ form.username }}
@@ -26,7 +25,6 @@
                     </div>
                 <button type="submit" value="Login" class="btn btn-primary btn-md">Login</button>
                 
-                </div>
                 <input type="hidden" name="next" value="{{ next }}" />
                 {% csrf_token %}
             </form>
