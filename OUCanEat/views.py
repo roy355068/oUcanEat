@@ -18,9 +18,12 @@ from django.utils import timezone
 import datetime
 import json
 import pytz
+import os, configparser
 from OUCanEat.models import *
 from OUCanEat.forms import RegistrationForm, ProfileForm, NameForm, ChoiceForm, EventPicForm
 from twilio.rest import Client
+
+
 
 @ensure_csrf_cookie
 @login_required
@@ -548,9 +551,6 @@ def get_event_rating(request, event):
 		avg_rating = 'Not Available'
 	return (event_status, avg_rating)
 
-
-from twilio.rest import Client
-import os, configparser
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 config = configparser.ConfigParser()
