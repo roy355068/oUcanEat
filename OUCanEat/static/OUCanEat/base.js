@@ -26,7 +26,7 @@ function show_restaurant_info(events, events_status, profile_stream) {
 		html += "<tr><td>"+this.fields.event_dt+"</td>";
 		if (profile_stream === 'upcoming') {
 			if (events_status[index]=='host'){
-				html+="<button type='button' class='btn btn-default btn-lg' onclick='edit_event("+this.pk+", 0)'>Edit Event</button></td></tr>"
+				html+="<button type='button' class='btn btn-default btn-lg' onclick=\"window.location.href='/OUCanEat/edit_event/"+this.pk+"'\">Edit Event</button></td></tr>"
 			}else if (events_status[index]=='joined'){
 				html+="<button type='button' class='btn btn-default btn-lg' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
 			}else{
@@ -119,7 +119,9 @@ function create_event_form() {
 					"</div>"+
 				"</div>";   
 
+
 	$("#info").prepend(html);
+	getTomorrow();
 }
 
 function create_event() {
@@ -350,19 +352,35 @@ function getCSRFToken() {
 	return "unknown";
 }
 
-function getToday(){
-	var today = new Date();
-	var dd = today.getDate();
-	var mm = today.getMonth()+1;
-	var yyyy = today.getFullYear();
+function getTomorrow(){
+	var tmr = new Date();
+	var dd = tmr.getDate()+1;
+	var mm = tmr.getMonth()+1;
+	var yyyy = tmr.getFullYear();
 	 if(dd<10){
 	        dd='0'+dd
 	    } 
 	    if(mm<10){
 	        mm='0'+mm
 	    } 
-	today = yyyy+'-'+mm+'-'+dd;
-	document.getElementById("search_date").setAttribute("min", today);
+	tmr = yyyy+'-'+mm+'-'+dd;
+	document.getElementById("event_date").setAttribute("min", tmr);
+
+}
+
+function getToday(){
+	var tmr = new Date();
+	var dd = tmr.getDate();
+	var mm = tmr.getMonth()+1;
+	var yyyy = tmr.getFullYear();
+	 if(dd<10){
+	        dd='0'+dd
+	    } 
+	    if(mm<10){
+	        mm='0'+mm
+	    } 
+	tmr = yyyy+'-'+mm+'-'+dd;
+	document.getElementById("search_date").setAttribute("min", tmr);
 
 }
 
@@ -382,13 +400,10 @@ function add_review(event_id) {
 		type: "POST",
 		data: "new_review="+checked_rating+"&event_id="+event_id+"&csrfmiddlewaretoken="+getCSRFToken(),
 		success: function(response) {
-			// show_comments(event_id);
 			rating = JSON.parse(response.avg_rating)
-			// events_status = JSON.parse(response.events_status)
 			$("#latest_rating").html("");
 			$("#latest_rating").html(rating);
 			$("#review").html("");
-			
 		}
 	});
 }

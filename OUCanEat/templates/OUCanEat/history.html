@@ -1,5 +1,12 @@
 {% extends "OUCanEat/map_base.html" %}
 
+{% block init_js %}
+	<script type="text/javascript">
+	$(window).on('load', function() {
+		profileMap();
+	});
+	</script>
+{% endblock %}
 
 {% block info %}
     <div class="col-md-4"  > 
@@ -12,7 +19,6 @@
 			  	<tr>
 					<td class="contentFont"><a href='/OUCanEat/show_event_page/{{event.id}}'>{{event.name}}</a></td>
 					<td class="contentFont" style="text-align: right;">{{event.event_dt}}</td>
-					<!-- <td style="font-size: 12pt;text-align: right;"> <button type='button' class='btn btn-default btn-lg' onclick='show_event_page({{event.pk}})'>Details</button></td> -->
 				  	
 				 </tr>
 				</table>
@@ -23,15 +29,11 @@
 			  	<table style="width:100%" id="oldEvents">
 			  	<tr>
 					<td class="contentFont"><a href='/OUCanEat/show_event_page/{{event.id}}'>{{event.name}}</a></td>
-					<!-- <td style="font-size: 18pt">{{event.num_participants}}</td> -->
-					<td style="font-size: 10pt; text-align: right;"> <!-- <button type='button' class='btn btn-default btn-lg' onclick='show_event_page({{event.pk}})'>Review</button> -->
+					<td style="font-size: 10pt; text-align: right;">
 					<form action="{% url 'show_event_page' event.pk %}" method="get" class="contentFont">
             			<input class="submit" type="submit" value="Review">
         			</form>						
-						
 					</td>				 
-
- 	
 				 </tr>
 				</table>
 			{% endfor %}
