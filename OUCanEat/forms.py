@@ -109,6 +109,10 @@ class EventPicForm(forms.ModelForm):
 		model = EventPicture
 		fields = ('picture',)
 
+	def __init__(self, *args, **kwargs):
+		super(EventPicForm, self).__init__(*args, **kwargs)
+		self.fields['picture'].label = "Upload your picture here!"
+
 	def clean_picture(self):
 		picture = self.cleaned_data['picture']
 		if picture and hasattr(self.cleaned_data['picture'],'content_type'):
