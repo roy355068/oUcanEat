@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html>
 <head>
@@ -15,9 +16,12 @@
 	{% endblock %}
 </head>
 <body>
+<div class= 'container-fluid height'>
+	<div class="row marginBotZero containerBG height">	
 	{% block navbar %}
-<nav class="navbar navbar-default skyblue marginBotZero">
-	<div class="container-fluid">
+
+	<nav class="navbar navbar-default skyblue marginBotZero">
+	
 		<div class="navbar-header">
 			<a class="navbar-brand navbarColor navbarTitle" href="{% url 'home' %}">oUcanEat</a>
 		</div>
@@ -31,11 +35,11 @@
 				<li><a href="{% url 'logout' %}" class="titleFont">Log Out</a></li>
 			</ul>
 		</div>
-	</div>
-</nav>
+	
+	</nav>
 
 	{% endblock %}
-	
+
 	{% block login_banner %}
 	{% endblock %}
 
@@ -44,5 +48,8 @@
 
 	{% block content %}
 	{% endblock %}
+
+	</div>
+</div>
 </body>
 </html>
