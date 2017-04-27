@@ -222,6 +222,7 @@ def create_event(request):
 		lng = request.POST['event_lng']
 		lat = request.POST['event_lat']
 		event_name = request.POST['event_name']
+		
 		try:
 			dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
 			now_dt = timezone.now()
@@ -364,7 +365,6 @@ def edit_event(request, event_id):
 		event = Event.objects.get(id=event_id, host=request.user) #check host is current user
 		event_join = Join.objects.filter(event__id=event_id)
 		event_participants = [j.participant for j in event_join if j.participant!=event.host]
-
 		context['event'] = event
 		context['event_participants'] = event_participants
 	except Exception as e:
