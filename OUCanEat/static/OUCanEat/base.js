@@ -116,7 +116,6 @@ function show_event_page(event_id){
 				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+event_id+", 2)'>Join</button></td></tr>"
 			}
 			$("#eventBtn").append(html);
-			console.log("Hiasdadasdasdasd");
 			showMapEvents(restaurants, true, false, '');
 		}
 	});
@@ -134,7 +133,7 @@ function create_event_form() {
       				"<input class='form-control' type='time' id='event_time' placeholder= 'time'><br><br>"+
 					"<span style='font-size:16pt'>Event Description</span><br>"+
 					"<input class='form-control' type='text' id='event_desc' placeholder= 'Description'><br><br>"+
-					"<input class='btn btn-primary btn-md' type='submit' value='Create' onclick='create_event()'>"+
+					"<input class='btn btn-info btn-lg skyblue transparentBorder' type='submit' value='Create' onclick='create_event()'>"+
 					"</div>"+
 				"</div>";   
 
