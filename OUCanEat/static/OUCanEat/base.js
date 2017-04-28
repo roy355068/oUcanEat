@@ -303,6 +303,9 @@ function add_comment(event_id) {
 
 function upload_event_pic(event_id) {
 	var file = $("#id_picture")[0].files[0];
+	var html = '<button class="btn btn-info btn-lg skyblue transparentBorder" id="pic_btn" type="button">Upload</button>';
+    $("#upload").append(html);
+
 	$("#pic_btn").off().click(function(){
 		var formData = new FormData($('#pic_form')[0]);
 		$.ajax({
@@ -317,6 +320,7 @@ function upload_event_pic(event_id) {
 			}
 		});
 		$("#pic_form")[0].reset();
+		$("#upload").html("");
 	});
 }
 
@@ -453,12 +457,7 @@ function get_formated_time(time){
 
 $(document).on('change', 'input[id="id_picture"]' , function(){
 	preview_photo(this);
-	if ($("#upload").length) {
-		var html = '<button class="btn btn-info btn-lg skyblue transparentBorder" id="pic_btn" type="button">Upload</button>';
-		$("#upload").append(html);
-	}
 });
-
 
 
 function preview_photo(input) {
