@@ -566,11 +566,12 @@ def send_notification(notify_type, recipients):
 	client = Client(account_sid, auth_token)
 	content = ''
 	for recipient in recipients:
+
 		try:
 			profile = Profile.objects.get(user=recipient)
 			content = get_notify_content(notify_type, recipient)
 			message = client.messages.create(to=profile.phone_number, from_=from_number, body=content)
-		except:
+		except Exception as e:
 			pass
 
 def get_notify_content(notify_type, user):

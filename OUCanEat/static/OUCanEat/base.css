@@ -4,6 +4,10 @@ html, body {
 	padding: 0;
 }
 
+.height{
+	height: 100%;
+}
+
 label {
 	font-family: sans-serif;
 	display: flex;
@@ -16,7 +20,7 @@ label {
 	margin-top: 1rem;
 }
 #map {
-	/*height: 80%;*/
+
 	height: 590px;
 }
 .inputFile {
@@ -52,7 +56,10 @@ label[for="id_picture"] {
 }
 
 .panelBody {
-	overflow-y: scroll; 
+	overflow-y: scroll;
+	overflow-x: hidden; 
+	/*min-height: 50;*/
+  	/*max-height: 50;*/
 	height: 590px
 }
 
@@ -69,8 +76,16 @@ label[for="id_picture"] {
 	background-color: transparent;
 }
 
-.tableFullWid {
+/*.tableFullWid {
 	width: 100%;
+}*/
+table{
+	width: 470px;
+	table-layout: fixed;
+}
+
+td{
+	word-wrap:break-word;
 }
 
 .skyblue {
@@ -104,7 +119,7 @@ label[for="id_picture"] {
 }
 
 .event_table{
-	font-size: 18pt;
+	font-size: 16pt;
 	color: #696969; 
 }
 
@@ -123,3 +138,5 @@ label[for="id_picture"] {
 #restaurant_detail{
 	font-size: 14pt
 }
+
+

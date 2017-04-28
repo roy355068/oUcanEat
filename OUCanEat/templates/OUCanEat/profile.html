@@ -10,18 +10,18 @@
 
 
 {% block info %}
-    <div class="col-md-4 containerBG"  > 
-		<div class="panel panelTrans">
-			<div id="info" class="panel-body panelBody">
-				<table class="tableFullWid">
+    <div class="col-md-4 containerBG " > 
+		<div class="panel panelTrans ">
+			<div id="info" class="panel-body panelBody height">
+				<table>
 					<th id="profileInfo"> <h2>{{profile.user}}'s Profile </h2></th>
-			 		<th class="event_table_button">
+			 		<th >
 					{% if curr_user == profile.user.username %}
 								<a href="{% url 'edit-profile' %}" class="btn btn-info btn-lg skyblue transparentBorder">Edit</a>
 					{% endif %}
 					</th>
 				</table>
-					<table class="tableFullWid table">
+					<table>
 						{% if profile.picture %}
 						<img src="{% url 'picture' post_user %}" width="100px">
                 		{% endif%}
