@@ -16,43 +16,43 @@
 		<div class="panel panelTrans">
 			<div id="info" class="panel-body panelBody">
 				<div class="container" id="inputForm">
-					<div class="col-xs-6">
-					<h3>{{event.name}}</h3>
-					<div class="form-horizontal editEvent">
-						<table class="tableFullWid form-group h3 table">
-							<tr>
-								<td>Restaurant: </td>
-								<td>{{event.restaurant.name}}</td> 
-							</tr>
-							<tr>
-								<td>Date: </td>
-								<td><input class="form-control" type="date" id="event_date" min= '1900-01-01' value={{event.event_dt|date:"Y-m-d"}}></td>
-							</tr>
-							<tr>
-								<td>Time: </td>
-								<td><input class="form-control" type="time" id="event_time" value={{event.event_dt|date:"H:i"}}></td>
-							</tr>
-							<tr>
-								<td>Description: </td>
-								<td><input class="form-control" type="text" id="event_desc" value={{event.desc}}></td>
-							</tr>
-							<tr>
-								<td>Host: </td>
-								<td>{{event.host.username}}</td>
-							</tr>
-							<tr>
-								<td>Participants: </td>
-								{% for p in event_participants %}
-									<td>{{p.username}}</td>
-								{% endfor %}
-							</tr>
-							
-							<tr>
-								<td><input class="btn btn-info btn-lg skyblue transparentBorder" type="submit" value="Update" onclick="update_event({{ event.id }})"></td>
-							</tr>
-						</table>
+					<div class="col-xs-8">
+						<h3>{{event.name}}</h3>
+						<div class="form-horizontal editEvent">
+							<table class="tableFullWid form-group h3 table">
+								<tr>
+									<td>Restaurant: </td>
+									<td>{{event.restaurant.name}}</td> 
+								</tr>
+								<tr>
+									<td>Date: </td>
+									<td><input class="form-control" type="date" id="event_date" min= '1900-01-01' value={{event.event_dt|date:"Y-m-d"}}></td>
+								</tr>
+								<tr>
+									<td>Time: </td>
+									<td><input class="form-control" type="time" id="event_time" value={{event.event_dt|date:"H:i"}}></td>
+								</tr>
+								<tr>
+									<td>Description: </td>
+									<td><input class="form-control" type="text" id="event_desc" value={{event.desc}}></td>
+								</tr>
+								<tr>
+									<td>Host: </td>
+									<td>{{event.host.username}}</td>
+								</tr>
+								<tr>
+									<td>Participants: </td>
+									{% for p in event_participants %}
+										<td>{{p.username}}</td>
+									{% endfor %}
+								</tr>
+								
+								<tr>
+									<td><input class="btn btn-info btn-lg skyblue transparentBorder" type="submit" value="Update" onclick="update_event({{ event.id }})"></td>
+								</tr>
+							</table>
+						</div>
 					</div>
-				</div>
 				</div>
 			</div>
 		</div>
