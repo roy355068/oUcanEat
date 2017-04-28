@@ -3,7 +3,7 @@ function show_restaurant_info(events, events_status, profile_stream) {
 	$("#info").html("");
 	$("#upcoming_events").html("");
 	$("#top_events").html("");
-	var html = "<table><tr><th colspan='2' id= 'restaurant_name' >"+clicked_place.name+"</th><th style= 'text-align: left'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='create_event_form()'>Create</button></th><table>";
+	var html = "<table class='table'><tr><th colspan='2' id= 'restaurant_name' >"+clicked_place.name+"</th><th style= 'text-align: left'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='create_event_form()'>Create</button></th><table>";
 	if ("opening_hours" in clicked_place) {
 		if(clicked_place.opening_hours.open_now){
 			var open = "open now";
