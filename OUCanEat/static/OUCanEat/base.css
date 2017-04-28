@@ -60,7 +60,7 @@ label[for="id_picture"] {
 	overflow-x: hidden; 
 	/*min-height: 50;*/
   	/*max-height: 50;*/
-	/*height: 590px*/
+	height: 590px
 }
 
 .titleFont {
@@ -119,7 +119,7 @@ td{
 }
 
 .event_table{
-	font-size: 18pt;
+	font-size: 16pt;
 	color: #696969; 
 }
 
