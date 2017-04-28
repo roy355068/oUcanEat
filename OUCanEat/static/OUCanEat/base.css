@@ -4,9 +4,13 @@ html, body {
 	padding: 0;
 }
 
-label {
+label, .editEvent{
 	font-family: sans-serif;
 	display: flex;
+}
+
+.uploadBtn {
+	background-color: gray;
 }
 
 #loginForm label {
@@ -53,6 +57,7 @@ label[for="id_picture"] {
 
 .panelBody {
 	overflow-y: scroll; 
+	overflow-x: hidden;
 	height: 590px
 }
 
