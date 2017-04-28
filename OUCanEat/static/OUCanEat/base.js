@@ -71,8 +71,10 @@ function join_event(event_id, page_type) {
 		success: function(response) {
 			if (page_type==0) {
 				show_restaurant_events('', 'upcoming');
-			} else {
+			} else if (page_type==1) {
 				show_default();
+			} else if (page_type==2) {
+				window.location.href = "/OUCanEat/show_event_page/"+event_id;
 			}
         }
     });
@@ -87,8 +89,10 @@ function leave_event(event_id, page_type) {
 		success: function(response) {
 			if (page_type==0) {
 				show_restaurant_events('', 'upcoming');
-			} else {
+			} else if (page_type==1) {
 				show_default();
+			} else if (page_type==2) {
+				window.location.href = "/OUCanEat/show_event_page/"+event_id;
 			}
         }
     });
@@ -102,6 +106,17 @@ function show_event_page(event_id){
 		type:"GET",
 		success: function(response){
 			var restaurants = JSON.parse(response.restaurant);
+			var events_status = response.events_status;
+			var html = "";
+			if (events_status[0]=='host'){
+				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit</button></td></tr>"
+			}else if (events_status[0]=='joined'){
+				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+event_id+", 2)'>Leave</button></td></tr>"
+			}else{
+				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+event_id+", 2)'>Join</button></td></tr>"
+			}
+			$("#eventBtn").append(html);
+			console.log("Hiasdadasdasdasd");
 			showMapEvents(restaurants, true, false, '');
 		}
 	});

@@ -443,8 +443,12 @@ def get_event_restaurant(request, event_id):
 	if request.method=='GET':
 		try:
 			event = Event.objects.get(id=event_id)
+
+
+			events_status= get_events_status([event], request.user)
+
 			response_text = serializers.serialize('json', [event.restaurant])
-			response_text = {'restaurant': response_text}
+			response_text = {'restaurant': response_text, 'events_status': events_status}
 			response_text = json.dumps(response_text)
 			return HttpResponse(response_text, content_type='application/json')
 		except Exception as error:
