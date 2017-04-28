@@ -3,7 +3,7 @@ function show_restaurant_info(events, events_status, profile_stream) {
 	$("#info").html("");
 	$("#upcoming_events").html("");
 	$("#top_events").html("");
-	var html = "<table class='tableFullWid'><tr><th id= 'restaurant_name' >"+clicked_place.name+"</th><th class= 'event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='create_event_form()'>Create Event</button></th><table>";
+	var html = "<table><tr><th colspan='2' id= 'restaurant_name' >"+clicked_place.name+"</th><th style= 'text-align: left'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='create_event_form()'>Create</button></th><table>";
 	if ("opening_hours" in clicked_place) {
 		if(clicked_place.opening_hours.open_now){
 			var open = "open now";
@@ -20,23 +20,25 @@ function show_restaurant_info(events, events_status, profile_stream) {
 		html += "<dd id = 'restaurant_detail'>Rating: "+clicked_place.rating+"</dd></dl><br>";
 	}
 
-	html += "<div><table class='table table-hover tableFullWid'>";
 	
+	html += "<div><table class='table table-hover tableFullWid'>";
 	$(events).each(function(index) {
 		var event_dt = new Date(this.fields.event_dt).toLocaleString();
 		var formated_dt = get_formated_time(event_dt);
 		var formated_date = formated_dt[0];
 		var formated_time = formated_dt[1];
+		var event_name = this.fields.name;
+		var event_id = this.pk;
 
-		html += "<tr><td class='event_table'>"+this.fields.name+"</td>";
+		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td>";
 		html += "<td class='event_table'>"+formated_date+ "<br>"+formated_time+"</td>";
 		if (profile_stream === 'upcoming') {
 			if (events_status[index]=='host'){
-				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+this.pk+"'\">Edit Event</button></td></tr>"
+				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+this.pk+"'\">Edit</button></td></tr>"
 			}else if (events_status[index]=='joined'){
-				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+this.pk+", 0)'>Leave Event</button></td></tr>"
+				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+this.pk+", 0)'>Leave</button></td></tr>"
 			}else{
-				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+this.pk+", 0)'>Join Event</button></td></tr>"
+				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+this.pk+", 0)'>Join</button></td></tr>"
 			}
 		}
 	});
@@ -113,7 +115,7 @@ function create_event_form() {
 					"<div class='col-xs-6'>"+
 					"<span style='font-size:16pt'>Event Name</span>"+
 					"<div id='datetimepicker' class='input-append date form-group'>"+
-					"<input maxlength='500' class='form-control' type='name' id='event_name' placeholder='Name'><br><br>"+
+					"<input maxlength='50' class='form-control' type='name' id='event_name' placeholder='Name'><br><br>"+
 					"<span style='font-size:16pt'>Event Date</span><br>"+
       				"<input class='form-control' type='date' id='event_date' placeholder= 'Date'><br><br>"+
       				"<span style='font-size:16pt'>Time</span><br>"+
@@ -190,15 +192,13 @@ function show_default(){
 function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,upcoming_events_length) {
 	$("#upcoming_events").html("");
 	var html = "<h2> Upcomping Events </h2>";
-    html+= "<table class='table table-hover tableFullWid contentFont'>";
+    html+= "<table class='table table-hover contentFont'>";
     if (upcoming_events){
 		for (i = 0; i < Math.min(upcoming_events_length, upcoming_events.length); i++){
 			var event_name = upcoming_events[i].fields.name;
     		var restaurant_name = upcoming_events_restaurant[i].fields.name;
     		var datetime = new Date(upcoming_events[i].fields.event_dt).toLocaleString();
-    		console.log(datetime);
     		var formated_dt = get_formated_time(datetime);
-    		console.log(formated_dt);
 			var formated_date = formated_dt[0];
 			var formated_time = formated_dt[1];
     		var event_id = upcoming_events[i].pk;
@@ -206,11 +206,11 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
     		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td><td class='event_table'>"+formated_date+"<br>"+formated_time+"</td><td class='event_table_button'>";
 
     		if (status=='host'){
-    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit Event</button></td></tr>"
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit </button></td></tr>"
     		}else if (status=='joined'){
-    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>";
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+event_id+", 1)'>Leave</button></td></tr>";
     		}else{
-    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+event_id+", 1)'>Join Event</button></td></tr>";
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+event_id+", 1)'>Join </button></td></tr>";
     		}
     	}   
 	}
@@ -221,7 +221,7 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
 function show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,top_events_length) {
 	$("#top_events").html("");
 	var html = "<h2> Top Events </h2>"
-    html+= "<table class='table table-hover tableFullWid contentFont'>"		
+    html+= "<table class='table table-hover contentFont'>"		
     if (top_events){
     	for (i = 0; i < Math.min(top_events_length, top_events.length); i++){
     		var event_name = top_events[i].fields.name;
@@ -231,11 +231,11 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
     		var status = top_events_status[i];
 			html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name + "</a></td><td class='event_table'>"+num_participants+"   going</td><td class='event_table_button'>"
     		if (status=='host'){
-    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit Event</button></td></tr>"
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit </button></td></tr>"
     		}else if (status=='joined'){
-    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+event_id+", 1)'>Leave Event</button></td></tr>"
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='leave_event("+event_id+", 1)'>Leave</button></td></tr>"
     		}else{
-    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+event_id+", 1)'>Join Event</button></td></tr>"
+    			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+event_id+", 1)'>Join </button></td></tr>"
     		}
     	}   
 	}

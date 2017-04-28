@@ -4,7 +4,12 @@ html, body {
 	padding: 0;
 }
 
-label, .editEvent{
+
+.height{
+	height: 100%;
+}
+
+label, .editEvent {
 	font-family: sans-serif;
 	display: flex;
 }
@@ -20,7 +25,7 @@ label, .editEvent{
 	margin-top: 1rem;
 }
 #map {
-	/*height: 80%;*/
+
 	height: 590px;
 }
 .inputFile {
@@ -74,8 +79,16 @@ label[for="id_picture"] {
 	background-color: transparent;
 }
 
-.tableFullWid {
+/*.tableFullWid {
 	width: 100%;
+}*/
+table{
+	width: 470px;
+	table-layout: fixed;
+}
+
+td{
+	word-wrap:break-word;
 }
 
 .skyblue {
@@ -109,7 +122,7 @@ label[for="id_picture"] {
 }
 
 .event_table{
-	font-size: 18pt;
+	font-size: 16pt;
 	color: #696969; 
 }
 
@@ -128,3 +141,5 @@ label[for="id_picture"] {
 #restaurant_detail{
 	font-size: 14pt
 }
+
+

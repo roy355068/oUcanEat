@@ -12,11 +12,11 @@
 
 {% block info %}
     <div class="col-md-4"  > 
-		<div class="panel panelTrans">
+		<div class="panel panelTrans height">
 			<div id="info" class="panel-body panelBody">
 
 			<h2>{{event.name}}</h2>
-			<table class="tableFullWid table">
+			<table class="table">
 				<tr>
 					<td class="contentFont">Restaurant: </td>
 					<td class="contentFont">{{event.restaurant.name}}</td>
@@ -76,8 +76,10 @@
 			</div>
 			{% if event_status == "toRate" %}
 			<div id="review" class="list-group">
-				<div>
+				
 				<div class="col-md-10">
+				<table>
+				<th>
 				<label class="radio-inline">
 					<input class="radio" type="radio" value=1 name="rating">1 
 				</label> 
@@ -93,13 +95,13 @@
 				<label class="radio-inline">
 					<input type="radio" value=5 name="rating">5
 				</label> 
-				
+				</th>
+				<th class= "event_table_button">
 				<span id="error"></span>
-				</div>
-
-				<button class= "btn btn-info btn-lg skyblue transparentBorder" onclick="back_home()">Back</button>
 
 				<button class="btn btn-info btn-lg skyblue transparentBorder" onclick="add_review({{event.id}})">Rate</button>
+				</th>
+				</table>
 				</div>
 			</div>
 			{% endif %}						
@@ -107,8 +109,10 @@
 
 			
 			<div id="comments" class="list-group">
+				<br>
+				<br>
 				<div>
-			
+				
 				<textarea class="form-control" rows="3" placeholder="Say something..." id="new_comment_{{event.id}}"></textarea>
 				
 				<button  class="orm-control btn btn-info btn-lg skyblue transparentBorder " onclick="add_comment({{event.id}})">Comment</button>

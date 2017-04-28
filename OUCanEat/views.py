@@ -313,6 +313,7 @@ def join_event(request):
 			if event.event_dt>=now_dt:
 				join = Join(event=event, participant=user)
 				join.save()
+				send_notification('join', [join.event.host])
 		except Exception as e:
 			pass
 	return HttpResponse()
@@ -561,10 +562,21 @@ auth_token = config.get('Twilio', 'auth_token')
 from_number = config.get('Twilio', 'from_number')
 
 
-def send_notification(recipients):
+def send_notification(notify_type, recipients):
 	client = Client(account_sid, auth_token)
 	content = ''
 	for recipient in recipients:
-		message = client.messages.create(to=recipient,	from_=from_number, body=content)
-		print(message.sid)
+
+		try:
+			profile = Profile.objects.get(user=recipient)
+			content = get_notify_content(notify_type, recipient)
+			message = client.messages.create(to=profile.phone_number, from_=from_number, body=content)
+		except Exception as e:
+			pass
+
+def get_notify_content(notify_type, user):
+	content = ''
+	if notify_type=='join':
+		content = '%s joined your event!' %(user.username)
+	return content
 
