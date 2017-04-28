@@ -36,21 +36,26 @@
 				<tr>
 					<td class="contentFont">Host: </td>
 					<td class="contentFont"><a href="{% url 'show-profile' event.host.username %}">
-					{{event.host.username}}</a></td
+					{{event.host.username}}</a></td>
 				</tr>
+
+				{% if event_participants %}
 				<tr>
 					<td class="contentFont">Participants: </td>
+					{% for p in event_participants %}
+					<td class="contentFont">{{p.username}}</td>
+					{% endfor %}
 				</tr>
-				{% for p in event_participants %}
-                	<tr>
-						<td></td>
-						<td class="contentFont">{{p.username}}</td>
-					</tr>
-				{% endfor %}
+				{% else %}
+				<tr>
+					<td class="contentFont">Participants: </td>
+					<td class="contentFont">Be the first! </td>
+				</tr>
+				{% endif %}
 			</table>
 
 			<div>
-			<table style="display: inline-block; overflow:scroll;">
+			<table class='table' style="display: inline-block; overflow:scroll;">
 				<tr id="pictures">
 				</tr>
 			</table>
@@ -61,6 +66,7 @@
 					<button type="button" class="btn btn-success btn-md">{{field.label_tag}}</button>
 					<br/>
 					<img id="preview" width='200px'/>
+					<br/>
 					<button class="btn btn-info btn-lg skyblue transparentBorder" id="pic_btn" type="button">Upload</button>
 					{{field}}
 					{% for error in field.errors %} {{error}} {% endfor %}
@@ -70,11 +76,12 @@
 				{% csrf_token %}
 			</form>
 			{% if event_status == "toRate" %}
+			{% endif %}	
 			<div id="review" class="list-group">
 				
 				<div class="col-md-10">
 				<table>
-				<th>
+				<th id='rate' colspan='2'>
 				<label class="radio-inline">
 					<input class="radio" type="radio" value=1 name="rating">1 
 				</label> 
@@ -91,26 +98,33 @@
 					<input type="radio" value=5 name="rating">5
 				</label> 
 				</th>
-				<th class= "event_table_button">
-				<span id="error"></span>
-
+				<th>
 				<button class="btn btn-info btn-lg skyblue transparentBorder" onclick="add_review({{event.id}})">Rate</button>
 				</th>
+
+				<tr>
+				<td colspan='2' id="error">				
+				</td>
+				</tr>
 				</table>
 				</div>
 			</div>
-			{% endif %}						
-			
-
-			
+								
+						
 			<div id="comments" class="list-group">
+				<br>
 				<br>
 				<br>
 				<div>
 				
 				<textarea class="form-control" rows="3" placeholder="Say something..." id="new_comment_{{event.id}}"></textarea>
-				
+				<table class="table">
+				<tr>
+				<td class="event_table_button">
 				<button  class="orm-control btn btn-info btn-lg skyblue transparentBorder " onclick="add_comment({{event.id}})">Comment</button>
+				</td>
+				</tr>
+				</table>
 				</div>
 			</div>
 
