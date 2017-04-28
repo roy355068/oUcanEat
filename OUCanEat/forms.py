@@ -111,7 +111,7 @@ class EventPicForm(forms.ModelForm):
 
 	def __init__(self, *args, **kwargs):
 		super(EventPicForm, self).__init__(*args, **kwargs)
-		self.fields['picture'].label = "Upload your picture here!"
+		self.fields['picture'].label = "Pick a picture!"
 
 	def clean_picture(self):
 		picture = self.cleaned_data['picture']
