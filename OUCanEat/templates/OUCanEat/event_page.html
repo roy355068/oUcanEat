@@ -72,7 +72,8 @@
 							{{field}}
 							{% for error in field.errors %} {{error}} {% endfor %}
 						</div>
-							<button class="btn btn-info btn-lg skyblue transparentBorder" id="pic_btn" type="button">Upload</button>
+						<div id="upload">
+						
 					<input type="hidden" name="event_id" value="{{event.id}}">
 					{% endfor %}
 					{% csrf_token %}
