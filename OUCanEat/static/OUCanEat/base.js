@@ -459,6 +459,10 @@ function get_formated_time(time){
 
 $(document).on('change', 'input[id="id_picture"]' , function(){
 	preview_photo(this);
+	if ($("#upload").length) {
+		var html = '<button class="btn btn-info btn-lg skyblue transparentBorder" id="pic_btn" type="button">Upload</button>';
+		$("#upload").append(html);
+	}
 });
 
 
