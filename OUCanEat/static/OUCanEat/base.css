@@ -48,10 +48,8 @@ label[for="id_picture"] {
 /**/
 
 #inputForm {
-	width: 700px;
-	padding: 5rem;
+	width: 100%;
 	border: solid #f7f7f9;
-	border-width: .2rem;
 }
 .transparentBorder {
 	border-color: transparent;

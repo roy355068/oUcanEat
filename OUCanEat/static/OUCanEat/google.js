@@ -88,7 +88,7 @@ function profileMap(username) {
 	$('#mapPanel').html("");
 	var html = "";
 	if (profile_stream === 'upcoming') {
-		html += '<br><button class="btn btn-info btn-lg skyblue transparentBorder" onclick="change_stream(\''+username+'\')">Past Events</button>';
+		html += '<button class="btn btn-info btn-lg skyblue transparentBorder" onclick="change_stream(\''+username+'\')">Past Events</button>';
 	}
 	else {
 		html += '<button class="btn btn-info btn-lg skyblue transparentBorder" onclick="change_stream(\''+username+'\')">Upcoming Events</button>';
