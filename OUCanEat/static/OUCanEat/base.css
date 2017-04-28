@@ -51,6 +51,12 @@ label[for="id_picture"] {
 	width: 100%;
 	border: solid #f7f7f9;
 }
+
+#userForm {
+	width: 50%;
+ 	border: solid #f7f7f9;
+}
+
 .transparentBorder {
 	border-color: transparent;
 }
