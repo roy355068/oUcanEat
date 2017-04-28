@@ -14,6 +14,10 @@
 			<div id="info" class="panel-body" style="overflow-y: scroll; height: 590px" >
 			{% if upcoming_event %}	
 			<h2 id="topEvent"> Your upcoming events: </h2>
+			{% else %}
+			<h3>Oops! You don't have future event now!</h3>
+			<h3>Go find new event and have fun!</h3>
+			<br/>
 			{% endif %}
 
 			{% for event in upcoming_event %}			
