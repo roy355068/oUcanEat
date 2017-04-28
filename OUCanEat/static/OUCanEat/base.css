@@ -141,5 +141,9 @@ td{
 #restaurant_detail{
 	font-size: 14pt
 }
-
+#rate{
+	font-size: 14pt;
+	text-align: center;
+	color: #696969; 
+}
 
