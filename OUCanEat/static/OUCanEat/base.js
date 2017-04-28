@@ -1,8 +1,6 @@
 function show_restaurant_info(events, events_status, profile_stream) {
 
 	$("#info").html("");
-	$("#upcoming_events").html("");
-	$("#top_events").html("");
 	var html = "<table class='table'><tr><th colspan='2' id= 'restaurant_name' >"+clicked_place.name+"</th><th style= 'text-align: left'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='create_event_form()'>Create</button></th><table>";
 	if ("opening_hours" in clicked_place) {
 		if(clicked_place.opening_hours.open_now){
@@ -125,8 +123,7 @@ function create_event_form() {
 					"</div>"+
 				"</div>";   
 
-
-	$("#info").prepend(html);
+	$("#info").append(html);
 	getTomorrow();
 }
 
@@ -188,7 +185,7 @@ function show_default(){
 }
 
 function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,upcoming_events_length) {
-	$("#upcoming_events").html("");
+	$("#info").html("");
 	var html = "<h2> Upcomping Events </h2>";
     html+= "<table class='table table-hover contentFont'>";
     if (upcoming_events){
@@ -213,11 +210,10 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
     	}   
 	}
 	html+= "</table>";
-	$("#upcoming_events").prepend(html);
+	$("#info").append(html);
 }
 
 function show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,top_events_length) {
-	$("#top_events").html("");
 	var html = "<h2> Top Events </h2>"
     html+= "<table class='table table-hover contentFont'>"		
     if (top_events){
@@ -238,7 +234,7 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
     	}   
 	}
 	html+= "</table>"
-	$("#top_events").prepend(html);
+	$("#info").append(html);
 }
 
 
@@ -513,8 +509,6 @@ $(function () {
 					events_status = response.events_status;
 					show_upcoming_event(events, restaurants, events_status, 5);
 					showMapEvents(restaurants, place_ids.length==0, true, '');
-					$("#info").html("");
-					$("#top_events").html("");
 				}
 			});
 		});
