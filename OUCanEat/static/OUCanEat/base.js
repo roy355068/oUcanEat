@@ -20,14 +20,17 @@ function show_restaurant_info(events, events_status, profile_stream) {
 		html += "<dd id = 'restaurant_detail'>Rating: "+clicked_place.rating+"</dd></dl><br>";
 	}
 
-	html += "<div><table class='table table-hover'>";
 	
+	html += "<div><table class='table table-hover tableFullWid'>";
 	$(events).each(function(index) {
-		var formated_dt = get_formated_time(this.fields.event_dt)
-		var formated_date = formated_dt[0]
-		var formated_time = formated_dt[1]
+		var event_dt = new Date(this.fields.event_dt).toLocaleString();
+		var formated_dt = get_formated_time(event_dt);
+		var formated_date = formated_dt[0];
+		var formated_time = formated_dt[1];
+		var event_name = this.fields.name;
+		var event_id = this.pk;
 
-		html += "<tr><td class='event_table'>"+this.fields.name+"</td>";
+		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td>";
 		html += "<td class='event_table'>"+formated_date+ "<br>"+formated_time+"</td>";
 		if (profile_stream === 'upcoming') {
 			if (events_status[index]=='host'){
@@ -45,8 +48,8 @@ function show_restaurant_info(events, events_status, profile_stream) {
 	$("#info").append(html);
 }
 
-function show_restaurant_events(isPersonal, profile_stream) {
-	var data = {'restaurant_id':clicked_place.place_id, 'isPersonal': isPersonal, 'csrfmiddlewaretoken': getCSRFToken(),
+function show_restaurant_events(username, profile_stream) {
+	var data = {'restaurant_id':clicked_place.place_id, 'username': username, 'csrfmiddlewaretoken': getCSRFToken(),
 				'profile_stream': profile_stream};
     $.ajax({
         url: "/OUCanEat/get_restaurant_events",
@@ -69,7 +72,7 @@ function join_event(event_id, page_type) {
 		data: data,
 		success: function(response) {
 			if (page_type==0) {
-				show_restaurant_events(false);
+				show_restaurant_events('', 'upcoming');
 			} else {
 				show_default();
 			}
@@ -85,7 +88,7 @@ function leave_event(event_id, page_type) {
 		data: data,
 		success: function(response) {
 			if (page_type==0) {
-				show_restaurant_events(false);
+				show_restaurant_events('', 'upcoming');
 			} else {
 				show_default();
 			}
@@ -101,7 +104,7 @@ function show_event_page(event_id){
 		type:"GET",
 		success: function(response){
 			var restaurants = JSON.parse(response.restaurant);
-			showMapEvents(restaurants, true, false, false);
+			showMapEvents(restaurants, true, false, '');
 		}
 	});
 }
@@ -112,7 +115,7 @@ function create_event_form() {
 					"<div class='col-xs-6'>"+
 					"<span style='font-size:16pt'>Event Name</span>"+
 					"<div id='datetimepicker' class='input-append date form-group'>"+
-					"<input class='form-control' type='name' id='event_name' placeholder='Name'><br><br>"+
+					"<input maxlength='50' class='form-control' type='name' id='event_name' placeholder='Name'><br><br>"+
 					"<span style='font-size:16pt'>Event Date</span><br>"+
       				"<input class='form-control' type='date' id='event_date' placeholder= 'Date'><br><br>"+
       				"<span style='font-size:16pt'>Time</span><br>"+
@@ -134,7 +137,8 @@ function create_event() {
 	var event_form_date = $("#event_date").val();
 	var event_form_time = $("#event_time").val();
 	var event_form_desc = $("#event_desc").val();
-	var data = {'event_name': event_form_name, 'event_date':event_form_date, 'event_time':event_form_time, 'event_desc':event_form_desc,
+	var event_dt_utc = new Date(event_form_date+" "+event_form_time).toISOString().replace(/\..+/, '');
+	var data = {'event_name': event_form_name, 'event_dt':event_dt_utc, 'event_desc':event_form_desc,
 		'event_restaurant':clicked_place.name, 'google_id': clicked_place.place_id, 
 		'event_lat':clicked_place.geometry.location.lat(), 'event_lng':clicked_place.geometry.location.lng(),
 		'csrfmiddlewaretoken': getCSRFToken()}
@@ -152,7 +156,8 @@ function update_event(event_id) {
 	var event_date = $("#event_date").val();
 	var event_time = $("#event_time").val();
 	var event_desc = $("#event_desc").val();
-	var data = {'event_id': event_id, 'event_date':event_date, 'event_time':event_time, 'event_desc':event_desc,
+	var event_dt_utc = new Date(event_date+" "+event_time).toISOString().replace(/\..+/, '');
+	var data = {'event_id': event_id, 'event_dt':event_dt_utc, 'event_desc':event_desc,
 		'csrfmiddlewaretoken': getCSRFToken()}
     $.ajax({
         url: "/OUCanEat/update_event",
@@ -178,8 +183,8 @@ function show_default(){
    			var top_events_num_participants = response.top_events_num_participants;
    			show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming_events_status,5);
 			show_top_event(top_events,top_events_restaurant,top_events_status,top_events_num_participants,5);
-			showMapEvents(upcoming_events_restaurant, true, false, false);
-			showMapEvents(top_events_restaurant, false, false, false);
+			showMapEvents(upcoming_events_restaurant, true, false, '');
+			showMapEvents(top_events_restaurant, false, false, '');
 		}
 	});
 }
@@ -192,14 +197,13 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
 		for (i = 0; i < Math.min(upcoming_events_length, upcoming_events.length); i++){
 			var event_name = upcoming_events[i].fields.name;
     		var restaurant_name = upcoming_events_restaurant[i].fields.name;
-    		var datetime = upcoming_events[i].fields.event_dt;
-    		var formated_dt = get_formated_time(datetime)
-			var formated_date = formated_dt[0]
-			var formated_time = formated_dt[1]
+    		var datetime = new Date(upcoming_events[i].fields.event_dt).toLocaleString();
+    		var formated_dt = get_formated_time(datetime);
+			var formated_date = formated_dt[0];
+			var formated_time = formated_dt[1];
     		var event_id = upcoming_events[i].pk;
     		var status = upcoming_events_status[i];
-    		// html+= "<tr><td style='font-size: 16pt'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+restaurant_name+"</a></td><td>"+datetime+"</td><td style='text-align: right;'>"
-    		html+= "<tr><td style = 'word-wrap:break-word' class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td><td class='event_table'>"+formated_date+"<br>"+formated_time+"</td><td class='event_table_button'>";
+    		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td><td class='event_table'>"+formated_date+"<br>"+formated_time+"</td><td class='event_table_button'>";
 
     		if (status=='host'){
     			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit </button></td></tr>"
@@ -262,7 +266,7 @@ function show_comments(event_id) {
 			$(comments).each(function(index) {
 				if (this.pk>latestCommentId) {
 					event_id = this.fields.event;
-					var dt = new Date(this.fields.create_dt).toString();
+					var dt = new Date(this.fields.create_dt).toLocaleString();
 
 					var html = "<li class='list-group-item' id='comments_"+this.pk+"'>";
 					if (profiles[index].fields.picture!="") {
@@ -315,6 +319,7 @@ function upload_event_pic(event_id) {
 			contentType: false,
 			success : function(response) {
 				show_event_pictures(event_id);
+				$('#preview').attr('src', "");
 			}
 		});
 		$("#pic_form")[0].reset();
@@ -453,7 +458,6 @@ function get_formated_time(time){
 
 
 $(document).on('change', 'input[id="id_picture"]' , function(){
-	console.log("HIHIH");
 	preview_photo(this);
 });
 
@@ -469,6 +473,7 @@ function preview_photo(input) {
         }
 
         reader.readAsDataURL(input.files[0]);
+        $('#compliment').html("Daaaarn! You look gorgeous!");
     }
 }
 
@@ -509,7 +514,7 @@ $(function () {
 					restaurants = JSON.parse(response.restaurants);
 					events_status = response.events_status;
 					show_upcoming_event(events, restaurants, events_status, 5);
-					showMapEvents(restaurants, place_ids.length==0, true, false);
+					showMapEvents(restaurants, place_ids.length==0, true, '');
 					$("#info").html("");
 					$("#top_events").html("");
 				}
