@@ -116,7 +116,6 @@ function show_event_page(event_id){
 				html+="<td class='event_table_button'><button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick='join_event("+event_id+", 2)'>Join</button></td></tr>"
 			}
 			$("#eventBtn").append(html);
-			console.log("Hiasdadasdasdasd");
 			showMapEvents(restaurants, true, false, '');
 		}
 	});
