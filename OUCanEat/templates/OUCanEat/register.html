@@ -49,19 +49,25 @@
                     </tr>
                     </table>
 
-                <button class="btn btn-info btn-lg skyblue transparentBorder" type="submit" value="Register">Register</button>
-                
-                {% csrf_token %}
-
                 {% for error in form.email.errors %}
                 <p class="text-danger text-center h3 ">
                 {{ error }}
                 </p>
                 {% endfor %}
 
+                <button class="btn btn-info btn-lg skyblue transparentBorder" type="submit" value="Register">Register</button>
+                
+                {% csrf_token %}
+
+
+
             </form>
-                <div class="text-center">
+            </div>
+            </div>
+            
+            <div class="text-center">
                 <br>
                 <a href="/OUCanEat/"><button class="btn btn-success btn-md skyblue transparentBorder">Back</button></a>
-        </div>
+            </div>
+
     {% endblock %}
