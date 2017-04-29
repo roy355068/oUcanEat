@@ -40,6 +40,10 @@ class RegistrationForm(forms.Form):
 			        widget=forms.SelectMultiple(attrs={'class': 'form-check-input'}),
 			        choices=RESTAURANT_TYPE,
 			    )
+	def __init__(self, *args, **kwargs):
+		super(RegistrationForm, self).__init__(*args, **kwargs)
+		self.fields['email'].error_messages['invalid'] = "Oops! Seems like you're not smart enough to study in CMU."
+		self.fields['phone_number'].error_messages['invalid'] = "Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
 
 
 	def clean(self):
