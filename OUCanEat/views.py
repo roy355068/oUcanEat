@@ -483,7 +483,7 @@ def register(request):
 
     token = default_token_generator.make_token(new_user)
     email_body = """
-        Welcome to the WebApp Class Address Book.  Please click the link below to
+        Welcome to oUcanEat. Please click the link below to
         verify your email address and complete the registration of your account:
         http://%s%s
     """ % (request.get_host(),
