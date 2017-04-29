@@ -28,7 +28,7 @@ function show_restaurant_info(events, events_status, profile_stream) {
 		var event_name = this.fields.name;
 		var event_id = this.pk;
 
-		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td>";
+		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+sanitizer(event_name)+"</a></td>";
 		html += "<td class='event_table'>"+formated_date+ "<br>"+formated_time+"</td>";
 		if (profile_stream === 'upcoming') {
 			if (events_status[index]=='host'){
@@ -69,6 +69,10 @@ function join_event(event_id, page_type) {
 		type: "POST",
 		data: data,
 		success: function(response) {
+			// page_type
+			// 0 : in restaurant page
+			// 1 : in homepage
+			// 2 : in event detail page
 			if (page_type==0) {
 				show_restaurant_events('', 'upcoming');
 			} else if (page_type==1) {
@@ -217,7 +221,7 @@ function show_upcoming_event(upcoming_events,upcoming_events_restaurant,upcoming
 			var formated_time = formated_dt[1];
     		var event_id = upcoming_events[i].pk;
     		var status = upcoming_events_status[i];
-    		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name+"</a></td><td class='event_table'>"+formated_date+"<br>"+formated_time+"</td><td class='event_table_button'>";
+    		html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+sanitizer(event_name)+"</a></td><td class='event_table'>"+formated_date+"<br>"+formated_time+"</td><td class='event_table_button'>";
 
     		if (status=='host'){
     			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit </button></td></tr>"
@@ -242,7 +246,7 @@ function show_top_event(top_events,top_events_restaurant,top_events_status,top_e
     		var event_id = top_events[i].pk;
     		var num_participants = top_events_num_participants[i];
     		var status = top_events_status[i];
-			html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+event_name + "</a></td><td class='event_table'>"+num_participants+"   going</td><td class='event_table_button'>"
+			html+= "<tr><td class='event_table'><a href='/OUCanEat/show_event_page/"+event_id+"'>"+sanitizer(event_name) + "</a></td><td class='event_table'>"+num_participants+"   going</td><td class='event_table_button'>"
     		if (status=='host'){
     			html+="<button type='button' class='btn btn-info btn-lg skyblue transparentBorder' onclick=\"window.location.href='/OUCanEat/edit_event/"+event_id+"'\">Edit </button></td></tr>"
     		}else if (status=='joined'){
@@ -284,14 +288,14 @@ function show_comments(event_id) {
 					var html = "<li class='list-group-item' id='comments_"+this.pk+"'>";
 					if (profiles[index].fields.picture!="") {
 						html += "<div class='col-md-2'>"+
-									"<img src='/OUCanEat/picture/"+users[index].fields.username+"' width='30px'>"+
+									"<img src='/OUCanEat/picture/"+sanitizer(users[index].fields.username)+"' width='30px'>"+
 								"</div>"+
 								"<div class='col-md-10'><h4 class='list-group-item-heading'>"+
-								users[index].fields.username+
+								sanitizer(users[index].fields.username)+
 								"</h4></div>";
 					} else {
 						html += "<h4 class='list-group-item-heading'>"+
-						users[index].fields.username+"</h4>";
+						sanitizer(users[index].fields.username)+"</h4>";
 					}
 
 					html += "<p class='list-group-item-heading'>"+dt+"</p>"+

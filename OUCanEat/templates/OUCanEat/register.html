@@ -19,7 +19,7 @@
                         {{field.label_tag}}
                         {{field}}
                             
-                        {% for error in field.errors %} {{error}} {% endfor %}
+                        {% for error in field.errors %} <span class=text-danger>{{error}}</span> {% endfor %}
                             
                     </div>
                     {% endfor %}
