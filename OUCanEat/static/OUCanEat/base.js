@@ -147,7 +147,7 @@ function create_event_form() {
 				"</div>";   
 
 	$("#info").append(html);
-	$("#event_date").attr("min", getTomorrow());
+	$("#event_date").attr("min", getToday());
 }
 
 function create_event() {

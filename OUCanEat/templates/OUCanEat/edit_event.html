@@ -5,7 +5,7 @@
 	$(window).on('load', function() {
 		{% if event %}
 			show_event_page({{ event.id }});
-			$("#event_date").attr("min", getTomorrow());
+			$("#event_date").attr("min", getToday());
 		{% endif %}
 		$("#search_date").attr("min", getToday());
 	});
