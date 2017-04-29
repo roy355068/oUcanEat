@@ -43,7 +43,6 @@
 					<td class="contentFont"><a href="{% url 'show-profile' event.host.username %}">
 					{{event.host.username}}</a></td>
 				</tr>
-
 				{% if event_participants %}
 				<tr>
 					<td class="contentFont">Participants: </td>
@@ -60,6 +59,7 @@
 					<td class="contentFont">Be the first! </td>
 				</tr>
 				{% endif %}
+
 			</table>
 
 			<div>

@@ -44,7 +44,7 @@ class RegistrationForm(forms.Form):
 		super(RegistrationForm, self).__init__(*args, **kwargs)
 		self.fields['email'].error_messages['invalid'] = "Oops! Seems like you're not smart enough to study in CMU."
 		self.fields['phone_number'].error_messages['invalid'] = "Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
-		
+
 	def clean(self):
 		cleaned_data = super(RegistrationForm, self).clean()
 		password1 = cleaned_data.get('password1')

@@ -5,32 +5,68 @@
         </div>
     {% endblock %}
     {% block content %}
-        {% for error in errors %}
-            <p class="text-danger text-center h3 ">
-                {{ error }}
-            </p>
-        {% endfor %}
-        <div class="container panelTrans" id="userForm">
             
-            <form method="post" action="{% url 'register' %}" class="h3 text-center form-horizontal" id="registerForm">
-                
-                    {% for field in form.visible_fields %}
-                    <div class="form-group">
-                        {{field.label_tag}}
-                        {{field}}
-                            
-                        {% for error in field.errors %} <span class=text-danger>{{error}}</span> {% endfor %}
-                            
-                    </div>
-                    {% endfor %}
+            <form method="post" action="{% url 'register' %}" class="h3 text-center form-horizontal containerBG" id="registerForm">
 
+                    <div class="container">
+                    <div class="row">
+
+                    <table style="width: 100%; font-size: 12pt;" class="table">
+                    <tr>
+                        <td>{{form.first_name.label_tag}}</td>
+                        <td>{{form.first_name}}</td>             
+                        <td>{{form.last_name.label_tag}}</td>
+                        <td>{{form.last_name}}</td>
+                        <td>{{form.username.label_tag}}</td>
+                        <td>{{form.username}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{form.password1.label_tag}}</td>
+                        <td colspan='2'>{{form.password1}}</td>
+                        <td>{{form.password2.label_tag}}</td>
+                        <td colspan='2'>{{form.password2}}</td>
+                    </tr>
+                    <tr>
+                    </tr>
+                    <tr>
+                        <td>{{form.email.label_tag}}</td>
+                        <td  colspan='2'>{{form.email}}</td>
+                        <td>{{form.phone_number.label_tag}}</td>
+                        <td  colspan='2'>{{form.phone_number}}</td>
+
+                    </tr>
+                    <tr>
+                        <td rowspan='2'>{{form.bio.label_tag}}</td>
+                        <td colspan='2' rowspan='2'>{{form.bio}}</td>
+                        <td>{{form.age.label_tag}}</td>
+                        <td colspan='2'>{{form.age}}</td>
+                        
+                    </tr>
+                    <tr>
+                        <td >{{form.preference.label_tag}}</td>
+                        <td colspan='2'>{{form.preference}}</td>
+                    </tr>
+                    </table>
+
+                {% for error in form.email.errors %}
+                <p class="text-danger text-center h3 ">
+                {{ error }}
+                </p>
+                {% endfor %}
 
                 <button class="btn btn-info btn-lg skyblue transparentBorder" type="submit" value="Register">Register</button>
                 
                 {% csrf_token %}
 
+
+
             </form>
-                <div class="text-center">
-                <a href="/OUCanEat/"><button class="btn btn-success btn-md">Back</button></a>
-        </div>
+            </div>
+            </div>
+            
+            <div class="text-center">
+                <br>
+                <a href="/OUCanEat/"><button class="btn btn-success btn-md skyblue transparentBorder">Back</button></a>
+            </div>
+
     {% endblock %}
