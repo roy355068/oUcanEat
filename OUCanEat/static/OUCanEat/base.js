@@ -87,6 +87,11 @@ function leave_event(event_id, page_type) {
 		type: "POST",
 		data: data,
 		success: function(response) {
+			// page_type
+			// 0 : in restaurant page
+			// 1 : in homepage
+			// 2 : in event detail page
+			
 			if (page_type==0) {
 				show_restaurant_events('', 'upcoming');
 			} else if (page_type==1) {
