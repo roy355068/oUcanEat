@@ -1,6 +1,5 @@
 var map;
 var service;
-var infowindow;
 var clicked_place;
 var searchBox;
 var markers = [];
@@ -15,8 +14,6 @@ function initMap() {
 		center: pittsburgh,
 		zoom: 15
 	});
-
-	infowindow = new google.maps.InfoWindow();
 
 	//nearby search
 	service = new google.maps.places.PlacesService(map);
@@ -146,12 +143,7 @@ function createMarker(place, color, username) {
 
 	google.maps.event.addListener(marker, 'click', function() {
 		clicked_place = place;
-
 		show_restaurant_events(username, profile_stream);
-
-
-		infowindow.setContent(place.name);
-		infowindow.open(map, this);
 	});
 
 	markers.push(marker);

@@ -3,8 +3,10 @@
 {% block init_js %}
 	<script language="javascript">
 	$(window).on('load', function() {
-		show_event_page({{ event.id }});
-		getToday();
+		{% if event %}
+			show_event_page({{ event.id }});
+			$("#search_date").attr("min", getToday());
+		{% endif %}
 	});
 	</script>
 {% endblock %}
@@ -14,6 +16,9 @@
     <div class="col-md-4"  > 
 		<div class="panel panelTrans height">
 			<div id="info" class="panel-body panelBody">
+			{% if errors %}
+				<h3> {{ errors }} </h3>
+			{% else %}
 			<table>
 				<tr>
 					<td colspan="3"><h2>{{event.name}}</h2></td>
@@ -61,7 +66,6 @@
 				{% endif %}
 
 			</table>
-
 			<div>
 			<table class='table' style="display: inline-block; overflow:scroll;">
 				<tr id="pictures">
@@ -134,7 +138,7 @@
 				</table>
 				</div>
 			</div>
-
+			{% endif %}
 
 			</div>
 		</div>

@@ -4,7 +4,7 @@
 	<script type="text/javascript">
 	$(window).on('load', function() {
 		show_default();
-		getToday();
+		$("#search_date").attr("min", getToday());
 	});
 	</script>
 {% endblock %}
@@ -16,7 +16,7 @@
 	<br>
 	<br>
 		<div class="form-group formPadding" >
-			<input class="form-control input-lg" id="keyword" type="text" placeholder= "Key Word">
+			<input class="form-control input-lg" id="keyword" type="text" placeholder= "Search Restaurant">
 		</div>
 
 	    

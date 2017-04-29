@@ -59,37 +59,41 @@ def show_default(request):
 @login_required
 def show_profile(request, post_user):
 	context = {}
-	profile = Profile.objects.get(user__username = post_user)
-	temp_events = Event.objects.filter(host__username = post_user)
+	try:
+		profile = Profile.objects.get(user__username = post_user)
+		temp_events = Event.objects.filter(host__username = post_user)
 
-	now_dt = timezone.now() 
-	your_events = temp_events.filter(event_dt__gte = now_dt).annotate(num_participants = Count('event_join'))
-	old_events = temp_events.filter(event_dt__lte = now_dt)
+		now_dt = timezone.now() 
+		your_events = temp_events.filter(event_dt__gte = now_dt).annotate(num_participants = Count('event_join'))
+		old_events = temp_events.filter(event_dt__lte = now_dt)
 	
-	joined_temp = Join.objects.filter(participant__username = post_user)
-	joined      = joined_temp.filter(event__event_dt__gte = now_dt)
+		joined_temp = Join.objects.filter(participant__username = post_user)
+		joined      = joined_temp.filter(event__event_dt__gte = now_dt)
 
-	my_prefer = profile.preference.all()
+		my_prefer = profile.preference.all()
 
-	ratings, rating_cnt = 0, 0
-	for e in old_events:
-		(event_status, avg_rating) = get_event_rating(request, e)
-		if isinstance(avg_rating, (int, float)):
-			ratings += avg_rating
-			rating_cnt += 1
-	if rating_cnt>0:
-		avg_rating = ratings/float(rating_cnt)
-	else:
-		avg_rating = 'No rating'
+		ratings, rating_cnt = 0, 0
+		for e in old_events:
+			(event_status, avg_rating) = get_event_rating(request, e)
+			if isinstance(avg_rating, (int, float)):
+				ratings += avg_rating
+				rating_cnt += 1
+		if rating_cnt>0:
+			avg_rating = ratings/float(rating_cnt)
+		else:
+			avg_rating = 'No rating'
 
-	context['joined'] = joined
-	context['profile'] = profile
-	context['prefer'] = my_prefer
-	context['post_user'] = post_user
-	context['curr_user'] = request.user.username
-	context['your_events'] = your_events
-	context['old_events'] = old_events
-	context['avg_rating'] = avg_rating
+		context['joined'] = joined
+		context['profile'] = profile
+		context['prefer'] = my_prefer
+		context['post_user'] = post_user
+		context['curr_user'] = request.user.username
+		context['your_events'] = your_events
+		context['old_events'] = old_events
+		context['avg_rating'] = avg_rating
+	except:
+		context['errors'] = 'Unable to get %s\'s profile' %(post_user)
+		pass
 	return render(request, 'OUCanEat/profile.html', context)
 
 @login_required
@@ -223,23 +227,24 @@ def create_event(request):
 		lat = request.POST['event_lat']
 		event_name = request.POST['event_name']
 		
-		try:
-			dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
-			now_dt = timezone.now()
-			if dt>=now_dt:
-				try:
-					restaurant = Restaurant.objects.get(google_id=google_id)
-				except:
-					restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
-					restaurant.save()
-				event = Event(name= event_name, host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
-				event.save()
-				join = Join(event=event, participant=request.user)
-				join.save()
-				data = json.dumps({"event_id":event.id})
-				return HttpResponse(data, content_type='application/json')
-		except Exception as e:
-			pass
+		if len(event_name.strip())>0:
+			try:
+				dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
+				now_dt = timezone.now()
+				if dt>=now_dt:
+					try:
+						restaurant = Restaurant.objects.get(google_id=google_id)
+					except:
+						restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
+						restaurant.save()
+					event = Event(name= event_name, host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
+					event.save()
+					join = Join(event=event, participant=request.user)
+					join.save()
+					data = json.dumps({"event_id":event.id})
+					return HttpResponse(data, content_type='application/json')
+			except Exception as e:
+				pass
 	return HttpResponse()
 
 @login_required
@@ -300,6 +305,7 @@ def show_event_page(request, event_id):
 		context['rating'] = avg_rating
 		context['event_status'] = event_status
 	except Exception as e:
+		context['errors'] = 'Unable to get event'
 		pass
 	return render(request, 'OUCanEat/event_page.html', context)
 
@@ -368,6 +374,7 @@ def edit_event(request, event_id):
 		context['event'] = event
 		context['event_participants'] = event_participants
 	except Exception as e:
+		context['errors'] = 'Unable to edit event: %s' %(event_id)
 		pass
 	return render(request, 'OUCanEat/edit_event.html', context)
 	
@@ -581,6 +588,6 @@ def send_notification(notify_type, recipients):
 def get_notify_content(notify_type, user):
 	content = ''
 	if notify_type=='join':
-		content = '%s joined your event!' %(user.username)
+		content = 'One more user joined your event!'
 	return content
 
