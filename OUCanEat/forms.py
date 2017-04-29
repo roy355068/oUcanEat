@@ -18,8 +18,8 @@ class RegistrationForm(forms.Form):
 	last_name  = forms.CharField(max_length = 30, widget=forms.TextInput(attrs={'class': 'form-control'}))
 	username   = forms.CharField(max_length = 30, widget=forms.TextInput(attrs={'class': 'form-control'}))
 	email      = forms.RegexField(regex = r'[\w0-9\.-]*@andrew\.cmu\.edu',
-								max_length = 50, 
-							     widget = forms.EmailInput(attrs={'class': 'form-control'}))
+								  error_message = (""),
+							      widget = forms.EmailInput(attrs={'class': 'form-control'}))
 
 
 	phone_number = forms.RegexField(regex= r'^\+?1?\d{9,15}$', 
@@ -40,8 +40,11 @@ class RegistrationForm(forms.Form):
 			        widget=forms.SelectMultiple(attrs={'class': 'form-check-input'}),
 			        choices=RESTAURANT_TYPE,
 			    )
-
-
+	def __init__(self, *args, **kwargs):
+		super(RegistrationForm, self).__init__(*args, **kwargs)
+		self.fields['email'].error_messages['invalid'] = "Oops! Seems like you're not smart enough to study in CMU."
+		self.fields['phone_number'].error_messages['invalid'] = "Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+		
 	def clean(self):
 		cleaned_data = super(RegistrationForm, self).clean()
 		password1 = cleaned_data.get('password1')
