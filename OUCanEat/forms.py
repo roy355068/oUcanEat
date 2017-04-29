@@ -17,8 +17,11 @@ class RegistrationForm(forms.Form):
 	first_name = forms.CharField(max_length = 30, widget=forms.TextInput(attrs={'class': 'form-control'}))
 	last_name  = forms.CharField(max_length = 30, widget=forms.TextInput(attrs={'class': 'form-control'}))
 	username   = forms.CharField(max_length = 30, widget=forms.TextInput(attrs={'class': 'form-control'}))
-	email      = forms.CharField(max_length = 50, 
+	email      = forms.RegexField(regex = r'[\w0-9\.-]*@andrew\.cmu\.edu',
+								max_length = 50, 
 							     widget = forms.EmailInput(attrs={'class': 'form-control'}))
+
+
 	phone_number = forms.RegexField(regex= r'^\+?1?\d{9,15}$', 
 		error_message = ("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
 		, widget=forms.TextInput(attrs={'class': 'form-control'}))
