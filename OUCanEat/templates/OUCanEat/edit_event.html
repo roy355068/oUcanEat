@@ -3,8 +3,10 @@
 {% block init_js %}
 	<script language="javascript">
 	$(window).on('load', function() {
-		show_event_page({{ event.id }});
-		getTomorrow();
+		{% if event %}
+			show_event_page({{ event.id }});
+			getTomorrow();
+		{% endif %}
 		getToday();
 	});
 	</script>
@@ -15,6 +17,9 @@
     <div class="col-md-4"> 
 		<div class="panel panelTrans">
 			<div id="info" class="panel-body panelBody">
+				{% if errors %}
+					<h3> {{ errors }} </h3>
+				{% else %}
 				<div class="container" id="inputForm">
 					<h3>{{event.name}}</h3>
 					<div class="form-horizontal editEvent">
@@ -54,6 +59,7 @@
 						</table>
 					</div>
 				</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>

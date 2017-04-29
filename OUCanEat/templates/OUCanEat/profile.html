@@ -2,9 +2,11 @@
 
 {% block init_js %}
 	<script type="text/javascript">
-	$(window).on('load', function() {
-		profileMap("{{ post_user }}");
-	});
+	{% if post_user %}
+		$(window).on('load', function() {
+			profileMap("{{ post_user }}");
+		});
+	{% endif %}
 	</script>
 {% endblock %}
 
@@ -13,6 +15,9 @@
     <div class="col-md-4 containerBG " > 
 		<div class="panel panelTrans ">
 			<div id="info" class="panel-body panelBody height">
+				{% if errors %}
+					<h3> {{ errors }} </h3>
+				{% else %}
 				<table>
 					<th id="profileInfo"> <h2>{{profile.user}}'s Profile </h2></th>
 			 		<th >
@@ -59,7 +64,7 @@
 							<td class="contentFont">{{avg_rating}}</td>
 						</tr>
 					</table>
-				
+				{% endif %}
 			</div>
 		</div>
 	</div>
