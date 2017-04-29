@@ -5,9 +5,9 @@
 	$(window).on('load', function() {
 		{% if event %}
 			show_event_page({{ event.id }});
-			getTomorrow();
+			$("#event_date").attr("min", getTomorrow());
 		{% endif %}
-		getToday();
+		$("#search_date").attr("min", getToday());
 	});
 	</script>
 {% endblock %}

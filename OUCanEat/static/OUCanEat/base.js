@@ -143,7 +143,7 @@ function create_event_form() {
 				"</div>";   
 
 	$("#info").append(html);
-	getTomorrow();
+	$("#event_date").attr("min", getTomorrow());
 }
 
 function create_event() {
@@ -394,8 +394,7 @@ function getTomorrow(){
 	        mm='0'+mm
 	    } 
 	tmr = yyyy+'-'+mm+'-'+dd;
-	document.getElementById("event_date").setAttribute("min", tmr);
-
+	return tmr;
 }
 
 function getToday(){
@@ -410,8 +409,7 @@ function getToday(){
 	        mm='0'+mm
 	    } 
 	tmr = yyyy+'-'+mm+'-'+dd;
-	document.getElementById("search_date").setAttribute("min", tmr);
-
+	return tmr;
 }
 
 

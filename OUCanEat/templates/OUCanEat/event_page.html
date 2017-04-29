@@ -5,7 +5,7 @@
 	$(window).on('load', function() {
 		{% if event %}
 			show_event_page({{ event.id }});
-			getToday();
+			$("#search_date").attr("min", getToday());
 		{% endif %}
 	});
 	</script>
