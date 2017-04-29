@@ -10,3 +10,6 @@ OUCanEat/migrations
 *.gif
 *.jpeg
 *.png
+
+# AWS key pair file
+*.pem
