@@ -227,23 +227,24 @@ def create_event(request):
 		lat = request.POST['event_lat']
 		event_name = request.POST['event_name']
 		
-		try:
-			dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
-			now_dt = timezone.now()
-			if dt>=now_dt:
-				try:
-					restaurant = Restaurant.objects.get(google_id=google_id)
-				except:
-					restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
-					restaurant.save()
-				event = Event(name= event_name, host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
-				event.save()
-				join = Join(event=event, participant=request.user)
-				join.save()
-				data = json.dumps({"event_id":event.id})
-				return HttpResponse(data, content_type='application/json')
-		except Exception as e:
-			pass
+		if len(event_name.strip())>0:
+			try:
+				dt = datetime.datetime.strptime(request.POST['event_dt'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
+				now_dt = timezone.now()
+				if dt>=now_dt:
+					try:
+						restaurant = Restaurant.objects.get(google_id=google_id)
+					except:
+						restaurant = Restaurant(name=restaurant_name, google_id=google_id, lng=lng, lat=lat)
+						restaurant.save()
+					event = Event(name= event_name, host = request.user, restaurant = restaurant, event_dt = dt, desc=request.POST['event_desc'])
+					event.save()
+					join = Join(event=event, participant=request.user)
+					join.save()
+					data = json.dumps({"event_id":event.id})
+					return HttpResponse(data, content_type='application/json')
+			except Exception as e:
+				pass
 	return HttpResponse()
 
 @login_required
@@ -587,6 +588,6 @@ def send_notification(notify_type, recipients):
 def get_notify_content(notify_type, user):
 	content = ''
 	if notify_type=='join':
-		content = '%s joined your event!' %(user.username)
+		content = 'One more user joined your event!'
 	return content
 
